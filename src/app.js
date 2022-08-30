@@ -1,13 +1,13 @@
 const express = require("express");
 const passport = require("passport");
 const morgan = require("morgan");
-const passportConfig = require("./passport");
+const passportConfig = require("./layers/passport");
 const { sequelize } = require("../models");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const routerLoader = require("./layers/_router.loader");
 const path = require("path");
-const app = express();
+
 const schedule = require("./nodeScheduller");
 const cors = require("cors");
 const { error, error404 } = require("./layers/routes/middlewares/error");
