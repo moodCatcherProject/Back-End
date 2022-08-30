@@ -2,7 +2,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
 
-const User = require("../../../models/user");
+const {User} = require("../../sequelize/models");
 
 module.exports = () => {
     //? auth 라우터에서 /login 요청이 오면 local설정대로 이쪽이 실행되게 된다.

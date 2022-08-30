@@ -3,7 +3,7 @@ const express = require("express")
 const request = require("supertest")
 
 const app = require("../app")
-const { sequelize } = require("../models")
+const { sequelize } = require("../src/sequelize/models")
 const agent = request.agent(app)
 
 beforeAll(async () => {

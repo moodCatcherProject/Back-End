@@ -1,6 +1,7 @@
-const {User} = require('../../../models');
+const {User} = require('../../sequelize/models');
 const passport = require("passport");
 const KakaoStrategy = require("passport-kakao").Strategy;
+require("dotenv").config({ path: ".env" });
 module.exports = () => {
    passport.use(
       new KakaoStrategy(
