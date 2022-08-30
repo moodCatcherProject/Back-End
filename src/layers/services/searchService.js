@@ -1,7 +1,7 @@
 const axios = require("axios")
 //html을 쉽게 파싱 할 수 있게 만들어준다.
 const cheerio = require("cheerio")
-const Exception = require("../../exceptModels/_.models.loader")
+const Exception = require("../exceptModels/_.models.loader")
 
 const crawlingMusinsa = async(keyword) => {
     const getHTML = async(keyword) => {

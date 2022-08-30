@@ -1,5 +1,5 @@
 const searchService = require("../services/searchService.js");
-const { FormDto } = require("../../exceptModels/_.models.loader");
+const { FormDto } = require("../exceptModels/_.models.loader");
 
 const crawlingMusinsa = async (req, res, next) => {
     try {
