@@ -3,7 +3,7 @@ const passport = require("passport");
 const bcrypt = require("bcrypt");
 const { isLoggedIn, isNotLoggedIn } = require("./middlewares/authMiddle"); // 내가 만든 사용자 미들웨어
 
-const { User } = require("../../../models");
+const { User } = require("../../sequelize/models");
 
 const router = express.Router();
 

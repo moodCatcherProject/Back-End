@@ -2,7 +2,7 @@ const express = require("express");
 const passport = require("passport");
 const morgan = require("morgan");
 const passportConfig = require("./layers/passport");
-const { sequelize } = require("../models");
+const { sequelize } = require("./sequelize/models");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const routerLoader = require("./layers/_router.loader");
@@ -20,6 +20,7 @@ class App {
         this.setErrorHandler();
     }
     setMiddleWare() {
+        console.log(__dirname, __filename)
         passportConfig();
         this.app.use(cookieParser(process.env.COOKIE_SECRET));
         //세션 겍체 생성
