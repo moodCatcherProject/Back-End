@@ -1,6 +1,7 @@
 const express = require("express");
 const authRouter = express.Router();
 const authController = require("../controllers/auth.controller");
+const passport = require("passport");
 
 authRouter.route("/login").post(authController.localLogin);
 
