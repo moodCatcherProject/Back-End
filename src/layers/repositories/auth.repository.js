@@ -1,4 +1,4 @@
-const { User, Auth } = require("../../sequelize/models");
+const { User, Auth , UserDetail} = require("../../sequelize/models");
 const bcrypt = require("bcrypt");
 
 /**
@@ -18,9 +18,15 @@ const findByEmail = async (email) => {
  * @returns User 테이블에 email, 해쉬password값 생성
  */
 const createSignUp = async (email, password) => {
+    createTable()
     const hash = await bcrypt.hash(password, 12);
     return await Auth.create({ email, password: hash, provider: "local" });
 
 };
 
+//FUNCTION
+const createTable = async() => {
+    await User.create({});
+    await UserDetail.create({})
+}
 module.exports = { findByEmail, createSignUp };
