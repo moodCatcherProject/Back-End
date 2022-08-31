@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       allowNull : false
     },
-    sessinId: {
+    sessionId: {
       type : DataTypes.BIGINT,
      
     },
@@ -38,6 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       }
   }, {
     sequelize,
+    timestamps: false,
     modelName: 'Auth',
   });
   return Auth;
