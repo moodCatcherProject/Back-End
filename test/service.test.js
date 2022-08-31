@@ -1,13 +1,13 @@
-const {crawlingMusinsa} = require("../services/searchService")
+const {crawlingMusinsa} = require("../src/layers/services/searchService")
 const express = require("express")
 const request = require("supertest")
 
-const app = require("../app")
-const { sequelize } = require("../src/sequelize/models")
+const app = require("../src/app")
+// const { sequelize } = require("../src/sequelize/models")
 const agent = request.agent(app)
 
 beforeAll(async () => {
-    await sequelize.sync()
+    // await sequelize.sync()
 })
 describe("crawlingMusinga", () => {
     const keyword = "후드티";
@@ -16,7 +16,7 @@ describe("crawlingMusinga", () => {
          * 후드티로 검색
          */
     test("크롤링 완료 후 받는 90개(첫 페이지가 90개)", async() => {
-        expect(await (await crawlingMusinsa(keyword)).length).toBe(90)
+        expect(await (await crawlingMusinsa(keyword)).items.length).toBe(90)
     } )
 })
 
@@ -33,5 +33,5 @@ request(app)
 })
 
 afterAll(async () => {
-    await sequelize.sync({force : true})
+    // await sequelize.sync({force : true})
 })
