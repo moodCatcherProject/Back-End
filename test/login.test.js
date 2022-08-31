@@ -2,6 +2,7 @@
  * @version 1.0 현재 실험 파일
  * @desc 로그인을 한 상태를 만들기 위한 테스트 코드
  */
+
 const {isLoggedIn} = require("../src/layers/routes/middlewares/authMiddle")
 const postController = require("../src/layers/controllers/post.controller")
  const app = require("../src/app")
@@ -42,4 +43,5 @@ const postController = require("../src/layers/controllers/post.controller")
        expect(postController.createPost(req, res)).toBe(200)
 
     })
+
  })
