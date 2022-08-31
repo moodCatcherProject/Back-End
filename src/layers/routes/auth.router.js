@@ -11,4 +11,6 @@ authRouter.post("/signup", AuthController.localSignUp);
 // // 닉네임 확인 , URL /api/auth?nickname
 // authRouter.get("/", authController.checkNickname);
 
+
 module.exports = authRouter;
+

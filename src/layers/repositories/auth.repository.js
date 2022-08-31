@@ -1,3 +1,4 @@
+
 const { Auth } = require("../../sequelize/models");
 const bcrypt = require("bcrypt");
 
@@ -19,6 +20,7 @@ const findByEmail = async (email) => {
 const createSignUp = async (email, password) => {
     const hash = await bcrypt.hash(password, 12);
     return await Auth.create({ email, password: hash, provider: "local" });
+
 };
 
 module.exports = { findByEmail, createSignUp };
