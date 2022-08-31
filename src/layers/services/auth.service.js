@@ -20,13 +20,15 @@ const localSignUp = async (email, password, confirmPw) => {
  * @throws { Error } @param { string } nickname @param {string} age
  * @returns { Promise<{ nickname: string, age: string }> } 닉네임,나이 생성
  */
-const createNicknameAge = async (nickname, age) => {
-    const createdNicknameAge = await authRepository.createNicknameAge(
-        nickname,
-        age
-        // 닉네임이 중복 될 경우
-    );
-    return createdNicknameAge;
+const createNicknameAgeGender = async (nickname, age, gender) => {
+    const createdNicknameAgeGender =
+        await authRepository.createNicknameAgeGender(
+            nickname,
+            age,
+            gender
+            // 닉네임이 중복 될 경우
+        );
+    return createdNicknameAgeGender;
 };
 /**
  * @throws { Error } @param { string } email
@@ -51,4 +53,9 @@ const checkNickname = async (nickname) => {
     return ExisNickname;
     // if 닉네임 유효성 검사 정규식
 };
-module.exports = { localSignUp, createNicknameAge, checkEmail, checkNickname };
+module.exports = {
+    localSignUp,
+    createNicknameAgeGender,
+    checkEmail,
+    checkNickname,
+};

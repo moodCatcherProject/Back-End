@@ -27,15 +27,15 @@ const createSignUp = async (email, password) => {
 };
 /**
  * @param { string } nickname @param { string } age
- * @returns User 테이블에 nickname , age 를 생성
+ * @returns User 테이블에 nickname , age , gender 를 생성
  */
-const createNicknameAge = async (nickname, age) => {
-    await User.create({ where: { nickname, age } });
+const createNicknameAgeGender = async (nickname, age, gender) => {
+    await User.create({ where: { nickname, age, gender } });
 };
 
 module.exports = {
     findByEmail,
     findByNickname,
     createSignUp,
-    createNicknameAge,
+    createNicknameAgeGender,
 };

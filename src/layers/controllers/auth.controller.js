@@ -29,8 +29,8 @@ const localSignUp = async (req, res, next) => {
     }
 };
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
-const createNicknameAge = async (req, res, next) => {
-    const { nickname, age } = req.body;
+const createNicknameAgeGender = async (req, res, next) => {
+    const { nickname, age, gender } = req.body;
     try {
         await joi
             .object({
@@ -41,13 +41,11 @@ const createNicknameAge = async (req, res, next) => {
                 nickname,
                 age,
             });
-        const createNicknameAge = await authService.createNicknameAge(
-            nickname,
-            age
-        );
+        const createNicknameAgeGender =
+            await authService.createNicknameAgeGender(nickname, age, gender);
         return res.status(200).json(
             new exception.FormDto("닉네임 나이 추가 성공", {
-                createNicknameAge,
+                createNicknameAgeGender,
             })
         );
     } catch (err) {
@@ -95,4 +93,9 @@ const checkNickname = async (req, res, next) => {
         next(err);
     }
 };
-module.exports = { localSignUp, createNicknameAge, checkEmail, checkNickname };
+module.exports = {
+    localSignUp,
+    createNicknameAgeGender,
+    checkEmail,
+    checkNickname,
+};
