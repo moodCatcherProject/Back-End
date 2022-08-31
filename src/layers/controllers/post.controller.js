@@ -5,7 +5,7 @@ const createPost = async (req, res, next) => {
     try {
         const userId = req.user.userId;
         const { title, content } = req.body.post;
-        const { imgFile } = req.file;
+        const  imgFile  = req.file;
         const { items } = req.body;
 
         const postData = await postService.createPost(
@@ -13,7 +13,7 @@ const createPost = async (req, res, next) => {
             title,
             content,
             imgFile,
-            items
+            
         );
         const itemsData = await postService.createItem(
             createPostData.postId,

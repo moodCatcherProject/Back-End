@@ -31,8 +31,21 @@ const localSignUp = async (req, res, next) => {
         next(err);
     }
 };
+
+const kakaoCallback = (req, res,next) => {
+    passport.authenticate("kakao", {
+        failureRedirect: "/", // kakaoStrategy에서 실패한다면 실행
+    }),
+    // kakaoStrategy에서 성공한다면 콜백 실행
+    (req, res) => {
+        console.log(req.user);
+
+        res.redirect("/");
+    }
+}
 module.exports = { localSignUp };
 
 // EM :8자~ 30자
 // PW :영소대문자+숫자+특수문자 8자 ~ 20자
 // NN : 한글, 영소 대문자. 숫자 2자~16자
+
