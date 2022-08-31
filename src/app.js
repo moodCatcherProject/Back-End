@@ -51,7 +51,7 @@ class App {
         this.app.use(cors()); // 화이트 리스트 생성 예정
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: false }));
-        this.app.use("/", express.static(path.join(__dirname, "public")));
+        this.app.use("/", express.static(path.join(__dirname, "../public")));
     }
     setRouter() {
         this.app.use("/api", routerLoader);

@@ -1,12 +1,14 @@
-const { Auth, User } = require("../../sequelize/models");
+const { User, Auth, UserDetail } = require("../../sequelize/models");
 const bcrypt = require("bcrypt");
 
 /**
+ * Auth 테이블에서 email 값이 일치하는 data 반환
  * @param { string } email
- * @returns Auth 테이블에서 email 한개를 찾음
+ * @returns { Promise<{authId:number, sessionId:number, provider:'local'|'kakao', email:string, password:string} | null>}
  */
 const findByEmail = async (email) => {
     const findByEmail = await Auth.findOne({ where: { email } });
+
     return findByEmail;
 };
 /**
@@ -22,6 +24,7 @@ const findByNickname = async (nickname) => {
  * @returns Auth 테이블에 email, 해쉬password값 생성
  */
 const createSignUp = async (email, password) => {
+    createTable();
     const hash = await bcrypt.hash(password, 12);
     return await Auth.create({ email, password: hash, provider: "local" });
 };
@@ -31,6 +34,11 @@ const createSignUp = async (email, password) => {
  */
 const createNicknameAgeGender = async (nickname, age, gender) => {
     await User.create({ where: { nickname, age, gender } });
+};
+//FUNCTION
+const createTable = async () => {
+    await User.create({});
+    await UserDetail.create({});
 };
 
 module.exports = {

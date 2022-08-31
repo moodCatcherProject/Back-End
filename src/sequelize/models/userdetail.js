@@ -8,7 +8,12 @@ module.exports = (sequelize, DataTypes) => {
          * The `models/index` file will call this method automatically.
          */
         static associate(models) {
-            // define association here
+            // models.UserDetail.belongsTo(models.User, {
+            //     foreignKey: "detailId",
+                
+            //     onDelete: "cascade",
+            //     onUpdate: "cascade",
+            // });
         }
     }
     UserDetail.init(
@@ -28,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             moodPoint: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
+                defaultValue : 0
             },
             repPostId: {
                 type: DataTypes.INTEGER,
@@ -39,6 +44,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         {
             sequelize,
+            timestamps: false,
             modelName: "UserDetail",
         }
     );
