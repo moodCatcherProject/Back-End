@@ -8,12 +8,13 @@ const bcrypt = require("bcrypt");
  */
 const localSignUp = async (email, password, confirmPw) => {
     const ExistUser = await authRepository.findByEmail(email);
-    if (email === ExistUser.email) {
-        throw new Exception.BadRequestException("이메일 중복 확인 실패");
-    }
+    // if (email === ExistUser.email) {
+    //     throw new exception.BadRequestException("이메일 중복 확인 실패");
+    // }
     if (password !== confirmPw) {
-        throw new Exception.BadRequestException("비밀번호 에러");
+        throw new exception.BadRequestException("비밀번호 에러");
     }
+
     const SignUp = await authRepository.createSignUp(email, password);
 
     return SignUp;
