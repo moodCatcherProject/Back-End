@@ -1,8 +1,8 @@
-const { Router } = require("express");
+const express = require("express");
+const authRouter = express.Router();
+const authController = require("../controllers/auth.controller");
 
-const authRouter = Router();
-
-const AuthController = require("../controllers/auth.controller");
+authRouter.route("/login").post(authController.localLogin)
 
 // 회원가입 , URL /api/auth/signup
 authRouter.post("/signup", AuthController.localSignUp);

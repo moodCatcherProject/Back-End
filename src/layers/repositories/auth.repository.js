@@ -1,14 +1,14 @@
-
-const { Auth } = require("../../sequelize/models");
+const { User, Auth } = require("../../sequelize/models");
 const bcrypt = require("bcrypt");
 
 /**
- *
- * @param { string } email
- * @returns User 테이블에서 email한개를 찾음
+ * Auth 테이블에서 email 값이 일치하는 data 반환
+ * @param { string } email 
+ * @returns { Promise<{authId:number, sessionId:number, provider:'local'|'kakao', email:string, password:string} | null>}
  */
 const findByEmail = async (email) => {
     const findByEmail = await Auth.findOne({ where: { email } });
+    
     return findByEmail;
 };
 
