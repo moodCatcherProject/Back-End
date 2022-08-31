@@ -25,13 +25,15 @@ module.exports = (sequelize, DataTypes) => {
                 onDelete: "cascade",
                 onUpdate: "cascade",
             });
-            models.User.belongsTo(models.UserDetail, {
+            models.User.hasOne(models.UserDetail, {
                 foreignKey: "detailId",
+                
                 onDelete: "cascade",
                 onUpdate: "cascade",
             });
-            models.User.belongsTo(models.Auth, {
+            models.User.hasOne(models.Auth, {
                 foreignKey: "authId",
+                
                 onDelete: "cascade",
                 onUpdate: "cascade",
             });
@@ -46,17 +48,10 @@ module.exports = (sequelize, DataTypes) => {
                 autoIncrement: true,
                 allowNull: false,
             },
-            detailId: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-            },
-            authId: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-            },
+            
             nickname: {
                 type: DataTypes.STRING,
-                allowNull: false,
+                
             },
             imgUrl: {
                 type: DataTypes.STRING,
