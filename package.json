@@ -8,6 +8,7 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "express-session": "^1.17.3",
+    "joi": "^17.6.0",
     "morgan": "^1.10.0",
     "mysql2": "^2.3.3",
     "node-schedule": "^2.1.0",
@@ -22,7 +23,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start:pro" : "pm2 start src/server.js",
+    "start:pro": "pm2 start src/server.js",
     "start": "nodemon src/server.js",
     "test": "jest --forceExit"
   },
