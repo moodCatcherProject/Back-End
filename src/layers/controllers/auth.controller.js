@@ -1,56 +1,44 @@
 const e = require('express');
 const authService = require("../services/auth.service");
 const exception = require("../exceptModels/_.models.loader");
+const joi = require("joi");
 
 
-// 주석 달기 , auth router 연결
 
+/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const localSignUp = async (req, res, next) => {
-    const { email, nickname, password, confirmPw } = req.body;
+    const { email, password, confirmPw } = req.body;
     try {
         await joi
             .object({
                 email: joi.string().email().min(8).max(30).trim().required(),
-                nickname: joi.string().min(2).max(16).trim().required(), // 닉네임 정규식 , 닉네임 중복확인
-                password: joi.number().min(8).max(20).trim().required(), // 비밀번호 정규식
-                confirmPw: joi.number().trim().required(),
+                password: joi.string().trim().required(),
+                confirmPw: joi.string().trim().required(),
             })
             .validateAsync({
                 email,
-                nickname,
                 password,
                 confirmPw,
             });
         const signUp = await authService.localSignUp(
             email,
-            nickname,
             password,
             confirmPw
         );
-        return res.status(200).json({ signUp }); // 에러처리
-    } catch (error) {
-        console.error(error);
+        return res.status(201).json(
+            new exception.FormDto("회원가입 성공", {
+                signUp,
+            })
+        );
+    } catch (err) {
+        console.error(err);
         next(err);
     }
 };
 
-const kakaoCallback = (req, res,next) => {
-    passport.authenticate("kakao", {
-        failureRedirect: "/", // kakaoStrategy에서 실패한다면 실행
-    }),
-    // kakaoStrategy에서 성공한다면 콜백 실행
-    (req, res) => {
-        console.log(req.user);
-
-        res.redirect("/");
-    }
-}
-
-
 // EM :8자~ 30자
 // PW :영소대문자+숫자+특수문자 8자 ~ 20자
 // NN : 한글, 영소 대문자. 숫자 2자~16자
-
 
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
@@ -71,6 +59,29 @@ const localLogin = async (req, res, next) => {
 
     }
 }
+
+
+// const checkNickname = async (req, res, next) => {
+//     const { nickname } = req.query;
+//     try {
+//         await joi
+//             .object({
+//                 nickname: joi.string().min(2).max(16).trim().required(), // 닉네임 정규식 , 닉네임 중복확인
+//             })
+//             .validateAsync({
+//                 nickname,
+//             });
+//         const checkNickname = await authService.checkNickname(nickname);
+//         return res.status(200).json(
+//             new exception.FormDto("닉네임 확인 성공", {
+//                 checkNickname,
+//             })
+//         );
+//     } catch (error) {
+//         console.error(error);
+//         next(err);
+//     }
+// };
 
 module.exports = { 
     localSignUp,

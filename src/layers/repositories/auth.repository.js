@@ -7,15 +7,20 @@ const bcrypt = require("bcrypt");
  * @returns { Promise<{authId:number, sessionId:number, provider:'local'|'kakao', email:string, password:string} | null>}
  */
 const findByEmail = async (email) => {
-    const auth = await Auth.findOne({ where: { email } });
-    console.log(auth)
-
-    return auth;
+    const findByEmail = await Auth.findOne({ where: { email } });
+    
+    return findByEmail;
 };
 
-const createSignUp = async (email, nickname, password) => {
+/**
+ *
+ * @param { string } email @param { string } password
+ * @returns User 테이블에 email, 해쉬password값 생성
+ */
+const createSignUp = async (email, password) => {
     const hash = await bcrypt.hash(password, 12);
-    await User.Create({ email, nickname, password: hash });
+    return await Auth.create({ email, password: hash, provider: "local" });
+
 };
 
 module.exports = { findByEmail, createSignUp };
