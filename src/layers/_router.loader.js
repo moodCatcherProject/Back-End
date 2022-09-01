@@ -6,6 +6,6 @@ const postRouter = require("./routes/post.router")
 
 router.use("/search", searchRouter);
 router.use("/auth", authRouter);
-router.use("/", isLoggedIn , postRouter);
+router.use("/post" , postRouter);
 
 module.exports = router;

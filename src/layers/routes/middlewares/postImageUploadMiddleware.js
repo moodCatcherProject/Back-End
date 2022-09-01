@@ -1,7 +1,7 @@
 const multer = require('multer');
 const multerS3 = require('multer-s3')
-const s3 = require("../config/s3");
-const {Post} = require("../models")
+const s3 = require("./config/s3");
+const {Post} = require("../../../sequelize/models")
 const exception = require("../../exceptModels/_.models.loader")
 
 class S3ImageController{
@@ -12,7 +12,6 @@ class S3ImageController{
             acl: 'public-read', //접근 권한
             contentType: multerS3.AUTO_CONTENT_TYPE,
             key : function (req, file, cb){
-                
                 const filename = file.originalname.split(".")[0]
                 switch (file.mimetype){
                     case "image/jpeg" :
