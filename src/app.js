@@ -20,7 +20,6 @@ class App {
         this.setErrorHandler();
     }
     setMiddleWare() {
-        console.log(__dirname, __filename)
         passportConfig();
         this.app.use(cookieParser(process.env.COOKIE_SECRET));
         //세션 겍체 생성
@@ -35,7 +34,7 @@ class App {
                 },
             })
         );
-        if (process.env.MODE !== "dev") {
+        if (process.env.MODE !== "de") {
             sequelize
                 .sync({ force: true })
                 .then(() => {

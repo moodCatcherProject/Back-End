@@ -6,7 +6,6 @@ const createPost = async (req, res, next) => {
         const userId = req.user.userId;
         const { title, content } = req.body.post;
         const { items } = req.body;
-        console.log(title, content, items);
         const postData = await postService.createPost(userId, title, content);
         const itemsData = await postService.createItem(postData.postId, items);
 

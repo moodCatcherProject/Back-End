@@ -3,7 +3,7 @@ const authService = require("../services/auth.service");
 const exception = require("../exceptModels/_.models.loader");
 const passport = require("passport");
 const joi = require("joi");
-
+const {User} = require("../../sequelize/models")
 // EM :8자~ 30자
 // PW :영소대문자+숫자+특수문자 8자 ~ 20자
 // NN : 한글, 영소 대문자. 숫자 2자~16자
@@ -139,12 +139,37 @@ const localLogin = async (req, res, next) => {
         });
     })(req, res, next); //! 미들웨어 내의 미들웨어에는 콜백을 실행시키기위해 (req, res, next)를 붙인다.
 };
+/**
+ * 
+ * @param  userId 
+ * @returns userId로 찾은 User 데이터 반환 
+ */
+const isExistUserNickname = async(userId) =>{
+    return await User.findOne({
+        where: {userId}
+        
+    })
+}
 
-
+const kakaoCallback= async(req, res, next) => {
+    try{
+       
+        const data = await isExistUserNickname(req.user.authId)
+        const exist = data.nickname ? true : false
+        //카카오 Strategy에서 성공한다면 콜백 실행
+        
+        res.status(200).redirect("/upload?exist=" + exist)
+    
+    }catch(err){
+        next(err)
+    }
+}
 module.exports = {
     localSignUp,
     createNicknameAgeGender,
     checkEmail,
     checkNickname,
     localLogin,
+
+    kakaoCallback,
 };
