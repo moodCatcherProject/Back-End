@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     message: DataTypes.STRING
   }, {
     sequelize,
+    timestamps: false,
     modelName: 'StartMessage',
   });
   return StartMessage;

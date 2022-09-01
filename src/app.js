@@ -7,7 +7,7 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const routerLoader = require("./layers/_router.loader");
 const path = require("path");
-
+const bodyParser = require("body-parser")
 const schedule = require("./nodeScheduller");
 const cors = require("cors");
 const { error, error404 } = require("./layers/routes/middlewares/error");
@@ -20,7 +20,6 @@ class App {
         this.setErrorHandler();
     }
     setMiddleWare() {
-        console.log(__dirname, __filename)
         passportConfig();
         this.app.use(cookieParser(process.env.COOKIE_SECRET));
         //세션 겍체 생성
@@ -35,7 +34,7 @@ class App {
                 },
             })
         );
-        if (process.env.MODE !== "dev") {
+        if (process.env.MODE !== "de") {
             sequelize
                 .sync({ force: true })
                 .then(() => {
@@ -45,12 +44,13 @@ class App {
                     console.error(err);
                 });
         }
+        
         this.app.use(passport.initialize()); // 요청 객체에 passport 설정을 심음
         this.app.use(passport.session()); // req.session 객체에 passport정보를 추가 저장
         this.app.use(morgan("dev")); //로그 생성
         this.app.use(cors()); // 화이트 리스트 생성 예정
-        this.app.use(express.json());
-        this.app.use(express.urlencoded({ extended: false }));
+        this.app.use(express.json({limit : "10mb"}));
+        this.app.use(express.urlencoded({limit : "10mb", extended: false }));
         this.app.use("/", express.static(path.join(__dirname, "../public")));
     }
     setRouter() {

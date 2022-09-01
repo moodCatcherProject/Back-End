@@ -1,16 +1,23 @@
 const authRepository = require("../repositories/auth.repository");
 const exception = require("../exceptModels/_.models.loader");
-const bcrypt = require("bcrypt");
+
+
+// EM :8자~ 30자
+// PW :영소대문자+숫자+특수문자 8자 ~ 20자
+// NN : 한글, 영소 대문자. 숫자 2자~16자
+
 
 /**
  * @throws { Error } @param { string } email @param { string } password @param { string } confirmPw
  * @returns { Promise<{ email: string, password: string }> } 이메일,비밀번호 생성
  */
-const localSignUp = async (email, password, confirmPw) => {
+ const localSignUp = async (email, password, confirmPw) => {
     const ExistUser = await authRepository.findByEmail(email);
     if (ExistUser) {
+
         throw new exception.BadRequestException("이메일 중복 확인 실패");
     }
+
     if (password !== confirmPw) {
         throw new exception.BadRequestException("비밀번호 에러");
     }
@@ -59,6 +66,7 @@ const checkNickname = async (nickname) => {
     // if 닉네임 유효성 검사 정규식
 };
 
+
 // EM :8자~ 30자
 // PW :영소대문자+숫자+특수문자 8자 ~ 20자
 // NN : 한글, 영소 대문자. 숫자 2자~16자
@@ -75,9 +83,7 @@ const localLogin = async (email, password) => {
     if (!exUser)
         throw new exception.NotFoundException("회원정보가 일치하지 않습니다.");
 
-    //bcrypt 해쉬암호 확인용 코드
-    //const hashPW = await bcrypt.hash(password, 12)
-    //console.log(hashPW)
+
 
     const result = await bcrypt.compare(password, exUser.password);
     if (!result)
@@ -91,4 +97,5 @@ module.exports = {
     checkEmail,
     checkNickname,
     localLogin,
+
 };

@@ -13,13 +13,13 @@ class CustomException extends Error {
 }
 
 /**
- * @property statusCode 401
+ * @property statusCode 400
  */
 class BadRequestException extends CustomException {
     constructor(message) {
         super(message);
 
-        this.name = "UnauthorizedException";
+        this.name = "BadRequestException";
         this.statusCode = 400;
     }
 }
