@@ -3,7 +3,8 @@ const authService = require("../services/auth.service");
 const exception = require("../exceptModels/_.models.loader");
 const passport = require("passport");
 const joi = require("joi");
-const {User} = require("../../sequelize/models")
+const { User } = require("../../sequelize/models");
+
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const localSignUp = async (req, res, next) => {
@@ -126,42 +127,70 @@ const localLogin = async (req, res, next) => {
         }
 
         //? done(null, exUser)가 처리된경우, 즉 로그인이 성공(user가 false가 아닌 경우), passport/index.js로 가서 실행시킨다.
-        return req.login(user, loginError => {
-            //? loginError => 미들웨어는 passport/index.js의 passport.deserializeUser((id, done) => 가 done()이 되면 실행하게 된다.
+        return req.login (user, loginError => {
+            try{
+                //? loginError => 미들웨어는 passport/index.js의 passport.deserializeUser((id, done) => 가 done()이 되면 실행하게 된다.
             // 만일 done(err) 가 됐다면,
             if (loginError) {
                 console.error(loginError);
                 return next(loginError);
             }
+
             // done(null, user)로 로직이 성공적이라면, 세션에 사용자 정보를 저장해놔서 로그인 상태가 된다.
-            console.log(req.user.dataValues)
-            return res.status(200).json(
-                new exception.FormDto("로그인 성공", {user}));
+            isExistUserNickname(req.user.authId).then(data => {
+                const exist = data.nickname ? true : false
+
+                return res.status(200).redirect("/upload?exist=" + exist)
+            })
+            
+
+            } catch(err) {
+
+                console.log(err)
+                return;
+            }
+            
         });
     })(req, res, next); //! 미들웨어 내의 미들웨어에는 콜백을 실행시키기위해 (req, res, next)를 붙인다.
 };
+
+
 /**
  * 
  * @param  userId 
  * @returns userId로 찾은 User 데이터 반환 
  */
-const isExistUserNickname = async(userId) =>{
+const isExistUserNickname = async (userId) => {
     return await User.findOne({
-        where: {userId}
-        
+        where: { userId }
+
     })
 }
 
-const kakaoCallback= async(req, res, next) => {
-    try{
-       
+const localCallback = async (req, res, next) => {
+    try {
+
+        const data = await isExistUserNickname(req.user.authId)
+        const exist = data.nickname ? true : false
+        //로컬 Strategy에서 성공한다면 콜백 실행
+
+        res.status(200).redirect("/upload?exist=" + exist)
+
+    } catch (err) {
+        next(err)
+    }
+}
+
+const kakaoCallback = async (req, res, next) => {
+    try {
+
         const data = await isExistUserNickname(req.user.authId)
         const exist = data.nickname ? true : false
         //카카오 Strategy에서 성공한다면 콜백 실행
-        
+
         res.status(200).redirect("/upload?exist=" + exist)
-    
-    }catch(err){
+
+    } catch (err) {
         next(err)
     }
 }
@@ -171,6 +200,7 @@ module.exports = {
     checkEmail,
     checkNickname,
     localLogin,
+    localCallback,
 
     kakaoCallback,
 };
