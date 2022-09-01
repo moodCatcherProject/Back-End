@@ -23,12 +23,14 @@ const localSignUp = async (email, password, confirmPw) => {
  * @throws { Error } @param { string } nickname @param {string} age
  * @returns { Promise<{ nickname: string, age: string }> } 닉네임,나이 생성
  */
-const createNicknameAgeGender = async (nickname, age, gender) => {
+const createNicknameAgeGender = async (nickname, userId) => {
+    // age / gender 추가 예정
     const createdNicknameAgeGender =
         await authRepository.createNicknameAgeGender(
             nickname,
-            age,
-            gender
+            // age,
+            // gender,
+            userId
             // 닉네임이 중복 될 경우
         );
     return createdNicknameAgeGender;

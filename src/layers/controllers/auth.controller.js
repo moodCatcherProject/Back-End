@@ -23,7 +23,7 @@ const localSignUp = async (req, res, next) => {
             password,
             confirmPw
         );
-        return res.status(201).json(new exception.FormDto("회원가입 성공", {}));
+        return res.status(201).json(new exception.FormDto("회원가입 성공"));
     } catch (err) {
         console.error(err);
         next(err);
@@ -31,19 +31,28 @@ const localSignUp = async (req, res, next) => {
 };
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const createNicknameAgeGender = async (req, res, next) => {
+    const userId = req.user.userId;
+    // const userId = res.locals;
     const { nickname, age, gender } = req.body;
     try {
         await joi
             .object({
                 nickname: joi.string().min(2).max(16).trim().required(),
-                age: joi.string().trim().required(),
+                // age: joi.required(),
+                // gender: joi.required(),
             })
             .validateAsync({
                 nickname,
-                age,
+                // age,
+                // gender,
             });
         const createNicknameAgeGender =
-            await authService.createNicknameAgeGender(nickname, age, gender);
+            await authService.createNicknameAgeGender(
+                nickname,
+                // age,
+                // gender,
+                userId
+            );
         return res.status(200).json(
             new exception.FormDto("닉네임 나이 추가 성공", {
                 createNicknameAgeGender,
@@ -66,9 +75,7 @@ const checkEmail = async (req, res, next) => {
                 email,
             });
         await authService.checkEmail(email);
-        return res
-            .status(200)
-            .json(new exception.FormDto("이메일 확인 성공", {}));
+        return res.status(200).json(new exception.FormDto("이메일 확인 성공"));
     } catch (err) {
         console.error(err);
         next(err);
@@ -86,9 +93,7 @@ const checkNickname = async (req, res, next) => {
                 nickname,
             });
         await authService.checkNickname(nickname);
-        return res
-            .status(200)
-            .json(new exception.FormDto("닉네임 확인 성공", {}));
+        return res.status(200).json(new exception.FormDto("닉네임 확인 성공"));
     } catch (err) {
         console.error(err);
         next(err);
