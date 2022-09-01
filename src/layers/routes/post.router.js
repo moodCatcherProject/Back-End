@@ -6,5 +6,5 @@ const upload = new Upload()
 router.route("/")
     .post(postController.createPost)
 
-router.post("/image/:postId", upload.upload.single("postImage") , postController.updateImage)
+router.put("/:postId/image", upload.upload.single("postImage") , postController.updateImage)
 module.exports = router
