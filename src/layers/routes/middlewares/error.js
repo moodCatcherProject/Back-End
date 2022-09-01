@@ -5,7 +5,10 @@ const error404 = (req, res, next) => {
 };
 
 const error = (err, req, res, next) => {
-  console.log(err.message)
+
+  res.locals.message = err.message;
+  res.locals.error = err;
+
   res.status(err.statusCode || 500).send(err.message);
  
 };
