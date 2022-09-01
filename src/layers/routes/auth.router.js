@@ -2,6 +2,7 @@ const express = require("express");
 const authRouter = express.Router();
 const authController = require("../controllers/auth.controller");
 const passport = require("passport");
+
 const { isLoggedIn, isNotLoggedIn } = require("./middlewares/authMiddle");
 
 // 회원가입(/api/auth/signup)
@@ -25,16 +26,7 @@ authRouter.delete("signout", authController.deleteUser);
 //카카오 로그인(/api/auth/kakao)
 authRouter.get("/kakao", passport.authenticate("kakao"));
 
-authRouter.get(
-    "/kakao/callback",
-    passport.authenticate("kakao", {
-        failureRedirect: "/",
-    }),
-    (req, res) => {
-        //카카오 Strategy에서 성공한다면 콜백 실행
-        res.status(200).send("카카오 로그인 성공했습니다!");
-    }
-);
+
 
 authRouter.get("/kakao/disconnect");
 module.exports = authRouter;

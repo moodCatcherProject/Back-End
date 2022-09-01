@@ -11,6 +11,7 @@ const findByEmail = async (email) => {
 
     return findByEmail;
 };
+
 /**
  * @param { string } nickname
  * @returns User 테이블에서 nickname 한개를 찾음
@@ -20,6 +21,7 @@ const findByNickname = async (nickname) => {
     return findByNickname;
 };
 /**
+
  * @param { string } email @param { string } password
  * @returns Auth 테이블에 email, 해쉬password값 생성
  */

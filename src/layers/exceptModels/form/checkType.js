@@ -1,4 +1,6 @@
+/** @version 1.1 */
 class CheckType {
+    exception = require("../_.models.loader");
     value;
     /**
      *
@@ -7,20 +9,21 @@ class CheckType {
      * @param {boolean} required
      *
      */
-    constructor(obj, type, required) {
+    constructor(obj, type) {
         const keys = Object.keys(obj)[0];
         const value = obj[keys];
 
         const checkType = this.checkValue(value, type);
-        if (required && !obj) {
-            throw new Error(`${keys}가 undefined 또는 null 값 입니다!`);
+        if (!value) {
+            throw new this.exception.BadRequestException(`${keys}이(가) 없음!`);
         }
         if (!checkType) {
-            throw new Error(
+            throw new this.exception.BadRequestException(
                 `${keys} 은(는) ${typeof value}이(가) 아닌 ${type}이어야 합니다!`
             );
         }
         this.value = value;
+        this.exception = "";
     }
 
     checkValue(value, type) {
@@ -29,7 +32,8 @@ class CheckType {
 }
 
 class isString extends CheckType {
-    constructor(value, required = false) {
+    constructor(value) {
+        const inst = super(value, "string");
         try {
             if (Object.values(value)[0].trim().length === 0) {
                 throw new Error(`${Object.keys(value)[0]}이(가) 빈 값입니다!`);
@@ -37,22 +41,19 @@ class isString extends CheckType {
         } catch (err) {
             throw err;
         }
-        const inst = super(value, "string", required);
         this.trim = inst.value.trim();
         return;
     }
 }
 
 class isNumber extends CheckType {
-    constructor(value, required = false) {
-        super(value, "number", required);
-        return;
+    constructor(value) {
+        super(value, "number");
     }
 }
 class isObject extends CheckType {
-    constructor(value, required = false) {
-        super(value, "object", required);
-        return;
+    constructor(value) {
+        super(value, "object");
     }
 }
 
