@@ -202,7 +202,7 @@ module.exports = {
     checkNickname,
     deleteUser,
     localLogin,
-    localCallback,
+    
 
     kakaoCallback,
 };
