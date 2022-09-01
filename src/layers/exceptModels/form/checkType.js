@@ -30,6 +30,7 @@ class CheckType {
 
 class isString extends CheckType {
     constructor(value, required = false) {
+        const inst = super(value, "string", required);
         try {
             if (Object.values(value)[0].trim().length === 0) {
                 throw new Error(`${Object.keys(value)[0]}이(가) 빈 값입니다!`);
@@ -37,7 +38,6 @@ class isString extends CheckType {
         } catch (err) {
             throw err;
         }
-        const inst = super(value, "string", required);
         this.trim = inst.value.trim();
         return;
     }
