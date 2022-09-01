@@ -58,6 +58,10 @@ const checkNickname = async (nickname) => {
     return ExisNickname;
     // if 닉네임 유효성 검사 정규식
 };
+const deleteUser = async (userId) => {
+    await authRepository.deleteUser(userId);
+    return;
+};
 
 // EM :8자~ 30자
 // PW :영소대문자+숫자+특수문자 8자 ~ 20자
@@ -90,5 +94,6 @@ module.exports = {
     updateNicknameAgeGender,
     checkEmail,
     checkNickname,
+    deleteUser,
     localLogin,
 };

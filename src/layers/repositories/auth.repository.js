@@ -49,6 +49,9 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
 
     await UserDetail.update({ age, gender }, { where: { detailId } });
 };
+const deleteUser = async (userId) => {
+    await User.destroy({ where: { userId } });
+};
 //FUNCTION
 const createTable = async () => {
     await User.create({});
@@ -60,6 +63,7 @@ module.exports = {
     findByNickname,
     createSignUp,
     updateNicknameAgeGender,
+    deleteUser,
 };
 
 // userId에서 nickname을 업데이트하고 userdetail에서 age,gender를 업데이트한다
