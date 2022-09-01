@@ -136,6 +136,7 @@ const localLogin = async (req, res, next) => {
                 return next(loginError);
             }
 
+            // done(null, user)로 로직이 성공적이라면, 세션에 사용자 정보를 저장해놔서 로그인 상태가 된다.
             isExistUserNickname(req.user.authId).then(data => {
                 const exist = data.nickname ? true : false
 
@@ -143,10 +144,6 @@ const localLogin = async (req, res, next) => {
             })
             
 
-            // done(null, user)로 로직이 성공적이라면, 세션에 사용자 정보를 저장해놔서 로그인 상태가 된다.
-            
-            // return res.status(200).json(
-            //     new exception.FormDto("로그인 성공", {user}));
             } catch(err) {
 
                 console.log(err)
@@ -156,6 +153,8 @@ const localLogin = async (req, res, next) => {
         });
     })(req, res, next); //! 미들웨어 내의 미들웨어에는 콜백을 실행시키기위해 (req, res, next)를 붙인다.
 };
+
+
 /**
  * 
  * @param  userId 
