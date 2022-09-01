@@ -34,7 +34,7 @@ class App {
                 },
             })
         );
-        if (process.env.MODE !== "de") {
+        if (process.env.MODE !== "dev") {
             sequelize
                 .sync({ force: true })
                 .then(() => {
