@@ -26,7 +26,6 @@ const findByNickname = async (nickname) => {
  * @returns Auth 테이블에 email, 해쉬password값 생성
  */
 const createSignUp = async (email, password) => {
-
     const user = await User.create({});
     console.log(user.dataValues.userId);
     await UserDetail.create({});
@@ -37,7 +36,6 @@ const createSignUp = async (email, password) => {
         provider: "local",
     });
     return auth;
-
 };
 /**
  * @param { string } nickname @param { string } age @param { string } gender
@@ -51,10 +49,11 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
     });
     const detailId = findByDetailId.UserDetail.dataValues.detailId;
 
-
     await UserDetail.update({ age, gender }, { where: { detailId } });
 };
-
+const deleteUser = async (userId) => {
+    await User.destroy({ where: { userId } });
+};
 //FUNCTION
 const createTable = async () => {
     await User.create({});
@@ -65,9 +64,8 @@ module.exports = {
     findByEmail,
     findByNickname,
     createSignUp,
-
     updateNicknameAgeGender,
+    deleteUser,
 };
 
 // userId에서 nickname을 업데이트하고 userdetail에서 age,gender를 업데이트한다
-
