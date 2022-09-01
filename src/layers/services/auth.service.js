@@ -21,19 +21,19 @@ const localSignUp = async (email, password, confirmPw) => {
 };
 /**
  * @throws { Error } @param { string } nickname @param {string} age
- * @returns { Promise<{ nickname: string, age: string }> } 닉네임,나이 생성
+ * @returns { Promise<{ nickname: string, age: string }> } null이였던 nickname / age / gender 업데이트
  */
-const createNicknameAgeGender = async (nickname, userId) => {
-    // age / gender 추가 예정
-    const createdNicknameAgeGender =
-        await authRepository.createNicknameAgeGender(
+const updateNicknameAgeGender = async (nickname, userId, age, gender) => {
+    const updatedNicknameAgeGender =
+        await authRepository.updateNicknameAgeGender(
             nickname,
-            // age,
-            // gender,
+            age,
+            gender,
             userId
             // 닉네임이 중복 될 경우
         );
-    return createdNicknameAgeGender;
+
+    return updatedNicknameAgeGender;
 };
 /**
  * @throws { Error } @param { string } email
@@ -42,7 +42,7 @@ const createNicknameAgeGender = async (nickname, userId) => {
 const checkEmail = async (email) => {
     const ExisEmail = await authRepository.findByEmail(email);
     if (ExisEmail) {
-        throw new Exception.BadRequestException("이메일 중복확인 실패");
+        throw new exception.BadRequestException("이메일 중복확인 실패");
     }
     return ExisEmail;
 };
@@ -53,7 +53,7 @@ const checkEmail = async (email) => {
 const checkNickname = async (nickname) => {
     const ExisNickname = await authRepository.findByNickname(nickname);
     if (ExisNickname) {
-        throw new Exception.BadRequestException("닉네임 중복확인 실패");
+        throw new exception.BadRequestException("닉네임 중복확인 실패");
     }
     return ExisNickname;
     // if 닉네임 유효성 검사 정규식
@@ -87,7 +87,7 @@ const localLogin = async (email, password) => {
 };
 module.exports = {
     localSignUp,
-    createNicknameAgeGender,
+    updateNicknameAgeGender,
     checkEmail,
     checkNickname,
     localLogin,

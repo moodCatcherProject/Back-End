@@ -36,12 +36,18 @@ const createSignUp = async (email, password) => {
     return auth;
 };
 /**
- * @param { string } nickname @param { string } age
+ * @param { string } nickname @param { string } age @param { string } gender
  * @returns User 테이블에 null이였던 nickname , age , gender 를 업데이트
  */
-const createNicknameAgeGender = async (nickname, userId) => {
-    // age gender 추가예정
+const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
     await User.update({ nickname }, { where: { userId } });
+    const findByDetailId = await User.findOne({
+        include: [{ model: UserDetail, attributes: ["detailId"] }],
+        where: { userId },
+    });
+    const detailId = findByDetailId.UserDetail.dataValues.detailId;
+
+    await UserDetail.update({ age, gender }, { where: { detailId } });
 };
 //FUNCTION
 const createTable = async () => {
@@ -53,7 +59,7 @@ module.exports = {
     findByEmail,
     findByNickname,
     createSignUp,
-    createNicknameAgeGender,
+    updateNicknameAgeGender,
 };
 
 // userId에서 nickname을 업데이트하고 userdetail에서 age,gender를 업데이트한다
