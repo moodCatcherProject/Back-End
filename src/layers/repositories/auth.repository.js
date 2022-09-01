@@ -12,7 +12,6 @@ const findByEmail = async (email) => {
     return findByEmail;
 };
 
-
 /**
  * @param { string } nickname
  * @returns User 테이블에서 nickname 한개를 찾음
@@ -21,34 +20,40 @@ const findByNickname = async (nickname) => {
     const findByNickname = await User.findOne({ where: { nickname } });
     return findByNickname;
 };
-
-
 /**
+
  * @param { string } email @param { string } password
  * @returns Auth 테이블에 email, 해쉬password값 생성
  */
 const createSignUp = async (email, password) => {
- 
-    createTable();
-    const hashPW = await bcrypt.hash(password, 12);
+
+    const user = await User.create({});
+    console.log(user.dataValues.userId);
+    await UserDetail.create({});
+    const hash = await bcrypt.hash(password, 12);
     const auth = await Auth.create({
         email,
-        password: hashPW,
+        password: hash,
         provider: "local",
     });
     return auth;
+
 };
-
-
 /**
- * @param { string } nickname @param { string } age
+ * @param { string } nickname @param { string } age @param { string } gender
  * @returns User 테이블에 null이였던 nickname , age , gender 를 업데이트
  */
-const createNicknameAgeGender = async (nickname, userId) => {
-    // age gender 추가예정
+const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
     await User.update({ nickname }, { where: { userId } });
-};
+    const findByDetailId = await User.findOne({
+        include: [{ model: UserDetail, attributes: ["detailId"] }],
+        where: { userId },
+    });
+    const detailId = findByDetailId.UserDetail.dataValues.detailId;
 
+
+    await UserDetail.update({ age, gender }, { where: { detailId } });
+};
 
 //FUNCTION
 const createTable = async () => {
@@ -60,7 +65,9 @@ module.exports = {
     findByEmail,
     findByNickname,
     createSignUp,
-    createNicknameAgeGender,
+
+    updateNicknameAgeGender,
 };
 
 // userId에서 nickname을 업데이트하고 userdetail에서 age,gender를 업데이트한다
+

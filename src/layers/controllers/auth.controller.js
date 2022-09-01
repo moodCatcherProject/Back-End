@@ -4,9 +4,6 @@ const exception = require("../exceptModels/_.models.loader");
 const passport = require("passport");
 const joi = require("joi");
 const {User} = require("../../sequelize/models")
-// EM :8자~ 30자
-// PW :영소대문자+숫자+특수문자 8자 ~ 20자
-// NN : 한글, 영소 대문자. 숫자 2자~16자
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const localSignUp = async (req, res, next) => {
@@ -24,43 +21,45 @@ const localSignUp = async (req, res, next) => {
             })
         );
     } catch (err) {
-        console.error(err);
         next(err);
     }
 };
 
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
-const createNicknameAgeGender = async (req, res, next) => {
+const updateNicknameAgeGender = async (req, res, next) => {
     const userId = req.user.userId;
-    // const userId = res.locals;
+
     const { nickname, age, gender } = req.body;
     try {
         await joi
             .object({
                 nickname: joi.string().min(2).max(16).trim().required(),
-                // age: joi.required(),
-                // gender: joi.required(),
+
+                age: joi.required(),
+                gender: joi.required(),
             })
             .validateAsync({
                 nickname,
-                // age,
-                // gender,
+                age,
+                gender,
             });
-        const createNicknameAgeGender =
-            await authService.createNicknameAgeGender(
+        const updateNicknameAgeGender =
+            await authService.updateNicknameAgeGender(
                 nickname,
-                // age,
-                // gender,
+                age,
+                gender,
+
                 userId
             );
         return res.status(200).json(
             new exception.FormDto("닉네임 나이 추가 성공", {
-                createNicknameAgeGender,
+
+                updateNicknameAgeGender,
             })
         );
     } catch (err) {
-        console.error(err);
+
         next(err);
     }
 };
@@ -80,7 +79,7 @@ const checkEmail = async (req, res, next) => {
         await authService.checkEmail(email);
         return res.status(200).json(new exception.FormDto("이메일 확인 성공"));
     } catch (err) {
-        console.error(err);
+
         next(err);
     }
 };
@@ -92,7 +91,9 @@ const checkNickname = async (req, res, next) => {
     try {
         await joi
             .object({
-                nickname: joi.string().min(2).max(16).trim().required(), // 닉네임 정규식 , 닉네임 중복확인
+
+                nickname: joi.string().min(2).max(16).trim().required(), // 닉네임 정규식
+
             })
             .validateAsync({
                 nickname,
@@ -100,7 +101,7 @@ const checkNickname = async (req, res, next) => {
         await authService.checkNickname(nickname);
         return res.status(200).json(new exception.FormDto("닉네임 확인 성공"));
     } catch (err) {
-        console.error(err);
+
         next(err);
     }
 };
@@ -166,7 +167,7 @@ const kakaoCallback= async(req, res, next) => {
 }
 module.exports = {
     localSignUp,
-    createNicknameAgeGender,
+    updateNicknameAgeGender,
     checkEmail,
     checkNickname,
     localLogin,
