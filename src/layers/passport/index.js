@@ -18,7 +18,7 @@ module.exports = () => {
    passport.serializeUser((user, done) => {
       // req.login(user, ...)의 user가 일로 와서 값을 이용할수 있는 것이다.
      
-      done(null, user.authId);
+      done(null,user.authId );
       // req.session객체에 어떤 데이터를 저장할 지 선택.
       // user.id만을 세션객체에 넣음. 사용자의 온갖 정보를 모두 들고있으면, 
       // 서버 자원낭비기 때문에 사용자 아이디만 저장 그리고 데이터를 deserializeUser애 전달함
@@ -37,7 +37,7 @@ module.exports = () => {
       // 즉, id를 sql로 조회해서 전체 정보를 가져오는 복구 로직이다.
       User.findOne({ where: { userId : authId } })
          .then(
-            user =>{console.log(user)
+            user =>{
                 done(null, user)}) //? done()이 되면 이제 다시 req.login(user, ...) 쪽으로 되돌아가 다음 미들웨어를 실행하게 된다.
          .catch(err => done(err));
    });

@@ -52,7 +52,6 @@ describe("로그인 테스트", () => {
             })
             .expect(200)
             .end((err, res) => {
-                console.log(res.body, "여기에요 여기!!");
                 done();
             });
     });
@@ -94,7 +93,6 @@ describe("게시물 작성하기", (done) => {
     }]
     
     
-    console.log(post.title)
     //request.agent : 로그인 테스트를 한 뒤 다른 테스트를 진행하려면 로그인이
     // 풀려있게 되는데 이를 풀지 않고 저장하게 해주는 역할.
     const agent = request.agent(app);
