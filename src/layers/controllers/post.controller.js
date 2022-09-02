@@ -6,9 +6,8 @@ const exception = require('../exceptModels/_.models.loader');
 
 const createPost = async (req, res, next) => {
     try {
-        
-        const userId =  1;
-        
+        const userId = req.user.userId;
+
         const { title, content } = req.body.post;
         const { items } = req.body;
         const postData = await postService.createPost(userId, title, content);
@@ -25,23 +24,25 @@ const createPost = async (req, res, next) => {
     }
 };
 
-const updatePost = (req, res, next) => {
-    try{
-        const userId = req.user.userId
-        const {postId} = req.params;
+const updatePost = async (req, res, next) => {
+    try {
+        const userId = req.user.userId;
+        const { postId } = req.params;
         const { title, content } = req.body.post;
         const { items } = req.body;
 
-    }catch(err){
-
+        const postData = await postService.updatePost(userId, postId, title, content);
+        const itemData = await postService.updateItem(items);
+    } catch (err) {
+        next(err);
     }
-}
+};
 // // IMAGE
-const updateImage = async(req, res, next) => {
+const updateImage = async (req, res, next) => {
     try {
         const { postId } = req.params;
         const imageFileName = req.file ? req.file.key : null;
-        const imageData = await postService.updateImage(postId,imageFileName)
+        const imageData = await postService.updateImage(postId, imageFileName);
         return res.status(201).json(
             new exception.FormDto('이미지 업데이트 성공!', {
                 image: imageData
@@ -53,6 +54,7 @@ const updateImage = async(req, res, next) => {
 };
 module.exports = {
     createPost,
+    updatePost,
 
     updateImage
 };

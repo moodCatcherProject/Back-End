@@ -1,11 +1,9 @@
-
 const e = require('express');
 const authService = require('../services/auth.service');
 const exception = require('../exceptModels/_.models.loader');
 const passport = require('passport');
 const joi = require('joi');
 const { User } = require('../../sequelize/models');
-
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const localSignUp = async (req, res, next) => {
@@ -98,9 +96,7 @@ const deleteUser = async (req, res, next) => {
     const userId = req.user.userId;
     try {
         await authService.deleteUser(userId);
-        return res
-            .status(200)
-            .json(new exception.FormDto("유저 정보 삭제 성공"));
+        return res.status(200).json(new exception.FormDto('유저 정보 삭제 성공'));
     } catch (err) {
         next(err);
     }
@@ -109,7 +105,7 @@ const deleteUser = async (req, res, next) => {
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const localLogin = async (req, res, next) => {
     //? local로 실행이 되면 localstrategy.js를 찾아 실행한다.
-    passport.authenticate("local", (authError, user, info) => {
+    passport.authenticate('local', (authError, user, info) => {
         //? (authError, user, info) => 이 콜백 미들웨어는 localstrategy에서 done()이 호출되면 실행된다.
         //? localstrategy에 done()함수에 로직 처리에 따라 1,2,3번째 인자에 넣는 순서가 달랐는데 그 이유가 바로 이것이다.
 
@@ -144,7 +140,6 @@ const localLogin = async (req, res, next) => {
                 console.log(err);
                 return;
             }
-
         });
     })(req, res, next); //! 미들웨어 내의 미들웨어에는 콜백을 실행시키기위해 (req, res, next)를 붙인다.
 };
@@ -158,7 +153,6 @@ const isExistUserNickname = async (userId) => {
     return await User.findOne({
         where: { userId }
     });
-};
 };
 
 const kakaoCallback = async (req, res, next) => {
