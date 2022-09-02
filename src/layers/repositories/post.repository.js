@@ -1,4 +1,4 @@
-const { User, Post, Item } = require('../../sequelize/models');
+const { User, UserDetail, Post, Item } = require('../../sequelize/models');
 const exception = require('../exceptModels/_.models.loader');
 
 //CRUD
@@ -31,7 +31,13 @@ const findPost = async (postId) => {
         where: { postId }
     });
 };
-
+/**
+ *
+ * @param {number} postId
+ * @param {string} title
+ * @param {string} content
+ * @returns 업데이트 된 게시물 데이터
+ */
 const updatePost = async (postId, title, content) => {
     try {
         await Post.update(
@@ -49,6 +55,11 @@ const updatePost = async (postId, title, content) => {
     return await findPost(postId);
 };
 
+/**
+ *
+ * @param {number} postId
+ * @return 없음 , 실패시 404 에러
+ */
 const deletePost = async (postId) => {
     try {
         await Post.destroy({
@@ -58,6 +69,32 @@ const deletePost = async (postId) => {
         throw new exception.NotFoundException('해당 게시물이 없음.');
     }
 };
+// // POST ADD
+/**
+ *
+ * @param {number} userId
+ * @param {number} repPostId
+ * @returns 업데이트 된 대표 게시물의 postId
+ */
+const updateRepPost = async (userId, repPostId) => {
+    try {
+        await UserDetail.update(
+            {
+                repPostId
+            },
+            {
+                where: { detailId: userId }
+            }
+        );
+        const repPostIdData = await UserDetail.findOne({
+            where: { detailId: userId }
+        });
+        return repPostIdData.repPostId;
+    } catch (err) {
+        throw new exception.NotFoundException('게시물이 없음.');
+    }
+};
+
 // //ITEM
 
 /**
@@ -132,6 +169,8 @@ module.exports = {
     updatePost,
     findPost,
     deletePost,
+
+    updateRepPost,
 
     createItem,
     updateItem,
