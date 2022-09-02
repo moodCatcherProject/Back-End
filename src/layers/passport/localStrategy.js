@@ -1,7 +1,7 @@
-const { Auth } = require("../../sequelize/models");
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const bcrypt = require("bcrypt");
+const { Auth } = require('../../sequelize/models');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
 
 module.exports = () => {
     //? auth 라우터에서 /login 요청이 오면 local설정대로 이쪽이 실행되게 된다.
@@ -9,8 +9,8 @@ module.exports = () => {
         new LocalStrategy(
             {
                 //* req.body 객체인자 하고 키값이 일치해야 한다.
-                usernameField: "email", // req.body.email
-                passwordField: "password", // req.body.password
+                usernameField: 'email', // req.body.email
+                passwordField: 'password' // req.body.password
                 /*
             session: true, // 세션에 저장 여부
             passReqToCallback: false, 
@@ -33,15 +33,12 @@ module.exports = () => {
                     // 만일 가입된 회원이면
                     if (exUser) {
                         // 해시비번을 비교
-                        const result = await bcrypt.compare(
-                            password,
-                            exUser.password
-                        );
+                        const result = await bcrypt.compare(password, exUser.password);
                         if (result) {
                             done(null, exUser); //? 성공이면 done()의 2번째 인수에 선언
                         } else {
                             done(null, false, {
-                                message: "회원정보가 일치하지 않습니다.",
+                                message: '회원정보가 일치하지 않습니다.'
                             }); //? 실패면 done()의 2번째 인수는 false로 주고 3번째 인수에 선언
                         }
                         //? done()을 호출하면, /login 요청온 auth 라우터로 다시 돌아가서 미들웨어 콜백을 실행하게 된다.
@@ -49,15 +46,13 @@ module.exports = () => {
                     // DB에 해당 이메일이 없다면, 회원 가입 한적이 없다.
                     else {
                         done(null, false, {
-                            message: "회원정보가 일치하지 않습니다.",
+                            message: '회원정보가 일치하지 않습니다.'
                         });
-
                     }
                 } catch (error) {
                     console.error(error);
                     done(error); //? done()의 첫번째 함수는 err용. 특별한것 없는 평소에는 null로 처리.
                 }
-
             }
         )
     );

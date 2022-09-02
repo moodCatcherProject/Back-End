@@ -1,5 +1,5 @@
-const { User, Auth, UserDetail } = require("../../sequelize/models");
-const bcrypt = require("bcrypt");
+const { User, Auth, UserDetail } = require('../../sequelize/models');
+const bcrypt = require('bcrypt');
 
 /**
  * Auth 테이블에서 email 값이 일치하는 data 반환
@@ -32,7 +32,7 @@ const createSignUp = async (email, password) => {
     const auth = await Auth.create({
         email,
         password: hash,
-        provider: "local",
+        provider: 'local'
     });
     return auth;
 };
@@ -44,8 +44,8 @@ const createSignUp = async (email, password) => {
 const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
     await User.update({ nickname }, { where: { userId } });
     const findByDetailId = await User.findOne({
-        include: [{ model: UserDetail, attributes: ["detailId"] }],
-        where: { userId },
+        include: [{ model: UserDetail, attributes: ['detailId'] }],
+        where: { userId }
     });
     const detailId = findByDetailId.UserDetail.dataValues.detailId;
     await UserDetail.update({ age }, { where: { detailId: userId } });
@@ -58,6 +58,7 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
 const deleteUser = async (userId) => {
     await User.destroy({ where: { userId } });
 };
+
 //FUNCTION
 const createTable = async () => {
     await User.create({});

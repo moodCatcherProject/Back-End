@@ -1,0 +1,28 @@
+// 기본 포맷터를 prettier-vscode로 사용
+{
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "editor.formatOnSave": true
+
+    /* 설정 가능한 항목들
+    prettier.arrowParens
+    prettier.bracketSpacing
+    prettier.endOfLine
+    prettier.htmlWhitespaceSensitivity
+    prettier.insertPragma
+    prettier.jsxBracketSameLine
+    prettier.jsxSingleQuote
+    prettier.printWidth
+    prettier.proseWrap
+    prettier.quoteProps
+    prettier.requirePragma
+    prettier.semi
+    prettier.singleQuote
+    prettier.tabWidth
+    prettier.trailingComma
+    prettier.useTabs
+    prettier.vueIndentScriptAndStyle
+    */
+}
