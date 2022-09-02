@@ -1,7 +1,8 @@
-require("dotenv").config({ path: ".env" });
+require('dotenv').config({ path: '.env' });
 const env = process.env;
 
 const development = {
+
   username: env.MYSQL_USERNAME,
   //env.MYSQL_USERNAME은 불러오고자 하는 데이터의 키값이므로 자유롭게 이름설정이 가능하다.
   password: env.MYSQL_PASSWORD,
@@ -46,6 +47,7 @@ const test = {
   },
   logging : false
   //port: env.MYSQL_PORT
+
 };
 
 module.exports = { development, production, test };

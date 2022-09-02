@@ -1,5 +1,5 @@
-const postRepository = require("../repositories/post.repository");
-const exception = require("../exceptModels/_.models.loader");
+const postRepository = require('../repositories/post.repository');
+const exception = require('../exceptModels/_.models.loader');
 //CRUD
 // // POST
 /**
@@ -10,13 +10,10 @@ const exception = require("../exceptModels/_.models.loader");
  * @returns 생성 된 게시물의 데이터
  */
 const createPost = async (userId, title, content) => {
-    isExistValue(title, "제목이 빈 값");
+    isExistValue(title, '제목이 빈 값');
 
-    const createPostData = await postRepository.createPost(
-        userId,
-        title,
-        content
-    );
+    const createPostData = await postRepository.createPost(userId, title, content);
+
     return createPostData;
 };
 /**
@@ -29,20 +26,15 @@ const createPost = async (userId, title, content) => {
 const updatePost = async (userId, postId, title, content) => {
     title = new exception.isString(title).trim;
     isExistPostOfUser(userId, postId);
-    const createPostData = await postRepository.createPost(
-        postId,
-        title,
-        content
-    );
+    const createPostData = await postRepository.createPost(postId, title, content);
     return createPostData;
 };
 
-const deletePost = async ( userId, postId) => {
+const deletePost = async (userId, postId) => {
     isExistPostOfUser(userId, postId);
-    postRepository.deletePost(postId)
+    postRepository.deletePost(postId);
     return;
-    
-}
+};
 
 // //ITEM
 /**
@@ -67,6 +59,7 @@ const updateItem = async (postId, items) => {
     }
     return updateItemData;
 };
+
 // // IMAGE
 /**
  *
@@ -74,18 +67,15 @@ const updateItem = async (postId, items) => {
  * @param {string} imageFileName
  * @returns 업데이트 된 이미지가 들어간 게시물 데이터
  */
-const updateImage = async (postId, imageFileName) => {
-    if (!imageFileName)
-        throw new exception.BadRequestException("게시물 이미지가 빈 값");
-    const updateImageData = await postRepository.updateImage(
-        postId,
-        imageFileName
-    );
-    updateImageData.imgUrl =
-        process.env.S3_STORAGE_URL + updateImageData.imgUrl;
 
+const updateImage = async (postId, imageFileName) => {
+    if (!imageFileName) throw new exception.BadRequestException('게시물 이미지가 빈 값');
+    const updateImageData = await postRepository.updateImage(postId, imageFileName);
+    updateImageData.imgUrl = process.env.S3_STORAGE_URL + updateImageData.imgUrl;
+    console.log(updateImageData.imgUrl);
     return updateImageData;
 };
+
 //FUNGTION
 
 /**
@@ -100,7 +90,7 @@ const isExistPostOfUser = async (userId, postId) => {
     if (userId === postData.userId) {
         return true;
     } else {
-        throw new exception.UnauthorizedException("게시물의 작성자가 아님.");
+        throw new exception.UnauthorizedException('게시물의 작성자가 아님.');
     }
 };
 
@@ -112,5 +102,5 @@ module.exports = {
     createItem,
     updateItem,
 
-    updateImage,
+    updateImage
 };

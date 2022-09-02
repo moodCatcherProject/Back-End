@@ -1,5 +1,5 @@
-const { User, Post, Item } = require("../../sequelize/models");
-const exception = require("../exceptModels/_.models.loader");
+const { User, Post, Item } = require('../../sequelize/models');
+const exception = require('../exceptModels/_.models.loader');
 
 //CRUD
 // // POST
@@ -18,7 +18,7 @@ const createPost = async (userId, title, content) => {
         userId,
         title,
         content,
-        imgUrl: "default",
+        imgUrl: 'default'
     });
 };
 /**
@@ -28,7 +28,7 @@ const createPost = async (userId, title, content) => {
  */
 const findPost = async (postId) => {
     return await Post.findOne({
-        where: { postId },
+        where: { postId }
     });
 };
 
@@ -37,27 +37,27 @@ const updatePost = async (postId, title, content) => {
         await Post.update(
             {
                 title,
-                content,
+                content
             },
             {
-                where: { postId },
+                where: { postId }
             }
         );
     } catch (err) {
-        throw new exception.NotFoundException("해당 게시물이 없음.");
+        throw new exception.NotFoundException('해당 게시물이 없음.');
     }
     return await findPost(postId);
 };
 
 const deletePost = async (postId) => {
-    try{
+    try {
         await Post.destroy({
-            where : {postId}
-        })
-    }catch(err){
-        throw new exception.NotFoundException("해당 게시물이 없음.")
+            where: { postId }
+        });
+    } catch (err) {
+        throw new exception.NotFoundException('해당 게시물이 없음.');
     }
-}
+};
 // //ITEM
 
 /**
@@ -73,7 +73,7 @@ const createItem = async (postId, item) => {
         brand,
         name,
         imgUrl,
-        price,
+        price
     });
 };
 
@@ -91,20 +91,19 @@ const updateItem = async (postId, item) => {
                 brand,
                 name,
                 imgUrl,
-                price,
+                price
             },
             {
-                where: { postId },
+                where: { postId }
             }
         );
         return await Item.findOne({ postId });
     } catch (err) {
-        throw new exception.NotFoundException("해당 게시물이 없음.")
+        throw new exception.NotFoundException('해당 게시물이 없음.');
     }
 };
 
 // // IMAGE
-
 /**
  *
  * @param {number} postId
@@ -115,15 +114,17 @@ const updateItem = async (postId, item) => {
 const updateImage = async (postId, imgUrl) => {
     await Post.update(
         {
-            imgUrl,
+            imgUrl
         },
         {
-            where: { postId },
+            where: { postId }
         }
     );
     //update를 하면 게시물의 정보가 아닌 postId를 return 해주는 것 같아 추가.
+
     return await findPost(postId);
 };
+
 //FUNCTION
 
 module.exports = {
@@ -131,9 +132,9 @@ module.exports = {
     updatePost,
     findPost,
     deletePost,
-    
+
     createItem,
     updateItem,
 
-    updateImage,
+    updateImage
 };

@@ -1,13 +1,13 @@
 //특정 요일 특정 시간 마다 특정 함수를 실행시켜주는 파일
-console.log("실행");
-const schedule = require("node-schedule");
+console.log('실행');
+const schedule = require('node-schedule');
 
-schedule.scheduleJob("* * 5 * * *", () => {
-    console.log("초마다 실행");
+schedule.scheduleJob('* * 5 * * *', () => {
+    console.log('초마다 실행');
 });
 
 module.exports = {
-    schedule,
+    schedule
 };
 // *     *    *     *    *     *
 // ┬    ┬    ┬    ┬    ┬    ┬

@@ -1,5 +1,5 @@
-const app = require("./app");
+const app = require('./app');
 
 app.listen(3000, () => {
-    console.log("서버 가동");
+    console.log('서버 가동');
 });
