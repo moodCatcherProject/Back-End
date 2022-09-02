@@ -20,9 +20,6 @@ authRouter.post('/detail', isLoggedIn, authController.updateNicknameAgeGender);
 // 로컬로그인(/api/auth/login)
 authRouter.post('/login', isNotLoggedIn, authController.localLogin);
 
-// 회원탈퇴 (/api/user/signout)
-authRouter.delete('signout', authController.deleteUser);
-
 //카카오 로그인(/api/auth/kakao)
 authRouter.get('/kakao', isNotLoggedIn, passport.authenticate('kakao'));
 //카카오 콜백(/api/auth/kakao/callback)

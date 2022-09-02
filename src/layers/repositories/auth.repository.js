@@ -49,15 +49,8 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
     });
 
     const detailId = findByDetailId.UserDetail.dataValues.detailId;
-    await UserDetail.update({ age }, { where: { detailId: userId } });
-    await UserDetail.update({ gender }, { where: { detailId: userId } });
-    // console.log(userId, detailId);
-    // console.log(age);
-    // console.log(gender);
-};
-
-const deleteUser = async (userId) => {
-    await User.destroy({ where: { userId } });
+    await UserDetail.update({ age }, { where: { detailId } });
+    await UserDetail.update({ gender }, { where: { detailId } });
 };
 
 //FUNCTION
@@ -70,6 +63,8 @@ module.exports = {
     findByEmail,
     findByNickname,
     createSignUp,
+
     updateNicknameAgeGender,
     deleteUser
+
 };

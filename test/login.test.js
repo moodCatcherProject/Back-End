@@ -87,6 +87,7 @@ describe('로그인 테스트', () => {
 
 const FormData = require('form-data');
 const fs = require('fs');
+
 const agent = request.agent(app);
 describe('게시물 작성하기', () => {
     // let post = new FormData();
@@ -103,6 +104,7 @@ describe('게시물 작성하기', () => {
     //         price: '79000원'
     //     }
     // ];
+
 
     //request.agent : 로그인 테스트를 한 뒤 다른 테스트를 진행하려면 로그인이
     // 풀려있게 되는데 이를 풀지 않고 저장하게 해주는 역할.
@@ -125,6 +127,7 @@ describe('게시물 작성하기', () => {
     });
 
     test('agent 에 닉네임, 성별, 나이 추가', (done) => {
+
         agent
             .post('/api/auth/detail')
             .send({
@@ -285,5 +288,6 @@ describe('다른 사람의 게시물 접근하기', () => {
     });
     test('(삭제)다른 사람이 작성한 게시물에 접근하면 에러', (done) => {
         agent.delete('/api/posts/1').expect(401, done);
+
     });
 });

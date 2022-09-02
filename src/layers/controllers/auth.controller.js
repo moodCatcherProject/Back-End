@@ -2,7 +2,6 @@ const e = require('express');
 const authService = require('../services/auth.service');
 const exception = require('../exceptModels/_.models.loader');
 const passport = require('passport');
-const joi = require('joi');
 const { User } = require('../../sequelize/models');
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
@@ -21,17 +20,6 @@ const updateNicknameAgeGender = async (req, res, next) => {
     const userId = req.user.userId;
     const { nickname, age, gender } = req.body;
     try {
-        await joi
-            .object({
-                nickname: joi.string().min(2).max(16).trim().required(),
-                age: joi.required(),
-                gender: joi.required()
-            })
-            .validateAsync({
-                nickname,
-                age,
-                gender
-            });
         const updateNicknameAgeGender = await authService.updateNicknameAgeGender(
             nickname,
             age,
@@ -52,13 +40,6 @@ const updateNicknameAgeGender = async (req, res, next) => {
 const checkEmail = async (req, res, next) => {
     const { email } = req.query;
     try {
-        await joi
-            .object({
-                email: joi.string().email().min(8).max(30).trim().required()
-            })
-            .validateAsync({
-                email
-            });
         await authService.checkEmail(email);
         return res.status(200).json(new exception.FormDto('이메일 확인 성공'));
     } catch (err) {
@@ -70,25 +51,8 @@ const checkEmail = async (req, res, next) => {
 const checkNickname = async (req, res, next) => {
     const { nickname } = req.query;
     try {
-        await joi
-            .object({
-                nickname: joi.string().min(2).max(16).trim().required() // 닉네임 정규식
-            })
-            .validateAsync({
-                nickname
-            });
         await authService.checkNickname(nickname);
         return res.status(200).json(new exception.FormDto('닉네임 확인 성공'));
-    } catch (err) {
-        next(err);
-    }
-};
-/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
-const deleteUser = async (req, res, next) => {
-    const userId = req.user.userId;
-    try {
-        await authService.deleteUser(userId);
-        return res.status(200).json(new exception.FormDto('유저 정보 삭제 성공'));
     } catch (err) {
         next(err);
     }
@@ -166,7 +130,6 @@ module.exports = {
     updateNicknameAgeGender,
     checkEmail,
     checkNickname,
-    deleteUser,
     localLogin,
     kakaoCallback
 };

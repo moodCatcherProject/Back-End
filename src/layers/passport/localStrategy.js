@@ -2,6 +2,7 @@ const { Auth } = require('../../sequelize/models');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
+const exception = require('../exceptModels/_.models.loader');
 
 module.exports = () => {
     //? auth 라우터에서 /login 요청이 오면 local설정대로 이쪽이 실행되게 된다.
@@ -28,6 +29,10 @@ module.exports = () => {
           */
             async (email, password, done) => {
                 try {
+                    // 이메일, 비밀번호 유효성 검사
+                    new exception.isString({ email }).value;
+                    new exception.isString({ password }).value;
+
                     // 가입된 회원인지 아닌지 확인
                     const exUser = await Auth.findOne({ where: { email } });
                     // 만일 가입된 회원이면
@@ -38,7 +43,7 @@ module.exports = () => {
                             done(null, exUser); //? 성공이면 done()의 2번째 인수에 선언
                         } else {
                             done(null, false, {
-                                message: '회원정보가 일치하지 않습니다.'
+                                message: '로그인 실패'
                             }); //? 실패면 done()의 2번째 인수는 false로 주고 3번째 인수에 선언
                         }
                         //? done()을 호출하면, /login 요청온 auth 라우터로 다시 돌아가서 미들웨어 콜백을 실행하게 된다.
@@ -46,11 +51,10 @@ module.exports = () => {
                     // DB에 해당 이메일이 없다면, 회원 가입 한적이 없다.
                     else {
                         done(null, false, {
-                            message: '회원정보가 일치하지 않습니다.'
+                            message: '로그인 실패'
                         });
                     }
                 } catch (error) {
-                    console.error(error);
                     done(error); //? done()의 첫번째 함수는 err용. 특별한것 없는 평소에는 null로 처리.
                 }
             }
