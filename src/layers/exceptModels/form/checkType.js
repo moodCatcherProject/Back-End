@@ -1,6 +1,9 @@
-/** @version 1.1 */
+/**
+ * @version 1.2
+ * @desc 데이터가 객체로 오지 않을 때의 경우 추가
+ *  */
 class CheckType {
-    exception = require("../_.models.loader");
+    exception = require('../_.models.loader');
     value;
     /**
      *
@@ -10,6 +13,9 @@ class CheckType {
      *
      */
     constructor(obj, type) {
+        if (typeof obj !== 'object') {
+            throw new Error('데이터가 객체로 와야합니다!');
+        }
         const keys = Object.keys(obj)[0];
         const value = obj[keys];
 
@@ -23,7 +29,7 @@ class CheckType {
             );
         }
         this.value = value;
-        this.exception = "";
+        this.exception = '';
     }
 
     checkValue(value, type) {
@@ -33,7 +39,8 @@ class CheckType {
 
 class isString extends CheckType {
     constructor(value) {
-        const inst = super(value, "string");
+        const inst = super(value, 'string');
+
         try {
             if (Object.values(value)[0].trim().length === 0) {
                 throw new Error(`${Object.keys(value)[0]}이(가) 빈 값입니다!`);
@@ -48,17 +55,17 @@ class isString extends CheckType {
 
 class isNumber extends CheckType {
     constructor(value) {
-        super(value, "number");
+        super(value, 'number');
     }
 }
 class isObject extends CheckType {
     constructor(value) {
-        super(value, "object");
+        super(value, 'object');
     }
 }
 
 module.exports = {
     isString,
     isNumber,
-    isObject,
+    isObject
 };

@@ -97,7 +97,7 @@ const updateItem = async (postId, item) => {
                 where: { postId }
             }
         );
-        return await Item.findOne({ postId });
+        return await Item.findOne({ where: { postId } });
     } catch (err) {
         throw new exception.NotFoundException('해당 게시물이 없음.');
     }

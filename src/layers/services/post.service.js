@@ -10,8 +10,6 @@ const exception = require('../exceptModels/_.models.loader');
  * @returns 생성 된 게시물의 데이터
  */
 const createPost = async (userId, title, content) => {
-    isExistValue(title, '제목이 빈 값');
-
     const createPostData = await postRepository.createPost(userId, title, content);
 
     return createPostData;
@@ -24,14 +22,15 @@ const createPost = async (userId, title, content) => {
  * @returns 업데이트 된 게시물의 데이터
  */
 const updatePost = async (userId, postId, title, content) => {
-    title = new exception.isString(title).trim;
-    isExistPostOfUser(userId, postId);
-    const createPostData = await postRepository.createPost(postId, title, content);
+    title = new exception.isString({ title }).trim;
+    await isExistPostOfUser(userId, postId);
+    const createPostData = await postRepository.updatePost(postId, title, content);
+
     return createPostData;
 };
 
 const deletePost = async (userId, postId) => {
-    isExistPostOfUser(userId, postId);
+    await isExistPostOfUser(userId, postId);
     postRepository.deletePost(postId);
     return;
 };
@@ -49,13 +48,14 @@ const createItem = async (postId, items) => {
     for (let item of items) {
         createItemData.push(await postRepository.createItem(postId, item));
     }
+    console.log();
     return createItemData;
 };
 
 const updateItem = async (postId, items) => {
     const updateItemData = [];
     for (let item of items) {
-        createItemData.push(await postRepository.createItem(postId, item));
+        updateItemData.push(await postRepository.updateItem(postId, item));
     }
     return updateItemData;
 };
@@ -87,6 +87,7 @@ const updateImage = async (postId, imageFileName) => {
  */
 const isExistPostOfUser = async (userId, postId) => {
     const postData = await postRepository.findPost(postId);
+
     if (userId === postData.userId) {
         return true;
     } else {
