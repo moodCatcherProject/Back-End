@@ -14,13 +14,10 @@ const localSignUp = async (email, password, confirmPw) => {
     if (ExistUser) {
         throw new exception.BadRequestException('이메일 중복 확인 실패');
     }
-
     if (password !== confirmPw) {
         throw new exception.BadRequestException('비밀번호 에러');
     }
-
     const SignUp = await authRepository.createSignUp(email, password);
-
     return SignUp;
 };
 /**
@@ -35,7 +32,6 @@ const updateNicknameAgeGender = async (nickname, userId, age, gender) => {
         userId
         // 닉네임이 중복 될 경우
     );
-
     return updatedNicknameAgeGender;
 };
 /**

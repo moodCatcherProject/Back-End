@@ -8,7 +8,6 @@ const bcrypt = require('bcrypt');
  */
 const findByEmail = async (email) => {
     const findByEmail = await Auth.findOne({ where: { email } });
-
     return findByEmail;
 };
 
@@ -49,8 +48,11 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
         where: { userId }
     });
     const detailId = findByDetailId.UserDetail.dataValues.detailId;
-
-    await UserDetail.update({ age, gender }, { where: { detailId } });
+    await UserDetail.update({ age }, { where: { detailId: userId } });
+    await UserDetail.update({ gender }, { where: { detailId: userId } });
+    // console.log(userId, detailId);
+    // console.log(age);
+    // console.log(gender);
 };
 
 const deleteUser = async (userId) => {
@@ -70,5 +72,3 @@ module.exports = {
     updateNicknameAgeGender,
     deleteUser,
 };
-
-// userId에서 nickname을 업데이트하고 userdetail에서 age,gender를 업데이트한다
