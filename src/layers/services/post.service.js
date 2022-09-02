@@ -1,5 +1,5 @@
-const postRepository = require("../repositories/post.repository");
-const exception = require("../exceptModels/_.models.loader");
+const postRepository = require('../repositories/post.repository');
+const exception = require('../exceptModels/_.models.loader');
 //CRUD
 // // POST
 /**
@@ -8,34 +8,26 @@ const exception = require("../exceptModels/_.models.loader");
  * @param {string} content
  * @param {Array} items
  */
-const createPost = async (userId, title, content, ) => {
-    isExistValue(title, "제목이 빈 값");
-    
+const createPost = async (userId, title, content) => {
+    isExistValue(title, '제목이 빈 값');
 
-    const createPostData = await postRepository.createPost(
-        userId,
-        title,
-        content,
-        
-    );
-    return createPostData
+    const createPostData = await postRepository.createPost(userId, title, content);
+    return createPostData;
 };
-
-
 
 // //ITEM
 const createItem = async (postId, items) => {
-    const createItemData = []
+    const createItemData = [];
     for (let item of items) {
-        createItemData.push(await postRepository.createItem(postId, item))
+        createItemData.push(await postRepository.createItem(postId, item));
     }
     return createItemData;
 };
 // // IMAGE
-const updateImage = async(postId,imageFileName) => {
-    if (!imageFileName) throw new exception.BadRequestException("게시물 이미지가 빈 값");
-    return await postRepository.updateImage(postId, imageFileName)
-}
+const updateImage = async (postId, imageFileName) => {
+    if (!imageFileName) throw new exception.BadRequestException('게시물 이미지가 빈 값');
+    return await postRepository.updateImage(postId, imageFileName);
+};
 //FUNGTION
 /**
  *

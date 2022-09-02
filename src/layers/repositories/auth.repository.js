@@ -1,5 +1,5 @@
-const { User, Auth, UserDetail } = require("../../sequelize/models");
-const bcrypt = require("bcrypt");
+const { User, Auth, UserDetail } = require('../../sequelize/models');
+const bcrypt = require('bcrypt');
 
 /**
  * Auth 테이블에서 email 값이 일치하는 data 반환
@@ -26,7 +26,6 @@ const findByNickname = async (nickname) => {
  * @returns Auth 테이블에 email, 해쉬password값 생성
  */
 const createSignUp = async (email, password) => {
-
     const user = await User.create({});
     console.log(user.dataValues.userId);
     await UserDetail.create({});
@@ -34,10 +33,9 @@ const createSignUp = async (email, password) => {
     const auth = await Auth.create({
         email,
         password: hash,
-        provider: "local",
+        provider: 'local'
     });
     return auth;
-
 };
 /**
  * @param { string } nickname @param { string } age @param { string } gender
@@ -46,11 +44,10 @@ const createSignUp = async (email, password) => {
 const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
     await User.update({ nickname }, { where: { userId } });
     const findByDetailId = await User.findOne({
-        include: [{ model: UserDetail, attributes: ["detailId"] }],
-        where: { userId },
+        include: [{ model: UserDetail, attributes: ['detailId'] }],
+        where: { userId }
     });
     const detailId = findByDetailId.UserDetail.dataValues.detailId;
-
 
     await UserDetail.update({ age, gender }, { where: { detailId } });
 };
@@ -66,8 +63,7 @@ module.exports = {
     findByNickname,
     createSignUp,
 
-    updateNicknameAgeGender,
+    updateNicknameAgeGender
 };
 
 // userId에서 nickname을 업데이트하고 userdetail에서 age,gender를 업데이트한다
-

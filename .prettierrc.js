@@ -3,7 +3,7 @@ module.exports = {
     tabWidth: 4, // 들여쓰기 시, 탭 너비
     useTabs: false, // 스페이스 대신 탭 사용
     semi: true, // 문장 끝 세미콜론 사용
-    singleQuote: true, // 작은 따옴표 사용
+    singleQuote: true, // 큰 따옴표 사용
     trailingComma: 'none', // 꼬리 콤마 사용
     bracketSpacing: true, // 중괄호 내에 공백 사용
     arrowParens: 'always', // 화살표 함수 단일 인자 시, 괄호 생략
