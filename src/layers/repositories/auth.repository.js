@@ -1,5 +1,5 @@
-const { User, Auth, UserDetail } = require("../../sequelize/models");
-const bcrypt = require("bcrypt");
+const { User, Auth, UserDetail } = require('../../sequelize/models');
+const bcrypt = require('bcrypt');
 
 /**
  * Auth 테이블에서 email 값이 일치하는 data 반환
@@ -20,8 +20,8 @@ const findByNickname = async (nickname) => {
     const findByNickname = await User.findOne({ where: { nickname } });
     return findByNickname;
 };
-/**
 
+/**
  * @param { string } email @param { string } password
  * @returns Auth 테이블에 email, 해쉬password값 생성
  */
@@ -33,10 +33,11 @@ const createSignUp = async (email, password) => {
     const auth = await Auth.create({
         email,
         password: hash,
-        provider: "local",
+        provider: 'local'
     });
     return auth;
 };
+
 /**
  * @param { string } nickname @param { string } age @param { string } gender
  * @returns User 테이블에 null이였던 nickname , age , gender 를 업데이트
@@ -44,16 +45,18 @@ const createSignUp = async (email, password) => {
 const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
     await User.update({ nickname }, { where: { userId } });
     const findByDetailId = await User.findOne({
-        include: [{ model: UserDetail, attributes: ["detailId"] }],
-        where: { userId },
+        include: [{ model: UserDetail, attributes: ['detailId'] }],
+        where: { userId }
     });
     const detailId = findByDetailId.UserDetail.dataValues.detailId;
 
     await UserDetail.update({ age, gender }, { where: { detailId } });
 };
+
 const deleteUser = async (userId) => {
     await User.destroy({ where: { userId } });
 };
+
 //FUNCTION
 const createTable = async () => {
     await User.create({});

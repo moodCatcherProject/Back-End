@@ -6,17 +6,12 @@ const {
     NotFoundException,
     ConflictException,
     UnkownException,
-    UnhandleMysqlSequelizeError,
-} = require("./exception/custom.exception");
+    UnhandleMysqlSequelizeError
+} = require('./exception/custom.exception');
 
-const {
-    isString,
-    isNumber,
-    isObject
+const { isString, isNumber, isObject } = require('./form/checkType');
 
-} = require("./form/checkType")
-
-const { FormDto } = require("./form/form.dto");
+const { FormDto } = require('./form/form.dto');
 
 module.exports = {
     FormDto,
@@ -32,5 +27,5 @@ module.exports = {
     NotFoundException,
     ConflictException,
     UnkownException,
-    UnhandleMysqlSequelizeError,
+    UnhandleMysqlSequelizeError
 };

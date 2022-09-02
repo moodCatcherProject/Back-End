@@ -1,4 +1,4 @@
-const { User, Post, Item } = require("../../sequelize/models");
+const { User, Post, Item } = require('../../sequelize/models');
 
 //CRUD
 // // POST
@@ -7,7 +7,7 @@ const { User, Post, Item } = require("../../sequelize/models");
  * @param {int} userId
  * @param {string} title
  * @param {string} content
- * 
+ *
  * @returns 게시물 정보를 만들고 나서 그 게시물의 데이터 반환
  */
 Post.findOne({}).then 
@@ -18,10 +18,8 @@ const createPost = async (userId, title, content) => {
         userId,
         title,
         content,
-        imgUrl:"default"
-        
+        imgUrl: 'default'
     });
-    
 };
 /**
  * 
@@ -35,6 +33,7 @@ const findPost = async (postId) => {
 }
 // //ITEM
 
+
 /**
  * 
  * @param {number} postId 
@@ -44,12 +43,15 @@ const findPost = async (postId) => {
 const createItem = async (postId,item) => {
     const { brand, name, imgUrl, price } = item;
     return await Item.create({
-        postId,brand,name,imgUrl,price
+        postId,
+        brand,
+        name,
+        imgUrl,
+        price
     });
-
 };
-// // IMAGE
 
+// // IMAGE
 /**
  * 
  * @param {number} postId 
@@ -66,13 +68,14 @@ const updateImage = async (postId, imgUrl) => {
     //update를 하면 게시물의 정보가 아닌 postId를 return 해주는 것 같아 추가.
     return findPost(postId)
 }
+
 //FUNCTION
 
 
 module.exports = {
     createPost,
-    
+
     createItem,
 
     updateImage
-}
+};

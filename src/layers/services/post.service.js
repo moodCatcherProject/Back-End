@@ -1,5 +1,5 @@
-const postRepository = require("../repositories/post.repository");
-const exception = require("../exceptModels/_.models.loader");
+const postRepository = require('../repositories/post.repository');
+const exception = require('../exceptModels/_.models.loader');
 //CRUD
 // // POST
 /**
@@ -9,17 +9,11 @@ const exception = require("../exceptModels/_.models.loader");
  * @param {Array} items
  * @returns 생성 된 게시물의 데이터
  */
-const createPost = async (userId, title, content, ) => {
-    isExistValue(title, "제목이 빈 값");
-    
+const createPost = async (userId, title, content) => {
+    isExistValue(title, '제목이 빈 값');
 
-    const createPostData = await postRepository.createPost(
-        userId,
-        title,
-        content,
-        
-    );
-    return createPostData
+    const createPostData = await postRepository.createPost(userId, title, content);
+    return createPostData;
 };
 /**
  *
@@ -41,8 +35,6 @@ const updatePost = async (userId, postId, title, content, ) => {
     return createPostData
 };
 
-
-
 // //ITEM
 /**
  * 
@@ -52,12 +44,13 @@ const updatePost = async (userId, postId, title, content, ) => {
  * @returns 생성 된 아이템들의 데이터
  */
 const createItem = async (postId, items) => {
-    const createItemData = []
+    const createItemData = [];
     for (let item of items) {
-        createItemData.push(await postRepository.createItem(postId, item))
+        createItemData.push(await postRepository.createItem(postId, item));
     }
     return createItemData;
 };
+
 // // IMAGE
 /**
  * 
@@ -72,6 +65,7 @@ const updateImage = async(postId,imageFileName) => {
     console.log(updateImageData.imgUrl)
     return updateImageData
 }
+
 //FUNGTION
 /**
  *
