@@ -5,5 +5,6 @@ const Upload = require('./middlewares/postImageUploadMiddleware');
 const upload = new Upload();
 router.route('/').post(postController.createPost);
 
-router.post('/image/:postId', upload.upload.single('postImage'), postController.updateImage);
-module.exports = router;
+router.put("/:postId/image", upload.upload.single("postImage") , postController.updateImage)
+module.exports = router
+

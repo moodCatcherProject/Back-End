@@ -1,9 +1,14 @@
 const postService = require('../services/post.service');
 const exception = require('../exceptModels/_.models.loader');
 
+// CRUD
+// //POST
+
 const createPost = async (req, res, next) => {
     try {
-        const userId = req.user.userId;
+        
+        const userId =  1;
+        
         const { title, content } = req.body.post;
         const { items } = req.body;
         const postData = await postService.createPost(userId, title, content);
@@ -20,11 +25,23 @@ const createPost = async (req, res, next) => {
     }
 };
 
-const updateImage = (req, res, next) => {
+const updatePost = (req, res, next) => {
+    try{
+        const userId = req.user.userId
+        const {postId} = req.params;
+        const { title, content } = req.body.post;
+        const { items } = req.body;
+
+    }catch(err){
+
+    }
+}
+// // IMAGE
+const updateImage = async(req, res, next) => {
     try {
         const { postId } = req.params;
         const imageFileName = req.file ? req.file.key : null;
-        const imageData = postService.updateImage(postId, imageFileName);
+        const imageData = await postService.updateImage(postId,imageFileName)
         return res.status(201).json(
             new exception.FormDto('이미지 업데이트 성공!', {
                 image: imageData
