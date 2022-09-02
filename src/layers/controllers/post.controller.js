@@ -24,6 +24,13 @@ const createPost = async (req, res, next) => {
     }
 };
 
+const findPost = async (req, res, next) => {
+    try {
+    } catch (err) {
+        next(err);
+    }
+};
+
 const updatePost = async (req, res, next) => {
     try {
         const userId = req.user.userId;
@@ -32,7 +39,25 @@ const updatePost = async (req, res, next) => {
         const { items } = req.body;
 
         const postData = await postService.updatePost(userId, postId, title, content);
-        const itemData = await postService.updateItem(items);
+        const itemsData = await postService.updateItem(postData.postId, items);
+
+        return res.status(201).json(
+            new exception.FormDto('게시물 수정 성공', {
+                post: postData,
+                items: itemsData
+            })
+        );
+    } catch (err) {
+        next(err);
+    }
+};
+
+const deletePost = async (req, res, next) => {
+    try {
+        const userId = req.user.userId;
+        const { postId } = req.params;
+        await postService.deletePost(userId, postId);
+        res.status(200).json(new exception.FormDto('게시물 삭제 성공'));
     } catch (err) {
         next(err);
     }
@@ -54,7 +79,9 @@ const updateImage = async (req, res, next) => {
 };
 module.exports = {
     createPost,
+    findPost,
     updatePost,
+    deletePost,
 
     updateImage
 };

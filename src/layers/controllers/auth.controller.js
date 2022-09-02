@@ -149,10 +149,13 @@ const isExistUserNickname = async (userId) => {
 
 const kakaoCallback = async (req, res, next) => {
     try {
-        const data = await isExistUserNickname(req.user.authId);
-        const exist = data.nickname ? true : false;
+        console.log('여기');
         //카카오 Strategy에서 성공한다면 콜백 실행
-        res.status(200).redirect('/upload?exist=' + exist);
+        isExistUserNickname(req.user.authId).then((data) => {
+            const exist = data.nickname ? true : false;
+            //카카오 Strategy에서 성공한다면 콜백 실행
+            res.status(200).redirect('/upload?exist=' + exist);
+        });
     } catch (err) {
         next(err);
     }

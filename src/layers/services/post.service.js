@@ -22,13 +22,15 @@ const createPost = async (userId, title, content) => {
  * @returns 업데이트 된 게시물의 데이터
  */
 const updatePost = async (userId, postId, title, content) => {
-    title = new exception.isString(title).trim;
+    title = new exception.isString({ title }).trim;
+    await isExistPostOfUser(userId, postId);
+    const createPostData = await postRepository.updatePost(postId, title, content);
 
-    const createPostData = await postRepository.createPost(postId, title, content);
     return createPostData;
 };
 
 const deletePost = async (userId, postId) => {
+    await isExistPostOfUser(userId, postId);
     postRepository.deletePost(postId);
     return;
 };
@@ -46,13 +48,14 @@ const createItem = async (postId, items) => {
     for (let item of items) {
         createItemData.push(await postRepository.createItem(postId, item));
     }
+    console.log();
     return createItemData;
 };
 
 const updateItem = async (postId, items) => {
     const updateItemData = [];
     for (let item of items) {
-        createItemData.push(await postRepository.createItem(postId, item));
+        updateItemData.push(await postRepository.updateItem(postId, item));
     }
     return updateItemData;
 };
@@ -84,6 +87,7 @@ const updateImage = async (postId, imageFileName) => {
  */
 const isExistPostOfUser = async (userId, postId) => {
     const postData = await postRepository.findPost(postId);
+
     if (userId === postData.userId) {
         return true;
     } else {
