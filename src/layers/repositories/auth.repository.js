@@ -8,7 +8,6 @@ const bcrypt = require("bcrypt");
  */
 const findByEmail = async (email) => {
     const findByEmail = await Auth.findOne({ where: { email } });
-
     return findByEmail;
 };
 
@@ -20,8 +19,8 @@ const findByNickname = async (nickname) => {
     const findByNickname = await User.findOne({ where: { nickname } });
     return findByNickname;
 };
-/**
 
+/**
  * @param { string } email @param { string } password
  * @returns Auth 테이블에 email, 해쉬password값 생성
  */
@@ -37,6 +36,7 @@ const createSignUp = async (email, password) => {
     });
     return auth;
 };
+
 /**
  * @param { string } nickname @param { string } age @param { string } gender
  * @returns User 테이블에 null이였던 nickname , age , gender 를 업데이트
@@ -48,9 +48,13 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
         where: { userId },
     });
     const detailId = findByDetailId.UserDetail.dataValues.detailId;
-
-    await UserDetail.update({ age, gender }, { where: { detailId } });
+    await UserDetail.update({ age }, { where: { detailId: userId } });
+    await UserDetail.update({ gender }, { where: { detailId: userId } });
+    // console.log(userId, detailId);
+    // console.log(age);
+    // console.log(gender);
 };
+
 const deleteUser = async (userId) => {
     await User.destroy({ where: { userId } });
 };
@@ -67,5 +71,3 @@ module.exports = {
     updateNicknameAgeGender,
     deleteUser,
 };
-
-// userId에서 nickname을 업데이트하고 userdetail에서 age,gender를 업데이트한다

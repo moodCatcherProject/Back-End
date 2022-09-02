@@ -26,7 +26,5 @@ authRouter.delete("signout", authController.deleteUser);
 //카카오 로그인(/api/auth/kakao)
 authRouter.get("/kakao", passport.authenticate("kakao"));
 
-
-
 authRouter.get("/kakao/disconnect");
 module.exports = authRouter;

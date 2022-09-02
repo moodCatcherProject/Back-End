@@ -14,28 +14,22 @@ const localSignUp = async (req, res, next) => {
             password,
             confirmPw
         );
-
-        return res.status(201).json(
-            new exception.FormDto("회원가입 성공", {
-                signUp,
-            })
-        );
+        return res
+            .status(201)
+            .json(new exception.FormDto("회원가입 성공", { signUp }));
     } catch (err) {
         next(err);
     }
 };
 
-
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const updateNicknameAgeGender = async (req, res, next) => {
     const userId = req.user.userId;
-
     const { nickname, age, gender } = req.body;
     try {
         await joi
             .object({
                 nickname: joi.string().min(2).max(16).trim().required(),
-
                 age: joi.required(),
                 gender: joi.required(),
             })
@@ -49,21 +43,17 @@ const updateNicknameAgeGender = async (req, res, next) => {
                 nickname,
                 age,
                 gender,
-
                 userId
             );
         return res.status(200).json(
             new exception.FormDto("닉네임 나이 추가 성공", {
-
                 updateNicknameAgeGender,
             })
         );
     } catch (err) {
-
         next(err);
     }
 };
-
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const checkEmail = async (req, res, next) => {
@@ -79,11 +69,9 @@ const checkEmail = async (req, res, next) => {
         await authService.checkEmail(email);
         return res.status(200).json(new exception.FormDto("이메일 확인 성공"));
     } catch (err) {
-
         next(err);
     }
 };
-
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const checkNickname = async (req, res, next) => {
@@ -91,9 +79,7 @@ const checkNickname = async (req, res, next) => {
     try {
         await joi
             .object({
-
                 nickname: joi.string().min(2).max(16).trim().required(), // 닉네임 정규식
-
             })
             .validateAsync({
                 nickname,
@@ -101,7 +87,6 @@ const checkNickname = async (req, res, next) => {
         await authService.checkNickname(nickname);
         return res.status(200).json(new exception.FormDto("닉네임 확인 성공"));
     } catch (err) {
-
         next(err);
     }
 };
@@ -117,7 +102,6 @@ const deleteUser = async (req, res, next) => {
         next(err);
     }
 };
-
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const localLogin = async (req, res, next) => {
@@ -175,6 +159,7 @@ const kakaoCallback = async (req, res, next) => {
         next(err);
     }
 };
+
 module.exports = {
     localSignUp,
     updateNicknameAgeGender,
@@ -182,6 +167,5 @@ module.exports = {
     checkNickname,
     deleteUser,
     localLogin,
-
     kakaoCallback,
 };

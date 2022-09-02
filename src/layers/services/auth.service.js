@@ -1,29 +1,23 @@
 const authRepository = require("../repositories/auth.repository");
 const exception = require("../exceptModels/_.models.loader");
 
-
 // EM :8자~ 30자
 // PW :영소대문자+숫자+특수문자 8자 ~ 20자
 // NN : 한글, 영소 대문자. 숫자 2자~16자
-
 
 /**
  * @throws { Error } @param { string } email @param { string } password @param { string } confirmPw
  * @returns { Promise<{ email: string, password: string }> } 이메일,비밀번호 생성
  */
- const localSignUp = async (email, password, confirmPw) => {
+const localSignUp = async (email, password, confirmPw) => {
     const ExistUser = await authRepository.findByEmail(email);
     if (ExistUser) {
-
         throw new exception.BadRequestException("이메일 중복 확인 실패");
     }
-
     if (password !== confirmPw) {
         throw new exception.BadRequestException("비밀번호 에러");
     }
-
     const SignUp = await authRepository.createSignUp(email, password);
-
     return SignUp;
 };
 /**
@@ -39,7 +33,6 @@ const updateNicknameAgeGender = async (nickname, userId, age, gender) => {
             userId
             // 닉네임이 중복 될 경우
         );
-
     return updatedNicknameAgeGender;
 };
 /**
@@ -70,11 +63,6 @@ const deleteUser = async (userId) => {
     return;
 };
 
-
-// EM :8자~ 30자
-// PW :영소대문자+숫자+특수문자 8자 ~ 20자
-// NN : 한글, 영소 대문자. 숫자 2자~16자
-
 /**
  * @param {string} email
  * @param {string} password
@@ -86,8 +74,6 @@ const localLogin = async (email, password) => {
     const exUser = await authRepository.findByEmail(email);
     if (!exUser)
         throw new exception.NotFoundException("회원정보가 일치하지 않습니다.");
-
-
 
     const result = await bcrypt.compare(password, exUser.password);
     if (!result)
@@ -102,5 +88,4 @@ module.exports = {
     checkNickname,
     deleteUser,
     localLogin,
-
 };
