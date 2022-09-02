@@ -90,7 +90,7 @@ const localLogin = async (req, res, next) => {
                 isExistUserNickname(req.user.authId).then((data) => {
                     const exist = data.nickname ? true : false;
 
-                    return res.status(200).redirect('/upload?exist=' + exist);
+                    res.status(200).redirect('http://localhost:3000/main?exist=' + exist);
                 });
             } catch (err) {
                 console.log(err);
@@ -118,7 +118,7 @@ const kakaoCallback = async (req, res, next) => {
         isExistUserNickname(req.user.authId).then((data) => {
             const exist = data.nickname ? true : false;
             //카카오 Strategy에서 성공한다면 콜백 실행
-            res.status(200).redirect('/upload?exist=' + exist);
+            res.status(200).redirect('http://localhost:3000/main?exist=' + exist);
         });
     } catch (err) {
         next(err);

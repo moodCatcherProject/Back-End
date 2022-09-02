@@ -29,10 +29,27 @@ const updatePost = async (userId, postId, title, content) => {
     return createPostData;
 };
 
+/**
+ *
+ * @param {number} userId
+ * @param {number} postId
+ * @returns 없음.
+ */
 const deletePost = async (userId, postId) => {
     await isExistPostOfUser(userId, postId);
     postRepository.deletePost(postId);
     return;
+};
+// // // POST ADD
+/**
+ *
+ * @param {number} userId
+ * @param {number} repPostId
+ * @returns 대표 게시물로 지정된 postId
+ */
+const updateRepPost = async (userId, repPostId) => {
+    isExistPostOfUser(userId, repPostId);
+    return await postRepository.updateRepPost(userId, repPostId);
 };
 
 // //ITEM
@@ -52,6 +69,13 @@ const createItem = async (postId, items) => {
     return createItemData;
 };
 
+/**
+ *
+ * @param {number} postId
+ * @param {Array} items
+ * @desc items는 배열 그대로 받아 repository의 함수를 배열 수만큼 실행합니다.
+ * @returns 업데이트 된 아이템의 데이터
+ */
 const updateItem = async (postId, items) => {
     const updateItemData = [];
     for (let item of items) {
@@ -99,6 +123,8 @@ module.exports = {
     createPost,
     updatePost,
     deletePost,
+
+    updateRepPost,
 
     createItem,
     updateItem,
