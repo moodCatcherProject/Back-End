@@ -19,7 +19,7 @@ beforeAll(async () => {
 //describe : 테스트를 나눠주는 단위
 describe('회원가입 테스트', () => {
     //request(app).메소드(URL).send(body에 보내줄 값).expect(statusCode, done)
-    //
+
     test('로그인 안 했으면 로컬 회원가입 하기', (done) => {
         request(app)
             .post('/api/auth/signup')
@@ -75,17 +75,16 @@ describe('로그인 테스트', () => {
     });
 });
 
+const FormData = require('form-data');
+const fs = require('fs');
 
-const FormData = require("form-data")
-const fs = require("fs")
-describe("게시물 작성하기", () => {
-
-    let post = new FormData();
-
-    post.append('postImage', fs.readFileSync('test/testPicture.jpg'), 'postImage');
-    post.append('title', '테스트용 제목입니다.');
-    post.append('content', '테스트용 내용입니다.');
-    console.log(post);
+describe('게시물 작성하기', () => {
+    // let post = new FormData();
+    jest.setTimeout(30000);
+    // post.append('postImage', fs.readFileSync('test/testPicture.jpg'), 'postImage');
+    // post.append('title', '테스트용 제목입니다.');
+    // post.append('content', '테스트용 내용입니다.');
+    // console.log(post);
     let items = [
         {
             imgUrl: 'http://',
@@ -100,7 +99,7 @@ describe("게시물 작성하기", () => {
     const agent = request.agent(app);
     //beforeEach 각 다음의 test모듈들이 실행될 때 이 테스트를 먼저 수행
     //각각의 테스트들을 실행하기 전!!
-    test("agent 에 로그인 " , (done) => {
+    test('agent 에 로그인 ', (done) => {
         agent
             .post('/api/auth/login')
             .send({
@@ -108,30 +107,51 @@ describe("게시물 작성하기", () => {
                 password: '1234asdf!'
             })
             .expect(200)
+            .expect('Location', '/')
             .end((err, res) => {
                 console.log(res.body, 'test@naver.com 로그인');
                 done();
             });
     });
-
-    test("agent 에 닉네임, 성별, 나이 추가", done => {
+    test('agent 에 닉네임, 성별, 나이 추가', (done) => {
         agent
-            .get(`/api/auth/checkNickname?nickname=${encodeURI("테스트 닉네임")}`)
-            .
-    })
-    test("이미지를 뺀 게시물을 생성", (done) => {
-        agent
-            .post("/api/posts")
+            .post('/api/auth/detail')
             .send({
-                post : {
-                    title : ""
-                }
+                nickname: '권영',
+                gender: '남자',
+                age: '20대'
             })
-    })
-    
-    
-  
-
-
+            .expect(201, done);
+    });
+    test('이미지를 뺀 게시물을 생성', (done) => {
+        agent
+            .post('/api/posts')
+            .send({
+                post: {
+                    title: '테스트용 제목입니다.',
+                    content: '내용입니다. 테스트용!'
+                },
+                items: [
+                    {
+                        imgUrl: 'http://',
+                        brand: '나이키',
+                        name: '가나다 운동화',
+                        price: '79000원'
+                    },
+                    {
+                        imgUrl: 'http://',
+                        brand: '아디다스',
+                        name: '라마바 운동화',
+                        price: '100000원'
+                    }
+                ]
+            })
+            .expect(201)
+            .end((err, res) => {
+                console.log(res.body);
+                console.log(res.body.data.items);
+                done();
+            });
+    });
 });
 afterAll(async () => {});

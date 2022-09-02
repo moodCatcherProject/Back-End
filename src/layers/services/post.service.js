@@ -10,8 +10,6 @@ const exception = require('../exceptModels/_.models.loader');
  * @returns 생성 된 게시물의 데이터
  */
 const createPost = async (userId, title, content) => {
-    isExistValue(title, '제목이 빈 값');
-
     const createPostData = await postRepository.createPost(userId, title, content);
 
     return createPostData;
@@ -25,13 +23,12 @@ const createPost = async (userId, title, content) => {
  */
 const updatePost = async (userId, postId, title, content) => {
     title = new exception.isString(title).trim;
-    isExistPostOfUser(userId, postId);
+
     const createPostData = await postRepository.createPost(postId, title, content);
     return createPostData;
 };
 
 const deletePost = async (userId, postId) => {
-    isExistPostOfUser(userId, postId);
     postRepository.deletePost(postId);
     return;
 };

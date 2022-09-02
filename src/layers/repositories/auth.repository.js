@@ -48,6 +48,7 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
         include: [{ model: UserDetail, attributes: ['detailId'] }],
         where: { userId }
     });
+
     const detailId = findByDetailId.UserDetail.dataValues.detailId;
 
     await UserDetail.update({ age, gender }, { where: { detailId } });
@@ -68,7 +69,7 @@ module.exports = {
     findByNickname,
     createSignUp,
     updateNicknameAgeGender,
-    deleteUser,
+    deleteUser
 };
 
 // userId에서 nickname을 업데이트하고 userdetail에서 age,gender를 업데이트한다
