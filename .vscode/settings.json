@@ -2,9 +2,10 @@
 {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "[javascript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    }
-    
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "editor.formatOnSave": true
+
     /* 설정 가능한 항목들
     prettier.arrowParens
     prettier.bracketSpacing
@@ -24,4 +25,4 @@
     prettier.useTabs
     prettier.vueIndentScriptAndStyle
     */
-  }
+}
