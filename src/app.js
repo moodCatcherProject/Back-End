@@ -13,14 +13,8 @@ const cors = require('cors');
 const { error, error404 } = require('./layers/routes/middlewares/error');
 const whitelist = ['http://localhost:3000/'];
 const corsOptions = {
-    origin: function (origin, callback) {
-        if (whitelist.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            console.log(origin);
-            callback(new Error('NOT_ALLOWED_ORIGIN'));
-        }
-    }
+    origin: '*',
+    credential: true
 };
 class App {
     constructor() {

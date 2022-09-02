@@ -89,10 +89,8 @@ const localLogin = async (req, res, next) => {
                 // done(null, user)로 로직이 성공적이라면, 세션에 사용자 정보를 저장해놔서 로그인 상태가 된다.
                 isExistUserNickname(req.user.authId).then((data) => {
                     const exist = data.nickname ? true : false;
-                    res.setHeader('Set-Cookie', `connect.id=12`);
-                    res.status(200).redirect(
-                        `http://localhost:3000/?exist=${exist}&cookie=${req.session.cookie}`
-                    );
+
+                    res.status(200).redirect(`http://localhost:3000/?exist=${exist}}`);
                 });
             } catch (err) {
                 console.log(err);
