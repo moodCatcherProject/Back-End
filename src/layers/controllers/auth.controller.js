@@ -10,12 +10,7 @@ const localSignUp = async (req, res, next) => {
     const { email, password, confirmPw } = req.body;
     try {
         const signUp = await authService.localSignUp(email, password, confirmPw);
-
-        return res.status(201).json(
-            new exception.FormDto('회원가입 성공', {
-                signUp
-            })
-        );
+        return res.status(201).json(new exception.FormDto('회원가입 성공', { signUp }));
     } catch (err) {
         next(err);
     }
@@ -24,13 +19,11 @@ const localSignUp = async (req, res, next) => {
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const updateNicknameAgeGender = async (req, res, next) => {
     const userId = req.user.userId;
-
     const { nickname, age, gender } = req.body;
     try {
         await joi
             .object({
                 nickname: joi.string().min(2).max(16).trim().required(),
-
                 age: joi.required(),
                 gender: joi.required()
             })
@@ -43,7 +36,6 @@ const updateNicknameAgeGender = async (req, res, next) => {
             nickname,
             age,
             gender,
-
             userId
         );
         return res.status(200).json(
