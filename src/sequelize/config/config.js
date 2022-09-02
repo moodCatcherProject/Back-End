@@ -15,7 +15,7 @@ const development = {
     typeCast: true,
   },
   define: {
-    timestamps: true,
+    timestamps: false,
   },
 };
 
@@ -25,6 +25,8 @@ const production = {
   database: env.MYSQL_DATABASE,
   host: env.MYSQL_HOST,
   dialect: "mysql",
+  logging : false
+
   //port: env.MYSQL_PORT
 };
 
@@ -42,6 +44,7 @@ const test = {
   define: {
     timestamps: true,
   },
+  logging : false
   //port: env.MYSQL_PORT
 };
 

@@ -37,15 +37,16 @@ class S3ImageController{
         limits: { fileSize: 5 * 1024 * 1024 } // 5메가로 용량 제한
     },     
     );
+    //해당 게시물의 이미지 삭제
     delete_file=async(req,res,next)=>{
         const {postId}=req.params
         const imageName = await Post.findOne({
           where : {postId}
         })
-        console.log(imageName.imageUrl)
+        console.log(imageName.imgUrl)
         let params = {
           Bucket: 'gwonyeong',
-          Key:`${imageName.imageUrl}`
+          Key:`${imageName.imgUrl}`
         };
     
         try {

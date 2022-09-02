@@ -77,7 +77,7 @@ describe("로그인 테스트", () => {
 
 const FormData = require("form-data")
 const fs = require("fs")
-describe("게시물 작성하기", (done) => {
+describe("게시물 작성하기", () => {
     let post = new FormData();
     
     
@@ -98,7 +98,7 @@ describe("게시물 작성하기", (done) => {
     const agent = request.agent(app);
     //beforeEach 각 다음의 test모듈들이 실행될 때 이 테스트를 먼저 수행
     //각각의 테스트들을 실행하기 전!!
-    beforeEach((done) => {
+    test("agent 에 로그인 " , (done) => {
         agent
             .post("/api/auth/login")
             .send({
@@ -111,9 +111,19 @@ describe("게시물 작성하기", (done) => {
                 done();
             });
     });
+    test("agent 에 닉네임, 성별, 나이 추가", done => {
+        agent
+            .get(`/api/auth/checkNickname?nickname=${encodeURI("테스트 닉네임")}`)
+            .
+    })
     test("이미지를 뺀 게시물을 생성", (done) => {
-        request(app)
-            .post
+        agent
+            .post("/api/posts")
+            .send({
+                post : {
+                    title : ""
+                }
+            })
     })
     
     
