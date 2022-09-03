@@ -11,8 +11,6 @@ const exception = require('../exceptModels/_.models.loader');
  *
  * @returns 게시물 정보를 만들고 나서 그 게시물의 데이터 반환
  */
-Post.findOne({}).then;
-
 const createPost = async (userId, title, content) => {
     return await Post.create({
         userId,
@@ -30,6 +28,15 @@ const findPost = async (postId) => {
     return await Post.findOne({
         where: { postId }
     });
+};
+
+const findRepPost = async (userId) => {
+    const repPostIdAttr = await UserDetail.findOne({
+        where: { detailId: userId },
+        attributes: ['repPostId']
+    });
+
+    return await Post.findByPk(repPostIdAttr.repPostId);
 };
 /**
  *
@@ -161,7 +168,13 @@ const updateImage = async (postId, imgUrl) => {
 
     return await findPost(postId);
 };
-
+// // NOTICE
+const isExistNotice = async (userId) => {
+    return await UserDetail.findOne({
+        where: { detailId: userId },
+        attributes: ['isExistsNotice']
+    });
+};
 //FUNCTION
 
 module.exports = {
@@ -170,10 +183,13 @@ module.exports = {
     findPost,
     deletePost,
 
+    findRepPost,
     updateRepPost,
 
     createItem,
     updateItem,
 
-    updateImage
+    updateImage,
+
+    isExistNotice
 };

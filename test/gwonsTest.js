@@ -1,9 +1,12 @@
-const exception = require('../src/layers/exceptModels/_.models.loader');
+const { Post } = require('../src/sequelize/models');
 
-const gwon = 453;
+const { sequelize } = require('./sequelize/models');
 
-try {
-    const title = new exception.isString({ title: req.body.title }).value;
-} catch (err) {
-    console.log(err);
-}
+sequelize
+    .sync({ force: true })
+    .then(() => {
+        console.log('데이터베이스 연결 성공');
+    })
+    .catch((err) => {
+        console.error(err);
+    });

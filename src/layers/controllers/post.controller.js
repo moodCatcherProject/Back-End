@@ -26,6 +26,14 @@ const createPost = async (req, res, next) => {
 
 const findPost = async (req, res, next) => {
     try {
+        const { page } = req.query;
+        const userId = req.user.userId;
+        //로그인한 사용자의 알림 유무 체크
+        const isExistNotice = await postService.isExistNotice(userId);
+        //로그인한 사용자의 대표 게시물 체크
+        const repPostData = await postService.findRepPost(userId);
+
+        console.log(isExistNotice, repPostData);
     } catch (err) {
         next(err);
     }
@@ -90,6 +98,9 @@ const updateImage = async (req, res, next) => {
         next(err);
     }
 };
+
+// // NOTICE
+
 module.exports = {
     createPost,
     findPost,
