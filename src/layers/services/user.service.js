@@ -2,6 +2,15 @@ const userRepository = require('../repositories/user.repository');
 const authRepository = require('../repositories/auth.repository');
 const exception = require('../exceptModels/_.models.loader');
 
+/**
+ * 유저 정보 수정
+ * @param {number} userId
+ * @param {string} nickname
+ * @param {string} gender
+ * @param {string} age
+ * @param {string} imageFileName
+ * @returns { Promise<{userId:number, nickname:string, imgUrl:string, grade:string} | null>}
+ */
 const updateUser = async (userId, nickname, gender, age, imageFileName) => {
     new exception.isString({ nickname }).value;
     new exception.isString({ gender }).value;
@@ -39,6 +48,11 @@ const updateUser = async (userId, nickname, gender, age, imageFileName) => {
     return updateUser;
 };
 
+/**
+ * 회원탈퇴
+ * @param {number} userId
+ * @returns
+ */
 const deleteUser = async (userId) => {
     await userRepository.deleteUser(userId);
     return;
