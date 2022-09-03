@@ -73,7 +73,7 @@ const localLogin = async (req, res, next) => {
 
         if (!user) {
             // done()의 3번째 인자 { message: '비밀번호가 일치하지 않습니다.' }가 실행
-            return res.status(400).send(info.message);
+            return res.status(404).send(info.message);
         }
 
         //? done(null, exUser)가 처리된경우, 즉 로그인이 성공(user가 false가 아닌 경우), passport/index.js로 가서 실행시킨다.
@@ -90,7 +90,7 @@ const localLogin = async (req, res, next) => {
                 isExistUserNickname(req.user.authId).then((data) => {
                     const exist = data.nickname ? true : false;
 
-                    return res.status(200).redirect('/upload?exist=' + exist);
+                    res.status(200).redirect(`http://localhost:3000/?exist=${exist}}`);
                 });
             } catch (err) {
                 console.log(err);
@@ -118,7 +118,7 @@ const kakaoCallback = async (req, res, next) => {
         isExistUserNickname(req.user.authId).then((data) => {
             const exist = data.nickname ? true : false;
             //카카오 Strategy에서 성공한다면 콜백 실행
-            res.status(200).redirect('/upload?exist=' + exist);
+            res.status(200).redirect(`http://localhost:3000/?exist=${exist}`);
         });
     } catch (err) {
         next(err);

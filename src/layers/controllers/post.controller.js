@@ -62,6 +62,19 @@ const deletePost = async (req, res, next) => {
         next(err);
     }
 };
+
+// // //POST ADD
+
+const updateRepPost = async (req, res, next) => {
+    const userId = req.user.userId;
+    const { postId } = req.params;
+    const repPostIdData = await postService.updateRepPost(userId, postId);
+    res.status(200).json(
+        new exception.FormDto('대표 게시물 지정 성공', {
+            repPostId: repPostIdData
+        })
+    );
+};
 // // IMAGE
 const updateImage = async (req, res, next) => {
     try {
@@ -82,6 +95,8 @@ module.exports = {
     findPost,
     updatePost,
     deletePost,
+
+    updateRepPost,
 
     updateImage
 };
