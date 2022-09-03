@@ -45,7 +45,7 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
     new exception.isString({ gender }).value;
     new exception.isString({ age }).value;
 
-    const checkNickname = /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,16}$/;
+    const checkNickname = /^(?=.*[a-zA-Z0-9가-힣])[a-zA-Z0-9가-힣]{2,16}$/;
     if (checkNickname.test(nickname) == false) {
         throw new exception.BadRequestException('닉네임 유효성 에러');
     }
@@ -101,7 +101,7 @@ const checkEmail = async (email) => {
 const checkNickname = async (nickname) => {
     new exception.isString({ nickname }).value;
 
-    const checkNickname = /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,16}$/;
+    const checkNickname = /^(?=.*[a-zA-Z0-9가-힣])[a-zA-Z0-9가-힣]{2,16}$/;
     if (checkNickname.test(nickname) == false) {
         throw new exception.BadRequestException('닉네임 형식 확인 실패!');
     }
