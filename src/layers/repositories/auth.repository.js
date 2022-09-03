@@ -63,5 +63,6 @@ module.exports = {
     findByEmail,
     findByNickname,
     createSignUp,
+
     updateNicknameAgeGender
 };

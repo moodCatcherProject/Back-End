@@ -11,7 +11,11 @@ const bodyParser = require('body-parser');
 const schedule = require('./nodeScheduller');
 const cors = require('cors');
 const { error, error404 } = require('./layers/routes/middlewares/error');
-
+const whitelist = ['http://localhost:3000/'];
+const corsOptions = {
+    origin: '*',
+    credential: true
+};
 class App {
     constructor() {
         this.app = express();
@@ -29,7 +33,7 @@ class App {
                 saveUninitialized: false,
                 secret: process.env.COOKIE_SECRET,
                 cookie: {
-                    httpOnly: true,
+                    httpOnly: false,
                     secure: false
                 }
             })
@@ -48,7 +52,7 @@ class App {
         this.app.use(passport.initialize()); // 요청 객체에 passport 설정을 심음
         this.app.use(passport.session()); // req.session 객체에 passport정보를 추가 저장
         this.app.use(morgan('dev')); //로그 생성
-        this.app.use(cors()); // 화이트 리스트 생성 예정
+        this.app.use(cors(corsOptions)); // 화이트 리스트 생성 예정
         this.app.use(express.json({ limit: '10mb' }));
         this.app.use(express.urlencoded({ limit: '10mb', extended: false }));
         this.app.use('/', express.static(path.join(__dirname, '../public')));
