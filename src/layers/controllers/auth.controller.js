@@ -73,7 +73,7 @@ const localLogin = async (req, res, next) => {
 
         if (!user) {
             // done()의 3번째 인자 { message: '비밀번호가 일치하지 않습니다.' }가 실행
-            return res.status(400).send(info.message);
+            return res.status(404).send(info.message);
         }
 
         //? done(null, exUser)가 처리된경우, 즉 로그인이 성공(user가 false가 아닌 경우), passport/index.js로 가서 실행시킨다.
