@@ -7,7 +7,7 @@ const Upload = require('./middlewares/postImageUploadMiddleware');
 const upload = new Upload();
 
 // 유저 정보 조회(/api/users/:userId)
-userRouter.get('/:userId', userController.getUser);
+userRouter.get('/:userId', isLoggedIn, userController.getUser);
 
 // 유저 정보 수정(/api/users)
 userRouter.put('/', isLoggedIn, upload.upload.single('userValue'), userController.updateUser);
