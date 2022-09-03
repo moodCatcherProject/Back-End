@@ -1,14 +1,34 @@
-const { User } = require('../../sequelize/models');
+const { User, UserDetail } = require('../../sequelize/models');
 
 /**
- * User 테이블에서 userId 값이 일치하는 data 반환
+ * User 테이블에서 UserDetail 테이블을 참조하여 userId 값이 일치하는 data 반환
  * @param {number} userId
- * @returns { Promise<{userId:number, nickname:string, imgUrl:string, grade:string} | null>}
+ * @returns { Promise<{userId:number, nickname:string, imgUrl:string, grade:string, gender:string, age:string, moodPoint:number, repPostId:number, isExistsNotice:boolean } | null>}
  */
-const findUser = async (userId) => {
-    return await User.findOne({
-        where: { userId }
+const getUserStatusByUserId = async (userId) => {
+    const userStatus = await User.findOne({
+        where: { userId },
+        raw: true,
+        include: [
+            {
+                model: UserDetail,
+                attributes: { exclude: ['detailId'] },
+                raw: true
+            }
+        ]
     });
+
+    return {
+        userId: userStatus['userId'],
+        nickname: userStatus['nickname'],
+        imgUrl: process.env.S3_STORAGE_URL + userStatus['imgUrl'],
+        grade: userStatus['grade'],
+        gender: userStatus['UserDetail.gender'],
+        age: userStatus['UserDetail.age'],
+        moodPoint: userStatus['UserDetail.moodPoint'],
+        repPostId: userStatus['UserDetail.repPostId'],
+        isExistsNotice: userStatus['UserDetail.isExistsNotice']
+    };
 };
 
 /**
@@ -20,7 +40,7 @@ const findUser = async (userId) => {
 const updateUserImage = async (userId, imageFileName) => {
     await User.update({ imgUrl: imageFileName }, { where: { userId } });
 
-    return await findUser(userId);
+    return await getUserStatusByUserId(userId);
 };
 
 /**
@@ -32,7 +52,7 @@ const deleteUser = async (userId) => {
 };
 
 module.exports = {
-    findUser,
+    getUserStatusByUserId,
     updateUserImage,
     deleteUser
 };

@@ -3,6 +3,19 @@ const userService = require('../services/user.service');
 const exception = require('../exceptModels/_.models.loader');
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
+const getUser = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+
+        const userStatus = await userService.getUser(userId);
+
+        return res.status(200).json(new exception.FormDto('유저 정보 조회 성공', { userStatus }));
+    } catch (err) {
+        next(err);
+    }
+};
+
+/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const updateUser = async (req, res, next) => {
     try {
         const userId = req.user.userId;
@@ -35,6 +48,7 @@ const deleteUser = async (req, res, next) => {
 };
 
 module.exports = {
+    getUser,
     updateUser,
     deleteUser
 };

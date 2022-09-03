@@ -3,6 +3,18 @@ const authRepository = require('../repositories/auth.repository');
 const exception = require('../exceptModels/_.models.loader');
 
 /**
+ * 유저 정보 조회
+ * @param {number} userId
+ * @returns { Promise<{userId:number, nickname:string, imgUrl:string, grade:string, gender:string, age:string, moodPoint:number, repPostId:number, isExistsNotice:boolean } | null>}
+ */
+const getUser = async (userId) => {
+    if (!userId) throw new exception.NotFoundException('유저 정보 없음');
+    const userStatus = await userRepository.getUserStatusByUserId(userId);
+
+    return userStatus;
+};
+
+/**
  * 유저 정보 수정
  * @param {number} userId
  * @param {string} nickname
@@ -31,7 +43,7 @@ const updateUser = async (userId, nickname, gender, age, imageFileName) => {
     }
 
     //변경할 닉네임 값을 기존 닉네임과 동일하게 입력했을 때는 닉네임 중복 확인 안함.
-    const user = await userRepository.findUser(userId);
+    const user = await userRepository.getUserStatusByUserId(userId);
     if (!user) throw new exception.NotFoundException('유저 정보 없음');
     if (nickname !== user.nickname) {
         const ExistsNickname = await authRepository.findByNickname(nickname);
@@ -43,7 +55,6 @@ const updateUser = async (userId, nickname, gender, age, imageFileName) => {
     await authRepository.updateNicknameAgeGender(nickname, age, gender, userId);
 
     const updateUser = await userRepository.updateUserImage(userId, imageFileName);
-    updateUser.imgUrl = process.env.S3_STORAGE_URL + updateUser.imgUrl;
 
     return updateUser;
 };
@@ -59,6 +70,7 @@ const deleteUser = async (userId) => {
 };
 
 module.exports = {
+    getUser,
     updateUser,
     deleteUser
 };

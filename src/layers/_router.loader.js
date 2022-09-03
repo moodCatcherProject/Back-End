@@ -10,6 +10,6 @@ router.use('/search', searchRouter);
 router.use('/auth', authRouter);
 router.use('/comments', commentRouter);
 router.use('/posts', postRouter);
-router.use('/user', userRouter);
+router.use('/users', userRouter);
 
 module.exports = router;
