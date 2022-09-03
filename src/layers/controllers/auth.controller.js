@@ -26,7 +26,7 @@ const updateNicknameAgeGender = async (req, res, next) => {
             gender,
             userId
         );
-        return res.status(200).json(
+        return res.status(201).json(
             new exception.FormDto('닉네임 나이 추가 성공', {
                 updateNicknameAgeGender
             })
