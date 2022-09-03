@@ -3,8 +3,13 @@ const userRouter = express.Router();
 const userController = require('../controllers/user.controller');
 const exception = require('../exceptModels/_.models.loader');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares/authMiddle');
+const Upload = require('./middlewares/postImageUploadMiddleware');
+const upload = new Upload();
 
-// 로그아웃(api/user/logout)
+// 정보 수정(/api/user)
+userRouter.put('/', isLoggedIn, upload.upload.single('userValue'), userController.updateUser);
+
+// 로그아웃(/api/user/logout)
 userRouter.get('/logout', isLoggedIn, (req, res) => {
     req.logout();
     req.session.destroy();
