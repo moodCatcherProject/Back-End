@@ -10,7 +10,10 @@ const createComment = async (userId, content, postId) => {
         throw new exception.BadRequestException('댓글 내용 없음.');
     }
 
-    // Posts에서 게시글을 findAll으로 찾아서 없는 게시글일때 에러처리
+    const post = await commentRepository.findPostByPostId(postId);
+    if (post === null) {
+        throw new exception.BadRequestException('게시물 없음.');
+    }
 
     const createdComment = await commentRepository.createComment(userId, content, postId);
     return createdComment;
@@ -25,9 +28,21 @@ const updateComment = async (userId, content, commentId) => {
         throw new exception.BadRequestException('댓글 내용 없음.');
     }
 
-    // Posts에서 게시글을 findAll으로 찾아서 없는 게시글일때 에러처리
-    // 본인이 쓴 글이 아닐때
-    // 댓글이 없을때
+    const post = await commentRepository.findUserIdByPostId(userId);
+    if (!post) {
+        throw new exception.BadRequestException('게시물 없음.');
+    } // -> 테스트중 3번 postId를 못받음 못씀 어케해서 postId를 뽑아서 해야되나
+
+    const comment = await commentRepository.findCommentByCommentId(commentId);
+    if (comment === null) {
+        throw new exception.BadRequestException('댓글이 없음.');
+    }
+
+    const user = await commentRepository.findUserIdByCommentId(userId);
+    console.log(userId);
+    if (user !== userId) {
+        throw new exception.BadRequestException('댓글의 작성자만 수정 가능합니다.');
+    } // -> 반 성공? 2번
 
     const updatedComment = await commentRepository.updateComment(userId, content, commentId);
     return updatedComment;
@@ -35,12 +50,23 @@ const updateComment = async (userId, content, commentId) => {
 
 /**
  * @throws { Error } @param { number } userId @param { number } commentId
- * @returns
+ * @returns { Promise<{ userId: number, commentId: number }> } commentId 삭제
  */
 const deleteComment = async (userId, commentId) => {
-    // 본인이 쓴글이 아닐때
-    // 삭제할 게시물이 없을때
-    // 삭제할 댓글이 없을때
+    const A = await commentRepository.findA(userId);
+    if (A) {
+        throw new exception.BadRequestException('게시물 없음.');
+    }
+
+    const C = await commentRepository.findC(commentId);
+    if (A) {
+        throw new exception.BadRequestException('댓글이 없음.');
+    }
+
+    const B = await commentRepository.findB(userId);
+    if (A) {
+        throw new exception.BadRequestException('댓글의 작성자만 삭제 가능합니다.');
+    }
 
     const deleteComment = await commentRepository.deleteComment(userId, commentId);
     return deleteComment;

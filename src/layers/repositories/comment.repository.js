@@ -1,4 +1,39 @@
-const { Comment } = require('../../sequelize/models');
+const { Comment, Post } = require('../../sequelize/models');
+
+/**
+ * @param { number } postId
+ * @returns postId로 게시글 한개를 찾음
+ */
+const findPostByPostId = async (postId) => {
+    const findpost = await Post.findOne({
+        where: { postId },
+        raw: true
+    });
+    return findpost;
+};
+
+const findCommentByCommentId = async (commentId) => {
+    const findComment = await Comment.findOne({
+        where: { commentId },
+        raw: true
+    });
+    return findComment;
+};
+
+const findUserIdByCommentId = async (userId) => {
+    const findComment = await Comment.findOne({
+        where: { userId },
+        raw: true
+    });
+    return findComment.userId;
+};
+
+const findUserIdByPostId = async (userId) => {
+    const findPostId = await Post.findOne({
+        userId
+    });
+    return findPostId;
+}; // userId에서 postId를 찾아봐야 할것같은데?
 
 /**
  * @param { number } userId @param { string } content @param { number } postId
@@ -14,7 +49,6 @@ const createComment = async (userId, content, postId) => {
 };
 
 /**
- *
  * @param { number } userId @param { string } content @param { number } commentId
  * @returns { Promise<{ userId: number, content: string, commentId: number }> } Comment테이블에 userId, content, postId 업데이트
  */
@@ -24,7 +58,6 @@ const updateComment = async (userId, content, commentId) => {
 };
 
 /**
- *
  * @param { number } userId @param { string } commentId
  * @returns { Promise<{ userId: number, commentId: number }> } Comment테이블에 commentId를 삭제
  */
@@ -34,6 +67,10 @@ const deleteComment = async (userId, commentId) => {
 };
 
 module.exports = {
+    findPostByPostId,
+    findCommentByCommentId,
+    findUserIdByPostId,
+    findUserIdByCommentId,
     createComment,
     updateComment,
     deleteComment
