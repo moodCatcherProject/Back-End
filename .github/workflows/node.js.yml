@@ -21,5 +21,11 @@ jobs:
         username: ${{ secrets.SSH_ID }}
         key: ${{ secrets.SSH_KEY }}
         port: 22
+        script: |
+          cd Back-End
+          git pull origin main
+          npm ci
+          sudo pm2 stop 0
+          sudo pm2 start src/server.js
      
 
