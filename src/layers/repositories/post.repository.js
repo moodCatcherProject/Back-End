@@ -1,6 +1,8 @@
-const { User, UserDetail, Post, Item } = require('../../sequelize/models');
+const { User, UserDetail, Post, Item, Like } = require('../../sequelize/models');
 const exception = require('../exceptModels/_.models.loader');
 
+const sequelize = require('sequelize');
+const Op = sequelize.Op;
 //CRUD
 // // POST
 /**
@@ -37,6 +39,60 @@ const findRepPost = async (userId) => {
     });
 
     return await Post.findByPk(repPostIdAttr.repPostId);
+};
+
+const findMyPage = async (userId, page, count) => {
+    console.log(page, count);
+    return await Post.findAll({
+        where: { userId },
+        offset: count * (page - 1),
+        limit: count,
+        order: [['createdAt', 'DESC']]
+    });
+};
+
+const findLikePage = async (userId, page, count) => {
+    return await Like.findAll({
+        where: { userId },
+        offset: count * (page - 1),
+        limit: count,
+        include: [
+            {
+                model: Post,
+                order: [['createdAt', 'DESC']]
+            }
+        ]
+    });
+};
+
+const findSearchTitleKeyword = async (keyword, page, count) => {
+    return await Post.findAll({
+        offset: count * (page - 1),
+        limit: count,
+        order: [['createdAt', 'DESC']],
+        where: {
+            title: {
+                [Op.like]: '%' + keyword + '%'
+            }
+        }
+    });
+};
+const findSearchWriterKeyword = async (keyword, page, count) => {
+    return await User.findAll({
+        offset: count * (page - 1),
+        limit: count,
+        where: {
+            nickname: {
+                [Op.like]: '%' + keyword + '%'
+            }
+        }
+    });
+};
+
+const findLikeNumByPostId = async (postId) => {
+    return await Like.findAndCountAll({
+        where: { postId }
+    });
 };
 /**
  *
@@ -185,6 +241,12 @@ module.exports = {
 
     findRepPost,
     updateRepPost,
+
+    findMyPage,
+    findLikePage,
+    findSearchTitleKeyword,
+    findSearchWriterKeyword,
+    findLikeNumByPostId,
 
     createItem,
     updateItem,

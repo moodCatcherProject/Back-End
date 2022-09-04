@@ -6,10 +6,10 @@ const commentRouter = require('./routes/comment.router');
 const postRouter = require('./routes/post.router');
 const userRouter = require('./routes/user.router');
 
+router.get('/start');
 router.use('/search', searchRouter);
 router.use('/auth', authRouter);
 router.use('/comments', commentRouter);
 router.use('/posts', postRouter);
-router.use('/users', userRouter);
-
+router.use('/user', userRouter);
 module.exports = router;

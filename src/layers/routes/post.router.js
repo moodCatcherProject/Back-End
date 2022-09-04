@@ -1,11 +1,11 @@
 const router = require('express').Router();
 
-const gwonsTest = require('../../../test/gwonsTest');
+const gwonsTest = require('../../../test/dbMockData');
 const postController = require('../controllers/post.controller');
 const Upload = require('./middlewares/postImageUploadMiddleware');
 const upload = new Upload();
 
-router.post('/test');
+router.post('/test', gwonsTest.createTestDatabase);
 //게시물 작성 /api/posts
 router.route('/').post(postController.createPost);
 
