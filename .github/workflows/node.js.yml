@@ -26,6 +26,6 @@ jobs:
         host: ${{ secrets.REMOTE_IP }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
-        port: ${22}
+        port: 22
      
 
