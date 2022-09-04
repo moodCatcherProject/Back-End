@@ -31,7 +31,6 @@
         "start:pro": "pm2 start src/server.js",
         "start": "nodemon src/server.js",
         "test": "jest --forceExit",
-        "prepare": "husky install",
         "format": "prettier --write ."
     },
     "keywords": [],
