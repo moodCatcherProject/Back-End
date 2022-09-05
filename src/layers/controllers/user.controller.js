@@ -18,7 +18,7 @@ const getUser = async (req, res, next) => {
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const updateUser = async (req, res, next) => {
     try {
-        const userId = req.user.userId;
+        const { userId } = res.locals.user;
         const { nickname, gender, age } = req.body;
         const imageFileName = req.file ? req.file.key : null;
 
@@ -39,7 +39,7 @@ const updateUser = async (req, res, next) => {
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const updateProfileIcon = async (req, res, next) => {
     try {
-        const userId = req.user.userId;
+        const { userId } = res.locals.user;
         const { profileIcon } = req.body;
 
         const userStatus = await userService.updateProfileIcon(userId, profileIcon);
@@ -54,7 +54,7 @@ const updateProfileIcon = async (req, res, next) => {
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const deleteUser = async (req, res, next) => {
-    const userId = req.user.userId;
+    const { userId } = res.locals.user;
     try {
         await userService.deleteUser(userId);
         return res.status(200).json(new exception.FormDto('유저 정보 삭제 성공'));
