@@ -1,5 +1,5 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict';
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
     class Post extends Model {
         /**
@@ -10,24 +10,24 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             // define association here
             models.Post.hasMany(models.Item, {
-                foreignKey: "postId",
-                onDelete: "cascade",
-                onUpdate: "cascade",
+                foreignKey: 'postId',
+                onDelete: 'cascade',
+                onUpdate: 'cascade'
             });
             models.Post.hasMany(models.Like, {
-                foreignKey: "postId",
-                onDelete: "cascade",
-                onUpdate: "cascade",
+                foreignKey: 'postId',
+                onDelete: 'cascade',
+                onUpdate: 'cascade'
             });
             models.Post.belongsTo(models.User, {
-                foreignKey: "userId",
-                onDelete: "cascade",
-                onUpdate: "cascade",
+                foreignKey: 'userId',
+                onDelete: 'cascade',
+                onUpdate: 'cascade'
             });
             models.Post.hasMany(models.Comment, {
-                foreignKey: "postId",
-                onDelete: "cascade",
-                onUpdate: "cascade",
+                foreignKey: 'postId',
+                onDelete: 'cascade',
+                onUpdate: 'cascade'
             });
         }
     }
@@ -37,28 +37,33 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true,
-                allowNull: false,
+                allowNull: false
             },
             title: {
                 type: DataTypes.STRING,
-                allowNull: false,
+                allowNull: false
             },
             content: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING
             },
             userId: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
+                allowNull: false
             },
             imgUrl: {
                 type: DataTypes.STRING,
-                allowNull: false,
+                allowNull: false
             },
+            accLike: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0,
+                allowNull: false
+            }
         },
         {
             sequelize,
-            timestamps: false,
-            modelName: "Post",
+            timestamps: true,
+            modelName: 'Post'
         }
     );
     return Post;

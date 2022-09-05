@@ -1,6 +1,8 @@
-const { User, UserDetail, Post, Item } = require('../../sequelize/models');
+const { User, UserDetail, Post, Item, Like } = require('../../sequelize/models');
 const exception = require('../exceptModels/_.models.loader');
 
+const sequelize = require('sequelize');
+const Op = sequelize.Op;
 //CRUD
 // // POST
 /**
@@ -11,8 +13,6 @@ const exception = require('../exceptModels/_.models.loader');
  *
  * @returns 게시물 정보를 만들고 나서 그 게시물의 데이터 반환
  */
-Post.findOne({}).then;
-
 const createPost = async (userId, title, content) => {
     return await Post.create({
         userId,
@@ -28,6 +28,69 @@ const createPost = async (userId, title, content) => {
  */
 const findPost = async (postId) => {
     return await Post.findOne({
+        where: { postId }
+    });
+};
+
+const findRepPost = async (userId) => {
+    const repPostIdAttr = await UserDetail.findOne({
+        where: { detailId: userId },
+        attributes: ['repPostId']
+    });
+
+    return await Post.findByPk(repPostIdAttr.repPostId);
+};
+
+const findMyPage = async (userId, page, count) => {
+    console.log(page, count);
+    return await Post.findAll({
+        where: { userId },
+        offset: count * (page - 1),
+        limit: count,
+        order: [['createdAt', 'DESC']]
+    });
+};
+
+const findLikePage = async (userId, page, count) => {
+    return await Like.findAll({
+        where: { userId },
+        offset: count * (page - 1),
+        limit: count,
+        include: [
+            {
+                model: Post,
+                order: [['createdAt', 'DESC']]
+            }
+        ]
+    });
+};
+
+const findSearchTitleKeyword = async (keyword, page, count) => {
+    return await Post.findAll({
+        offset: count * (page - 1),
+        limit: count,
+        order: [['createdAt', 'DESC']],
+        where: {
+            title: {
+                [Op.like]: '%' + keyword + '%'
+            }
+        }
+    });
+};
+const findSearchWriterKeyword = async (keyword, page, count) => {
+    return await User.findAll({
+        offset: count * (page - 1),
+        limit: count,
+        where: {
+            nickname: {
+                [Op.like]: '%' + keyword + '%'
+            }
+        }
+    });
+};
+
+const findLikeNumByPostId = async (postId) => {
+    return await Like.findAndCountAll({
         where: { postId }
     });
 };
@@ -161,7 +224,13 @@ const updateImage = async (postId, imgUrl) => {
 
     return await findPost(postId);
 };
-
+// // NOTICE
+const isExistNotice = async (userId) => {
+    return await UserDetail.findOne({
+        where: { detailId: userId },
+        attributes: ['isExistsNotice']
+    });
+};
 //FUNCTION
 
 module.exports = {
@@ -170,10 +239,19 @@ module.exports = {
     findPost,
     deletePost,
 
+    findRepPost,
     updateRepPost,
+
+    findMyPage,
+    findLikePage,
+    findSearchTitleKeyword,
+    findSearchWriterKeyword,
+    findLikeNumByPostId,
 
     createItem,
     updateItem,
 
-    updateImage
+    updateImage,
+
+    isExistNotice
 };
