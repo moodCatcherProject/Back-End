@@ -1,7 +1,9 @@
 const express = require('express');
-const searchController = require('../controllers/item.controller');
-const router = express.Router();
-//게시물 전체 조회
-router.get('/', searchController.crawlingMusinsa);
+const itemRouter = express.Router();
+const itemController = require('../controllers/item.controller');
+const { isLoggedIn, isNotLoggedIn } = require('./middlewares/authMiddle');
 
-module.exports = router;
+//무신사 상품 찾기(/api/musinsa/:keyword)
+itemRouter.get('/:keyword', itemController.crawlingMusinsa);
+
+module.exports = itemRouter;
