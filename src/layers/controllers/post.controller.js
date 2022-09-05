@@ -1,4 +1,5 @@
 const postService = require('../services/post.service');
+const allPostService = require('../services/allPosts.service');
 const exception = require('../exceptModels/_.models.loader');
 
 // CRUD
@@ -26,6 +27,16 @@ const createPost = async (req, res, next) => {
 
 const findPost = async (req, res, next) => {
     try {
+        const { type, keyword, sort, page, count, order } = req.query;
+        const userId = req.user.userId;
+        await allPostService.pageHandller(type, userId, keyword, sort, page, count, order);
+        //로그인한 사용자의 알림 유무 체크
+        // const isExistNotice = await postService.isExistNotice(type, userId, keyword);
+        //로그인한 사용자의 대표 게시물 체크
+        // const repPostData = await postService.findRepPost(userId);
+
+        // console.log(isExistNotice, repPostData);
+        res.status(200).send('안녕');
     } catch (err) {
         next(err);
     }
@@ -90,6 +101,9 @@ const updateImage = async (req, res, next) => {
         next(err);
     }
 };
+
+// // NOTICE
+
 module.exports = {
     createPost,
     findPost,

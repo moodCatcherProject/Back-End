@@ -11,6 +11,7 @@ const bodyParser = require('body-parser');
 const schedule = require('./nodeScheduller');
 const cors = require('cors');
 const { error, error404 } = require('./layers/routes/middlewares/error');
+
 const whitelist = ['http://localhost:3000/'];
 const corsOptions = {
     origin: '*',

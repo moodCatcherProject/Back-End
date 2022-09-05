@@ -1,5 +1,5 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict';
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
     class UserDetail extends Model {
         /**
@@ -10,7 +10,6 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             // models.UserDetail.belongsTo(models.User, {
             //     foreignKey: "detailId",
-                
             //     onDelete: "cascade",
             //     onUpdate: "cascade",
             // });
@@ -22,30 +21,30 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true,
-                allowNull: false,
+                allowNull: false
             },
-
             gender: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING
             },
             age: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING
             },
             moodPoint: {
                 type: DataTypes.INTEGER,
-                defaultValue : 0
+                defaultValue: 0
             },
             repPostId: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.INTEGER
             },
             isExistsNotice: {
                 type: DataTypes.BOOLEAN,
-            },
+                defaultValue: false
+            }
         },
         {
             sequelize,
             timestamps: false,
-            modelName: "UserDetail",
+            modelName: 'UserDetail'
         }
     );
     return UserDetail;

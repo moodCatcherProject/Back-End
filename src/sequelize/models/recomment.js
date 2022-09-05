@@ -1,5 +1,5 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict';
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
     class Recomment extends Model {
         /**
@@ -10,10 +10,10 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             // define association here
             models.Recomment.belongsTo(models.Comment, {
-              foreignKey: "commentId",
-              onDelete: "cascade",
-              onUpdate: "cascade",
-          });
+                foreignKey: 'commentId',
+                onDelete: 'cascade',
+                onUpdate: 'cascade'
+            });
         }
     }
     Recomment.init(
@@ -22,24 +22,30 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true,
-                allowNull: false,
+                allowNull: false
             },
             userId: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
+                allowNull: false
             },
             content: {
                 type: DataTypes.STRING,
-                allowNull: false,
+                allowNull: false
             },
             commentId: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
+                allowNull: false
             },
+            createdAt: {
+                allowNull: false,
+                type: DataTypes.DATE,
+                defaultValue: DataTypes.NOW
+            }
         },
         {
             sequelize,
-            modelName: "Recomment",
+            timestamps: false,
+            modelName: 'Recomment'
         }
     );
     return Recomment;
