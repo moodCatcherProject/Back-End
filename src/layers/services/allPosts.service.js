@@ -82,7 +82,7 @@ const pageHandller = async (
                 }
                 case 'writer': {
                     data = await postRepository.findSearchWriterKeyword(keyword, page, count);
-                    console.log(data);
+
                     break;
                 }
             }
@@ -90,7 +90,7 @@ const pageHandller = async (
             break;
         }
         default: {
-            data = await postRepository.findAllPosts(page, count, orderKey, order);
+            data = await postRepository.findAllPosts(page, count, orderKey, order, gender);
 
             break;
         }
