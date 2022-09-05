@@ -1,74 +1,77 @@
 const commentRepository = require('../repositories/comment.repository');
+const postRepository = require('../repositories/post.repository');
 const exception = require('../exceptModels/_.models.loader');
 
 /**
- * @throws { Error } @param { number } userId @param { string } content @param { number } postId
- * @returns { Promise<{ userId: number, content: string, postId: number }> } postId, userId, content 생성
+ * 댓글 생성
+ * @param { number } postId
+ * @param { string } content
+ * @param { number } userId
+ * @returns { Promise<{ postId: number, content: string, userId: number }> }
  */
-const createComment = async (userId, content, postId) => {
+const createComment = async (postId, content, userId) => {
     if (!content) {
         throw new exception.BadRequestException('댓글 내용 없음.');
     }
 
-    const post = await commentRepository.findPostByPostId(postId);
+    const post = await postRepository.findPost(postId);
     if (post === null) {
         throw new exception.BadRequestException('게시물 없음.');
     }
 
-    const createdComment = await commentRepository.createComment(userId, content, postId);
+    const createdComment = await commentRepository.createComment(postId, content, userId);
+
     return createdComment;
 };
 
 /**
- * @throws { Error } @param { number } userId @param { string } content @param { number } commentId
- * @returns { Promise<{ userId: number, content: string, postId: number }> } postId, userId, content 업데이트
+ * 댓글 수정
+ * @param { number } commentId
+ * @param { string } content
+ * @param { number } userId
+ * @returns { Promise<{ commentId: number, content: string, userId: number }> }
  */
-const updateComment = async (userId, content, commentId) => {
+const updateComment = async (commentId, content, userId) => {
     if (!content) {
         throw new exception.BadRequestException('댓글 내용 없음.');
     }
 
-    const post = await commentRepository.findUserIdByPostId(userId);
-    if (!post) {
-        throw new exception.BadRequestException('게시물 없음.');
-    } // -> 테스트중 3번 postId를 못받음 못씀 어케해서 postId를 뽑아서 해야되나
-
-    const comment = await commentRepository.findCommentByCommentId(commentId);
+    const comment = await commentRepository.findComment(commentId);
     if (comment === null) {
         throw new exception.BadRequestException('댓글이 없음.');
     }
 
-    const user = await commentRepository.findUserIdByCommentId(userId);
-    console.log(userId);
-    if (user !== userId) {
+    const user = await commentRepository.findComment(commentId);
+    const findUser = user.userId;
+    if (findUser !== userId) {
         throw new exception.BadRequestException('댓글의 작성자만 수정 가능합니다.');
-    } // -> 반 성공? 2번
+    }
 
-    const updatedComment = await commentRepository.updateComment(userId, content, commentId);
+    const updatedComment = await commentRepository.updateComment(commentId, content, userId);
+
     return updatedComment;
 };
 
 /**
- * @throws { Error } @param { number } userId @param { number } commentId
- * @returns { Promise<{ userId: number, commentId: number }> } commentId 삭제
+ * 댓글 삭제
+ * @param { number } commentId
+ * @param { number } userId
+ * @returns { Promise<{ commentId: number, userId: number }> }
  */
-const deleteComment = async (userId, commentId) => {
-    const A = await commentRepository.findA(userId);
-    if (A) {
-        throw new exception.BadRequestException('게시물 없음.');
-    }
-
-    const C = await commentRepository.findC(commentId);
-    if (A) {
+const deleteComment = async (commentId, userId) => {
+    const comment = await commentRepository.findComment(commentId);
+    if (comment === null) {
         throw new exception.BadRequestException('댓글이 없음.');
     }
 
-    const B = await commentRepository.findB(userId);
-    if (A) {
-        throw new exception.BadRequestException('댓글의 작성자만 삭제 가능합니다.');
+    const user = await commentRepository.findComment(commentId);
+    const findUser = user.userId;
+    if (findUser !== userId) {
+        throw new exception.BadRequestException('댓글의 작성자만 수정 가능합니다.');
     }
 
-    const deleteComment = await commentRepository.deleteComment(userId, commentId);
+    const deleteComment = await commentRepository.deleteComment(commentId);
+
     return deleteComment;
 };
 

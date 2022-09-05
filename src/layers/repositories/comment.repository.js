@@ -1,76 +1,60 @@
-const { Comment, Post } = require('../../sequelize/models');
+const { Comment } = require('../../sequelize/models');
 
 /**
- * @param { number } postId
- * @returns postId로 게시글 한개를 찾음
+ * Comment 테이블에 있는 commentId를 찾음.
+ * @param { number } commentId
+ * @returns { Promise<{ commentId: number }> | null }
  */
-const findPostByPostId = async (postId) => {
-    const findpost = await Post.findOne({
-        where: { postId },
-        raw: true
-    });
-    return findpost;
-};
-
-const findCommentByCommentId = async (commentId) => {
+const findComment = async (commentId) => {
     const findComment = await Comment.findOne({
-        where: { commentId },
-        raw: true
+        where: { commentId }
     });
+
     return findComment;
 };
 
-const findUserIdByCommentId = async (userId) => {
-    const findComment = await Comment.findOne({
-        where: { userId },
-        raw: true
-    });
-    return findComment.userId;
-};
-
-const findUserIdByPostId = async (userId) => {
-    const findPostId = await Post.findOne({
+/**
+ * Comment 테이블에 postId, content, userId 생성.
+ * @param { number } postId
+ * @param { string } content
+ * @param { number } userId
+ * @returns { Promise<{ postId: number, content: string, userId: number }> | null }
+ */
+const createComment = async (postId, content, userId) => {
+    const createdComment = await Comment.create({
+        postId,
+        content,
         userId
     });
-    return findPostId;
-}; // userId에서 postId를 찾아봐야 할것같은데?
 
-/**
- * @param { number } userId @param { string } content @param { number } postId
- * @returns { Promise<{ userId: number, content: string, postId: number }> } Comment테이블에 userId, content, postId 생성
- */
-const createComment = async (userId, content, postId) => {
-    const createdComment = await Comment.create({
-        userId,
-        content,
-        postId
-    });
     return createdComment;
 };
 
 /**
- * @param { number } userId @param { string } content @param { number } commentId
- * @returns { Promise<{ userId: number, content: string, commentId: number }> } Comment테이블에 userId, content, postId 업데이트
+ * Comment 테이블에 content 업데이트.
+ * @param { number } commentId
+ * @param { string } content
+ * @returns { Promise<{ commentId: number, content: string }> | null }
  */
-const updateComment = async (userId, content, commentId) => {
+const updateComment = async (commentId, content) => {
     const updatedComment = await Comment.update({ content }, { where: { commentId } });
+
     return updatedComment;
 };
 
 /**
- * @param { number } userId @param { string } commentId
- * @returns { Promise<{ userId: number, commentId: number }> } Comment테이블에 commentId를 삭제
+ * Comment 테이블에 commentId를 삭제.
+ * @param { number } commentId
+ * @returns { Promise<{ commentId: number }> | null }
  */
-const deleteComment = async (userId, commentId) => {
+const deleteComment = async (commentId) => {
     const deleteComment = await Comment.destroy({ where: { commentId } });
+
     return deleteComment;
 };
 
 module.exports = {
-    findPostByPostId,
-    findCommentByCommentId,
-    findUserIdByPostId,
-    findUserIdByCommentId,
+    findComment,
     createComment,
     updateComment,
     deleteComment

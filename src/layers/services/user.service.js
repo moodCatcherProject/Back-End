@@ -48,7 +48,7 @@ const updateUser = async (userId, nickname, gender, age, imageFileName) => {
     if (nickname !== user.nickname) {
         const ExistsNickname = await authRepository.findByNickname(nickname);
         if (ExistsNickname) {
-            throw new exception.BadRequestException('닉네임 중복 확인 실패!');
+            throw new exception.BadRequestException('닉네임 중복확인 실패');
         }
     }
 
