@@ -12,16 +12,6 @@ const findByEmail = async (email) => {
 };
 
 /**
- * User 테이블에있는 nickname을 찾음.
- * @param { string } nickname
- * @returns { Promise<{ nickname: number }> | null> }
- */
-const findByNickname = async (nickname) => {
-    const findByNickname = await User.findOne({ where: { nickname } });
-    return findByNickname;
-};
-
-/**
  * Auth 테이블에 email, 해쉬password 생성.
  * @param { string } email @param { string } password
  * @returns { Promise<{ email: string, password: string }> | null> }
@@ -43,8 +33,8 @@ const createSignUp = async (email, password) => {
  * @param { string } nickname @param { string } age @param { string } gender
  * @returns { Promise<{ nickname: string, age: string, gender: string }> | null> }
  */
-const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
-    await User.update({ nickname }, { where: { userId } });
+const updateNicknameAgeGender = async (nickname, age, gender, userId, grade) => {
+    await User.update({ nickname, grade }, { where: { userId } });
     const findByDetailId = await User.findOne({
         include: [{ model: UserDetail, attributes: ['detailId'] }],
         where: { userId }
@@ -57,7 +47,6 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
 
 module.exports = {
     findByEmail,
-    findByNickname,
     createSignUp,
     updateNicknameAgeGender
 };

@@ -1,4 +1,5 @@
 const authRepository = require('../repositories/auth.repository');
+const userRepository = require('../repositories/user.repository');
 const exception = require('../exceptModels/_.models.loader');
 
 // EM : 8자~ 30자 이메일형식
@@ -48,6 +49,10 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
     new exception.isString({ gender }).value;
     new exception.isString({ age }).value;
 
+    const ExistUser = await userRepository.getUserStatusByUserId(userId);
+    if (ExistUser.nickname)
+        throw new exception.ForbiddenException('초기설정한 유저정보가 있습니다.');
+
     const checkNickname = /^(?=.*[a-zA-Z0-9가-힣])[a-zA-Z0-9가-힣]{2,16}$/;
     if (checkNickname.test(nickname) == false) {
         throw new exception.BadRequestException('닉네임 유효성 에러');
@@ -61,16 +66,20 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
         throw new exception.BadRequestException('나이 유효성 에러');
     }
 
-    const ExisNickname = await authRepository.findByNickname(nickname);
+    const ExisNickname = await userRepository.findByNickname(nickname);
     if (ExisNickname) {
         throw new exception.BadRequestException('닉네임 중복확인 실패');
     }
+
+    let grade = 'man 1';
+    if (gender === '여자') grade = 'woman 1';
 
     const updatedNicknameAgeGender = await authRepository.updateNicknameAgeGender(
         nickname,
         age,
         gender,
-        userId
+        userId,
+        grade
     );
 
     return updatedNicknameAgeGender;

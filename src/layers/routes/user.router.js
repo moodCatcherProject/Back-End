@@ -12,6 +12,9 @@ userRouter.get('/:userId', isLoggedIn, userController.getUser);
 // 유저 정보 수정(/api/users)
 userRouter.put('/', isLoggedIn, upload.upload.single('userValue'), userController.updateUser);
 
+// 프로필 아이콘 변경(/api/users)
+userRouter.patch('/', isLoggedIn, userController.updateProfileIcon);
+
 // 로그아웃(/api/users/logout)
 userRouter.get('/logout', isLoggedIn, (req, res) => {
     req.logout();

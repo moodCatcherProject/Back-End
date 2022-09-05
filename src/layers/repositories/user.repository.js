@@ -32,13 +32,34 @@ const getUserStatusByUserId = async (userId) => {
 };
 
 /**
+ * @param { string } nickname
+ * @returns User 테이블에서 nickname 한개를 찾음
+ */
+const findByNickname = async (nickname) => {
+    const findByNickname = await User.findOne({ where: { nickname } });
+    return findByNickname;
+};
+
+/**
  * User 테이블에서 userId 값이 일치하는 data의 imgUrl 업데이트 후 user data 반환
  * @param {number} userId
  * @param {string} imageFileName
- * @returns { Promise<{userId:number, nickname:string, imgUrl:string, grade:string} | null>}
+ * @returns { Promise<{userId:number, nickname:string, imgUrl:string, grade:string, gender:string, age:string, moodPoint:number, repPostId:number, isExistsNotice:boolean } | null>}
  */
 const updateUserImage = async (userId, imageFileName) => {
     await User.update({ imgUrl: imageFileName }, { where: { userId } });
+
+    return await getUserStatusByUserId(userId);
+};
+
+/**
+ * User 테이블에서 userId 값이 일치하는 data의 grade 업데이트 후 user data 반환
+ * @param {number} userId
+ * @param {string} grade
+ * @returns { Promise<{userId:number, nickname:string, imgUrl:string, grade:string, gender:string, age:string, moodPoint:number, repPostId:number, isExistsNotice:boolean } | null>}
+ */
+const updateGrade = async (userId, grade) => {
+    await User.update({ grade }, { where: { userId } });
 
     return await getUserStatusByUserId(userId);
 };
@@ -53,6 +74,8 @@ const deleteUser = async (userId) => {
 
 module.exports = {
     getUserStatusByUserId,
+    findByNickname,
     updateUserImage,
+    updateGrade,
     deleteUser
 };
