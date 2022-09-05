@@ -40,11 +40,16 @@ module.exports = (sequelize, DataTypes) => {
             postId: {
                 type: DataTypes.INTEGER,
                 allowNull: false
+            },
+            createdAt: {
+                allowNull: false,
+                type: DataTypes.DATE,
+                defaultValue: DataTypes.NOW
             }
         },
         {
             sequelize,
-            timestamps: true,
+            timestamps: false,
             modelName: 'Comment'
         }
     );
