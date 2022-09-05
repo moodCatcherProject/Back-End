@@ -1,15 +1,16 @@
 const authRepository = require('../repositories/auth.repository');
 const exception = require('../exceptModels/_.models.loader');
 
-// EM : 8자~ 30자
+// EM : 8자~ 30자 이메일형식
 // PW : 영소대문자+숫자+특수문자 8자 ~ 20자
 // NN : 한글, 영소 대문자. 숫자 2자~16자
 
-// 비밀번호 비밀번호확인 이메일 닉네임 성별 나이 문자열 확인만 남음
-
 /**
- * @throws { Error } @param { string } email @param { string } password @param { string } confirmPw
- * @returns { Promise<{ email: string, password: string }> } 이메일,비밀번호 생성
+ * 회원가입
+ * @param { string } email
+ * @param { string } password
+ * @param { string } confirmPw
+ * @returns { Promise<{ email: string, password: string }> | null }
  */
 const localSignUp = async (email, password, confirmPw) => {
     new exception.isString({ email }).value;
@@ -37,8 +38,10 @@ const localSignUp = async (email, password, confirmPw) => {
 };
 
 /**
- * @throws { Error } @param { string } nickname @param {string} age
- * @returns { Promise<{ nickname: string, age: string }> } null이였던 nickname / age / gender 업데이트
+ * 닉네임 나이 성별 추가
+ * @param { string } nickname
+ * @param {string} age
+ * @returns { Promise<{ nickname: string, age: string }> | null }
  */
 const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
     new exception.isString({ nickname }).value;
@@ -74,8 +77,9 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
 };
 
 /**
- * @throws { Error } @param { string } email
- * @returns { Promise<{ email: string }> }
+ * 이메일 중복확인
+ * @param { string } email
+ * @returns { Promise<{ email: string }> | null }
  */
 const checkEmail = async (email) => {
     new exception.isString({ email }).value;
@@ -95,8 +99,9 @@ const checkEmail = async (email) => {
 };
 
 /**
- * @throws { Error } @param { string } nickname
- * @returns { Promise<{ nickname: string }> }
+ * 닉네임 중복확인
+ * @param { string } nickname
+ * @returns { Promise<{ nickname: string }> | null }
  */
 const checkNickname = async (nickname) => {
     new exception.isString({ nickname }).value;

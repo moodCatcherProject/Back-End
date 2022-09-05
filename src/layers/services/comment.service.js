@@ -7,7 +7,7 @@ const exception = require('../exceptModels/_.models.loader');
  * @param { number } postId
  * @param { string } content
  * @param { number } userId
- * @returns { Promise<{ postId: number, content: string, userId: number }> }
+ * @returns { Promise<{ postId: number, content: string, userId: number }> | null }
  */
 const createComment = async (postId, content, userId) => {
     if (!content) {
@@ -25,11 +25,13 @@ const createComment = async (postId, content, userId) => {
 };
 
 /**
- *
- * @returns
+ * 댓글 조회
+ * @param { number } page
+ * @param { number } count
+ * @returns { Promise<{ page: number, count: number }> | null }
  */
-const getComments = async (page, count) => {
-    const getComments = await commentRepository.getComments(page, count);
+const getComments = async (postId, page, count) => {
+    const getComments = await commentRepository.getComments(postId, page, count);
 
     return getComments;
 };
@@ -37,21 +39,29 @@ const getComments = async (page, count) => {
 // data: {
 //     comments: [
 //         {
+//          ----Comment table
 //          userId:
 //          commentId:
 //          content:
+//          ----Comment table
+//          ---- User table
 //          imgUrl:
 //          nickname:
 //          grade:
+//          ---- User table
 //          createdAt:
 //          recomments: [
 //                         {
+//                             ----Comment table
 //                             userId:
 //                             recommentId:
 //                             content:
+//                             ----Comment table
+//                             ---- User table
 //                             imgUrl:
 //                             nickname:
 //                             grade:
+//                             ---- User table
 //                             createdAt:
 //                         } * 여러 개
 //                     ]
@@ -64,7 +74,7 @@ const getComments = async (page, count) => {
  * @param { number } commentId
  * @param { string } content
  * @param { number } userId
- * @returns { Promise<{ commentId: number, content: string, userId: number }> }
+ * @returns { Promise<{ commentId: number, content: string, userId: number }> | null }
  */
 const updateComment = async (commentId, content, userId) => {
     if (!content) {
@@ -91,7 +101,7 @@ const updateComment = async (commentId, content, userId) => {
  * 댓글 삭제
  * @param { number } commentId
  * @param { number } userId
- * @returns { Promise<{ commentId: number, userId: number }> }
+ * @returns { Promise<{ commentId: number, userId: number }> | null }
  */
 const deleteComment = async (commentId, userId) => {
     const comment = await commentRepository.findComment(commentId);

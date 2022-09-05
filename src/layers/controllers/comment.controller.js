@@ -19,10 +19,11 @@ const createComment = async (req, res, next) => {
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const getComments = async (req, res, next) => {
     try {
+        const postId = req.query;
         const page = Number(req.query.page || 1);
         const count = Number(req.query.count || 8);
 
-        const getComments = await commentService.getComments(page, count);
+        const getComments = await commentService.getComments(postId, page, count);
         return res.status(200).json(new exception.FormDto('댓글 조회 성공', { getComments }));
     } catch (err) {
         next(err);
