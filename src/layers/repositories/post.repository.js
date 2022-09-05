@@ -31,6 +31,13 @@ const findPost = async (postId) => {
         where: { postId }
     });
 };
+const findAllPosts = async (page, count, orderKey, order) => {
+    return await Post.findAll({
+        offset: count * (page - 1),
+        limit: count,
+        order: [[orderKey, order]]
+    });
+};
 
 const findRepPost = async (userId) => {
     const repPostIdAttr = await UserDetail.findOne({
@@ -41,44 +48,48 @@ const findRepPost = async (userId) => {
     return await Post.findByPk(repPostIdAttr.repPostId);
 };
 
-const findMyPage = async (userId, page, count) => {
-    console.log(page, count);
+const findMyPage = async (userId, page, count, orderKey, order) => {
     return await Post.findAll({
         where: { userId },
         offset: count * (page - 1),
         limit: count,
-        order: [['createdAt', 'DESC']]
+        order: [[orderKey, order]]
     });
 };
 
-const findLikePage = async (userId, page, count) => {
-    return await Like.findAll({
-        where: { userId },
+const findLikePage = async (userId, page, count, orderKey, order, gender) => {
+    console.log(orderKey, order);
+    const likeIdData = await Like.findAll({
+        where: { userId, likeStatus: true }
+    });
+    const likeIdArr = likeIdData.map((p) => {
+        return p.postId;
+    });
+    console.log(likeIdArr);
+    return await Post.findAll({
+        where: { gender },
+        order: [[orderKey, order]],
         offset: count * (page - 1),
-        limit: count,
-        include: [
-            {
-                model: Post,
-                order: [['createdAt', 'DESC']]
-            }
-        ]
+        limit: count
     });
 };
 
-const findSearchTitleKeyword = async (keyword, page, count) => {
+const findSearchTitleKeyword = async (keyword, page, count, orderKey, order, gender) => {
+    console.log(keyword);
     return await Post.findAll({
         offset: count * (page - 1),
         limit: count,
-        order: [['createdAt', 'DESC']],
         where: {
+            gender,
             title: {
                 [Op.like]: '%' + keyword + '%'
             }
-        }
+        },
+        order: [[orderKey, order]]
     });
 };
 const findSearchWriterKeyword = async (keyword, page, count) => {
-    return await User.findAll({
+    const userData = await User.findAll({
         offset: count * (page - 1),
         limit: count,
         where: {
@@ -87,6 +98,15 @@ const findSearchWriterKeyword = async (keyword, page, count) => {
             }
         }
     });
+
+    const result = [];
+
+    for (let user of userData) {
+        const rep = await findRepPost(user.userId);
+        console.log(rep.postId);
+        result.push(await findPost(rep.postId));
+    }
+    return result;
 };
 
 const findLikeNumByPostId = async (postId) => {
@@ -237,6 +257,7 @@ module.exports = {
     createPost,
     updatePost,
     findPost,
+    findAllPosts,
     deletePost,
 
     findRepPost,

@@ -1,3 +1,6 @@
+const exception = require('../../exceptModels/_.models.loader');
+const jwt = require('jsonwebtoken');
+const { User } = require('../../../sequelize/models');
 /**
  * 로그인에 해당하는 전략을 짜야하는데,
 로그인한 사용자는 회원가입과 로그인 라우터에 접근하면 안되며,
@@ -14,11 +17,25 @@ auth.js 라우터에 로그인 여부를 검사하는 위 미들웨어들을 넣
 
 exports.isLoggedIn = (req, res, next) => {
     // isAuthenticated()로 검사해 로그인이 되어있으면
+    try {
+        const { authorization } = req.headers;
 
-    if (req.isAuthenticated()) {
-        next(); // 다음 미들웨어
-    } else {
-        res.status(403).send('로그인 필요');
+        if (authorization == null) {
+            throw new exception.UnauthorizedException('로그인 필요');
+        }
+        const [tokenType, tokenValue] = authorization.split(' ');
+
+        if (tokenType !== 'Bearer') {
+            throw new exception.UnauthorizedException('로그인 필요');
+        }
+
+        const { userId } = jwt.verify(tokenValue, process.env.SECRET_KEY);
+        User.findOne({ where: userId }).then((user) => {
+            res.locals.user = user;
+            next();
+        });
+    } catch (err) {
+        next(err);
     }
 };
 

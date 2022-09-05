@@ -17,7 +17,7 @@ module.exports = {
                 allowNull: false
             },
             likeStatus: {
-                type: Sequelize.boolean,
+                type: Sequelize.BOOLEAN,
                 allowNull: false,
                 defaultValue: true
             },

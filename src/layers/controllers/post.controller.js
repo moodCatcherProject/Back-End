@@ -7,7 +7,7 @@ const exception = require('../exceptModels/_.models.loader');
 
 const createPost = async (req, res, next) => {
     try {
-        const userId = req.user.userId;
+        const { userId } = res.locals.user;
 
         const { title, content } = req.body.post;
         const { items } = req.body;
@@ -27,16 +27,29 @@ const createPost = async (req, res, next) => {
 
 const findPost = async (req, res, next) => {
     try {
-        const { type, keyword, sort, page, count, order } = req.query;
-        const userId = req.user.userId;
-        await allPostService.pageHandller(type, userId, keyword, sort, page, count, order);
+        let { userId } = req.query;
+        const { type, keyword, sort, gender, page, count, order } = req.query;
+        if (!userId) {
+            userId = res.locals.user.userId;
+        }
+        const postData = await allPostService.pageHandller(
+            userId,
+            keyword,
+            sort,
+            type,
+            gender,
+            page,
+            count,
+            order
+        );
+        // console.log(postData);
         //로그인한 사용자의 알림 유무 체크
         // const isExistNotice = await postService.isExistNotice(type, userId, keyword);
         //로그인한 사용자의 대표 게시물 체크
         // const repPostData = await postService.findRepPost(userId);
 
         // console.log(isExistNotice, repPostData);
-        res.status(200).send('안녕');
+        res.status(200).send(postData);
     } catch (err) {
         next(err);
     }
@@ -44,7 +57,7 @@ const findPost = async (req, res, next) => {
 
 const updatePost = async (req, res, next) => {
     try {
-        const userId = req.user.userId;
+        const { userId } = res.locals.user;
         const { postId } = req.params;
         const { title, content } = req.body.post;
         const { items } = req.body;
@@ -65,7 +78,7 @@ const updatePost = async (req, res, next) => {
 
 const deletePost = async (req, res, next) => {
     try {
-        const userId = req.user.userId;
+        const { userId } = res.locals.user;
         const { postId } = req.params;
         await postService.deletePost(userId, postId);
         res.status(200).json(new exception.FormDto('게시물 삭제 성공'));
@@ -77,7 +90,7 @@ const deletePost = async (req, res, next) => {
 // // //POST ADD
 
 const updateRepPost = async (req, res, next) => {
-    const userId = req.user.userId;
+    const { userId } = res.locals.user;
     const { postId } = req.params;
     const repPostIdData = await postService.updateRepPost(userId, postId);
     res.status(200).json(
