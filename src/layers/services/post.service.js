@@ -14,6 +14,11 @@ const createPost = async (userId, title, content) => {
 
     return createPostData;
 };
+
+const findRepPost = async (userId) => {
+    return await postRepository.findRepPost(userId);
+};
+
 /**
  *
  * @param {string} title
@@ -100,6 +105,12 @@ const updateImage = async (postId, imageFileName) => {
     return updateImageData;
 };
 
+// // NOTICE
+const isExistNotice = async (userId) => {
+    const isExistNoticeData = await postRepository.isExistNotice(userId);
+    return isExistNoticeData.isExistsNotice;
+};
+
 //FUNGTION
 
 /**
@@ -124,10 +135,13 @@ module.exports = {
     updatePost,
     deletePost,
 
+    findRepPost,
     updateRepPost,
 
     createItem,
     updateItem,
 
-    updateImage
+    updateImage,
+
+    isExistNotice
 };
