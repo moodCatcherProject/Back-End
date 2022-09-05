@@ -26,19 +26,19 @@ class App {
     }
     setMiddleWare() {
         passportConfig();
-        this.app.use(cookieParser(process.env.COOKIE_SECRET));
-        //세션 겍체 생성
-        this.app.use(
-            session({
-                resave: false,
-                saveUninitialized: false,
-                secret: process.env.COOKIE_SECRET,
-                cookie: {
-                    httpOnly: false,
-                    secure: false
-                }
-            })
-        );
+        // this.app.use(cookieParser(process.env.COOKIE_SECRET));
+        // //세션 겍체 생성
+        // this.app.use(
+        //     session({
+        //         resave: false,
+        //         saveUninitialized: false,
+        //         secret: process.env.COOKIE_SECRET,
+        //         cookie: {
+        //             httpOnly: false,
+        //             secure: false
+        //         }
+        //     })
+        // );
         if (process.env.MODE !== 'dev') {
             sequelize
                 .sync({ force: true })
@@ -51,7 +51,7 @@ class App {
         }
 
         this.app.use(passport.initialize()); // 요청 객체에 passport 설정을 심음
-        this.app.use(passport.session()); // req.session 객체에 passport정보를 추가 저장
+        // this.app.use(passport.session()); // req.session 객체에 passport정보를 추가 저장
         this.app.use(morgan('dev')); //로그 생성
         // this.app.use(cors()); // 화이트 리스트 생성 예정
         this.app.use(express.json({ limit: '10mb' }));
