@@ -12,15 +12,6 @@ const findByEmail = async (email) => {
 };
 
 /**
- * @param { string } nickname
- * @returns User 테이블에서 nickname 한개를 찾음
- */
-const findByNickname = async (nickname) => {
-    const findByNickname = await User.findOne({ where: { nickname } });
-    return findByNickname;
-};
-
-/**
  * @param { string } email @param { string } password
  * @returns Auth 테이블에 email, 해쉬password값 생성
  */
@@ -41,8 +32,8 @@ const createSignUp = async (email, password) => {
  * @param { string } nickname @param { string } age @param { string } gender
  * @returns User 테이블에 null이였던 nickname , age , gender 를 업데이트
  */
-const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
-    await User.update({ nickname }, { where: { userId } });
+const updateNicknameAgeGender = async (nickname, age, gender, userId, grade) => {
+    await User.update({ nickname, grade }, { where: { userId } });
     const findByDetailId = await User.findOne({
         include: [{ model: UserDetail, attributes: ['detailId'] }],
         where: { userId }
@@ -61,8 +52,6 @@ const createTable = async () => {
 
 module.exports = {
     findByEmail,
-    findByNickname,
     createSignUp,
-
     updateNicknameAgeGender
 };
