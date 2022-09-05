@@ -21,7 +21,7 @@ const getUser = async (userId) => {
  * @param {string} gender
  * @param {string} age
  * @param {string} imageFileName
- * @returns { Promise<{userId:number, nickname:string, imgUrl:string, grade:string} | null>}
+ * @returns { Promise<{userId:number, nickname:string, imgUrl:string, grade:string, gender:string, age:string, moodPoint:number, repPostId:number, isExistsNotice:boolean } | null>}
  */
 const updateUser = async (userId, nickname, gender, age, imageFileName) => {
     new exception.isString({ nickname }).value;
@@ -29,7 +29,7 @@ const updateUser = async (userId, nickname, gender, age, imageFileName) => {
     new exception.isString({ age }).value;
     if (!imageFileName) throw new exception.BadRequestException('이미지가 빈 값');
 
-    const checkNickname = /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,16}$/;
+    const checkNickname = /^(?=.*[a-zA-Z0-9가-힣])[a-zA-Z0-9가-힣]{2,16}$/;
     if (checkNickname.test(nickname) == false) {
         throw new exception.BadRequestException('닉네임 유효성 에러');
     }
@@ -46,17 +46,51 @@ const updateUser = async (userId, nickname, gender, age, imageFileName) => {
     const user = await userRepository.getUserStatusByUserId(userId);
     if (!user) throw new exception.NotFoundException('유저 정보 없음');
     if (nickname !== user.nickname) {
-        const ExistsNickname = await authRepository.findByNickname(nickname);
+        const ExistsNickname = await userRepository.findByNickname(nickname);
         if (ExistsNickname) {
             throw new exception.BadRequestException('닉네임 중복확인 실패');
         }
     }
 
-    await authRepository.updateNicknameAgeGender(nickname, age, gender, userId);
+    //성별을 수정할 때 grade도 변경하기(moody인 경우 제외/(예)man 1에서 woman 1로 변경)
+    let grade = user.grade;
+    if (gender !== user.gender && user.grade.split(' ')[0] !== 'moody') {
+        if (gender === '남자') grade = 'man ' + user.grade.split(' ')[1];
+        else grade = 'woman ' + user.grade.split(' ')[1];
+    }
+
+    await authRepository.updateNicknameAgeGender(nickname, age, gender, userId, grade);
 
     const updateUser = await userRepository.updateUserImage(userId, imageFileName);
 
     return updateUser;
+};
+
+/**
+ *
+ * @param {number} userId
+ * @param {string} profileIcon
+ * @returns { Promise<{userId:number, nickname:string, imgUrl:string, grade:string, gender:string, age:string, moodPoint:number, repPostId:number, isExistsNotice:boolean } | null>}
+ */
+const updateProfileIcon = async (userId, profileIcon) => {
+    new exception.isString({ profileIcon }).value;
+
+    const user = await userRepository.getUserStatusByUserId(userId);
+    if (!user) throw new exception.NotFoundException('유저 정보 없음');
+
+    if (user.gender === '남자' && profileIcon !== 'man' && profileIcon !== 'moody')
+        throw new exception.BadRequestException('profileIcon 값은 man, moody만 유효합니다.');
+    if (user.gender === '여자' && profileIcon !== 'woman' && profileIcon !== 'moody')
+        throw new exception.BadRequestException('profileIcon 값은 woman, moody만 유효합니다.');
+
+    let grade = user.grade;
+    if (profileIcon === 'man') grade = 'man ' + user.grade.split(' ')[1];
+    if (profileIcon === 'woman') grade = 'woman ' + user.grade.split(' ')[1];
+    if (profileIcon === 'moody') grade = 'moody ' + user.grade.split(' ')[1];
+
+    const userStatus = await userRepository.updateGrade(userId, grade);
+
+    return userStatus;
 };
 
 /**
@@ -72,5 +106,6 @@ const deleteUser = async (userId) => {
 module.exports = {
     getUser,
     updateUser,
+    updateProfileIcon,
     deleteUser
 };

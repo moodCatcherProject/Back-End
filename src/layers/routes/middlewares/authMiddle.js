@@ -1,6 +1,6 @@
 const exception = require('../../exceptModels/_.models.loader');
 const jwt = require('jsonwebtoken');
-const { User } = require('../../../sequelize/models');
+const { User, UserDetail } = require('../../../sequelize/models');
 /**
  * 로그인에 해당하는 전략을 짜야하는데,
 로그인한 사용자는 회원가입과 로그인 라우터에 접근하면 안되며,
@@ -15,7 +15,7 @@ auth.js 라우터에 로그인 여부를 검사하는 위 미들웨어들을 넣
 원하지 않는 상황들을 방지할 수 있다.
  */
 
-exports.isLoggedIn = (req, res, next) => {
+exports.isLoggedIn = async (req, res, next) => {
     // isAuthenticated()로 검사해 로그인이 되어있으면
     try {
         const { authorization } = req.headers;
@@ -30,19 +30,34 @@ exports.isLoggedIn = (req, res, next) => {
         }
 
         const { userId } = jwt.verify(tokenValue, process.env.SECRET_KEY);
-        User.findOne({ where: userId }).then((user) => {
-            res.locals.user = user;
-            next();
-        });
+
+        const userData = await User.findOne({ where: userId });
+        const detailUserData = await UserDetail.findOne({ where: { detailId: userId } });
+        res.locals.user = userData.dataValues;
+        res.locals.detailUser = detailUserData.dataValues;
+
+        // UserDetail.findOne({ where: { detailId: userId } }).then((detail) => {
+        //     res.locals.detailUser = detail;
+        // });
+        next();
     } catch (err) {
         next(err);
     }
 };
 
 exports.isNotLoggedIn = (req, res, next) => {
-    if (!req.isAuthenticated()) {
-        next(); // 로그인 안되어있으면 다음 미들웨어
-    } else {
-        res.status(403).send('로그인한 상태입니다.');
+    try {
+        const { authorization } = req.headers;
+        if (!authorization) {
+            next();
+        } else {
+            const [tokenType, tokenValue] = authorization.split(' ');
+
+            if (tokenType === 'Bearer') {
+                throw new exception.ForbiddenException('로그인 한 상태');
+            }
+        }
+    } catch (err) {
+        next(err);
     }
 };

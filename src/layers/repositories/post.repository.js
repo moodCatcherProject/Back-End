@@ -13,11 +13,12 @@ const Op = sequelize.Op;
  *
  * @returns 게시물 정보를 만들고 나서 그 게시물의 데이터 반환
  */
-const createPost = async (userId, title, content) => {
+const createPost = async (userId, title, content, gender) => {
     return await Post.create({
         userId,
         title,
         content,
+        gender,
         imgUrl: 'default'
     });
 };
@@ -121,12 +122,13 @@ const findLikeNumByPostId = async (postId) => {
  * @param {string} content
  * @returns 업데이트 된 게시물 데이터
  */
-const updatePost = async (postId, title, content) => {
+const updatePost = async (postId, title, content, gender) => {
     try {
         await Post.update(
             {
                 title,
-                content
+                content,
+                gender
             },
             {
                 where: { postId }

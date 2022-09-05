@@ -8,10 +8,10 @@ const exception = require('../exceptModels/_.models.loader');
 const createPost = async (req, res, next) => {
     try {
         const { userId } = res.locals.user;
-
+        const { gender } = res.locals.detailUser;
         const { title, content } = req.body.post;
         const { items } = req.body;
-        const postData = await postService.createPost(userId, title, content);
+        const postData = await postService.createPost(userId, title, content, gender);
         const itemsData = await postService.createItem(postData.postId, items);
 
         return res.status(201).json(
@@ -58,11 +58,12 @@ const findPost = async (req, res, next) => {
 const updatePost = async (req, res, next) => {
     try {
         const { userId } = res.locals.user;
+        const { gender } = res.locals.detailUser;
         const { postId } = req.params;
         const { title, content } = req.body.post;
         const { items } = req.body;
 
-        const postData = await postService.updatePost(userId, postId, title, content);
+        const postData = await postService.updatePost(userId, postId, title, content, gender);
         const itemsData = await postService.updateItem(postData.postId, items);
 
         return res.status(201).json(
