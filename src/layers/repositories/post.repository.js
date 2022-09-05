@@ -32,11 +32,12 @@ const findPost = async (postId) => {
         where: { postId }
     });
 };
-const findAllPosts = async (page, count, orderKey, order) => {
+const findAllPosts = async (page, count, orderKey, order, gender) => {
     return await Post.findAll({
         offset: count * (page - 1),
         limit: count,
-        order: [[orderKey, order]]
+        order: [[orderKey, order]],
+        where: { gender }
     });
 };
 
