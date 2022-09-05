@@ -60,7 +60,7 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
 
     const ExisNickname = await authRepository.findByNickname(nickname);
     if (ExisNickname) {
-        throw new exception.BadRequestException('닉네임 중복 확인 실패!');
+        throw new exception.BadRequestException('닉네임 중복확인 실패');
     }
 
     const updatedNicknameAgeGender = await authRepository.updateNicknameAgeGender(
@@ -83,7 +83,7 @@ const checkEmail = async (email) => {
     const checkEmail =
         /^[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/;
     if (checkEmail.test(email) == false) {
-        throw new exception.BadRequestException('이메일 형식 확인 실패!');
+        throw new exception.BadRequestException('이메일 유효성 에러');
     }
 
     const ExisEmail = await authRepository.findByEmail(email);
@@ -103,12 +103,12 @@ const checkNickname = async (nickname) => {
 
     const checkNickname = /^(?=.*[a-zA-Z0-9가-힣])[a-zA-Z0-9가-힣]{2,16}$/;
     if (checkNickname.test(nickname) == false) {
-        throw new exception.BadRequestException('닉네임 형식 확인 실패!');
+        throw new exception.BadRequestException('닉네임 유효성 에러');
     }
 
     const ExisNickname = await authRepository.findByNickname(nickname);
     if (ExisNickname) {
-        throw new exception.BadRequestException('닉네임 중복 확인 실패!');
+        throw new exception.BadRequestException('닉네임 중복확인 실패');
     }
 
     return ExisNickname;

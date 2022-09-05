@@ -1,39 +1,60 @@
 const { Comment } = require('../../sequelize/models');
 
 /**
- * @param { number } userId @param { string } content @param { number } postId
- * @returns { Promise<{ userId: number, content: string, postId: number }> } Comment테이블에 userId, content, postId 생성
+ * Comment 테이블에 있는 commentId를 찾음.
+ * @param { number } commentId
+ * @returns { Promise<{ commentId: number }> | null }
  */
-const createComment = async (userId, content, postId) => {
-    const createdComment = await Comment.create({
-        userId,
-        content,
-        postId
+const findComment = async (commentId) => {
+    const findComment = await Comment.findOne({
+        where: { commentId }
     });
+
+    return findComment;
+};
+
+/**
+ * Comment 테이블에 postId, content, userId 생성.
+ * @param { number } postId
+ * @param { string } content
+ * @param { number } userId
+ * @returns { Promise<{ postId: number, content: string, userId: number }> | null }
+ */
+const createComment = async (postId, content, userId) => {
+    const createdComment = await Comment.create({
+        postId,
+        content,
+        userId
+    });
+
     return createdComment;
 };
 
 /**
- *
- * @param { number } userId @param { string } content @param { number } commentId
- * @returns { Promise<{ userId: number, content: string, commentId: number }> } Comment테이블에 userId, content, postId 업데이트
+ * Comment 테이블에 content 업데이트.
+ * @param { number } commentId
+ * @param { string } content
+ * @returns { Promise<{ commentId: number, content: string }> | null }
  */
-const updateComment = async (userId, content, commentId) => {
+const updateComment = async (commentId, content) => {
     const updatedComment = await Comment.update({ content }, { where: { commentId } });
+
     return updatedComment;
 };
 
 /**
- *
- * @param { number } userId @param { string } commentId
- * @returns { Promise<{ userId: number, commentId: number }> } Comment테이블에 commentId를 삭제
+ * Comment 테이블에 commentId를 삭제.
+ * @param { number } commentId
+ * @returns { Promise<{ commentId: number }> | null }
  */
-const deleteComment = async (userId, commentId) => {
+const deleteComment = async (commentId) => {
     const deleteComment = await Comment.destroy({ where: { commentId } });
+
     return deleteComment;
 };
 
 module.exports = {
+    findComment,
     createComment,
     updateComment,
     deleteComment
