@@ -18,6 +18,7 @@ const createComment = async (postId, content, userId) => {
     if (post === null) {
         throw new exception.BadRequestException('게시물 없음.');
     }
+    // nickname, grade, imgUrl이 없으면 댓글 작성 못하게
 
     const createdComment = await commentRepository.createComment(postId, content, userId);
 
