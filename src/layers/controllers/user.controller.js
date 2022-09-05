@@ -37,6 +37,22 @@ const updateUser = async (req, res, next) => {
 };
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
+const updateProfileIcon = async (req, res, next) => {
+    try {
+        const userId = req.user.userId;
+        const { profileIcon } = req.body;
+
+        const userStatus = await userService.updateProfileIcon(userId, profileIcon);
+
+        return res
+            .status(201)
+            .json(new exception.FormDto('프로필 아이콘 변경 성공', { userStatus }));
+    } catch (err) {
+        next(err);
+    }
+};
+
+/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const deleteUser = async (req, res, next) => {
     const userId = req.user.userId;
     try {
@@ -50,5 +66,6 @@ const deleteUser = async (req, res, next) => {
 module.exports = {
     getUser,
     updateUser,
+    updateProfileIcon,
     deleteUser
 };
