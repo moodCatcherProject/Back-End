@@ -19,6 +19,10 @@ module.exports = {
                 type: Sequelize.INTEGER,
                 allowNull: false
             },
+            gender: {
+                type: Sequelize.STRING,
+                allowNull: false
+            },
             imgUrl: {
                 type: Sequelize.STRING,
                 allowNull: false
