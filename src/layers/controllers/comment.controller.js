@@ -6,7 +6,7 @@ const exception = require('../exceptModels/_.models.loader');
 const createComment = async (req, res, next) => {
     const { postId } = req.query;
     const { content } = req.body;
-    const userId = req.user.userId;
+    const { userId } = res.locals.user;
 
     try {
         const createComment = await commentService.createComment(postId, content, userId);
@@ -34,7 +34,7 @@ const getComments = async (req, res, next) => {
 const updateComment = async (req, res, next) => {
     const { commentId } = req.params;
     const { content } = req.body;
-    const userId = req.user.userId;
+    const { userId } = res.locals.user;
 
     try {
         await commentService.updateComment(commentId, content, userId);
@@ -47,7 +47,7 @@ const updateComment = async (req, res, next) => {
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const deleteComment = async (req, res, next) => {
     const { commentId } = req.params;
-    const userId = req.user.userId;
+    const { userId } = res.locals.user;
 
     try {
         await commentService.deleteComment(commentId, userId);
