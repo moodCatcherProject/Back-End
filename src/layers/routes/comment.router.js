@@ -7,6 +7,9 @@ const { isLoggedIn } = require('./middlewares/authMiddle');
 // 댓글 작성(/api/comments?postId)
 commentRouter.post('/', isLoggedIn, commentController.createComment);
 
+// 댓글 조회(/api/comments?postId&page&count)
+commentRouter.get('/', isLoggedIn, commentController.getComments);
+
 // 댓글 수정 (/api/comments/:commentId)
 commentRouter.put('/:commentId', isLoggedIn, commentController.updateComment);
 

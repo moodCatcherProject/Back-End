@@ -17,6 +17,19 @@ const createComment = async (req, res, next) => {
 };
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
+const getComments = async (req, res, next) => {
+    try {
+        const page = Number(req.query.page || 1);
+        const count = Number(req.query.count || 8);
+
+        const getComments = await commentService.getComments(page, count);
+        return res.status(200).json(new exception.FormDto('댓글 조회 성공', { getComments }));
+    } catch (err) {
+        next(err);
+    }
+};
+
+/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const updateComment = async (req, res, next) => {
     const { commentId } = req.params;
     const { content } = req.body;
@@ -45,6 +58,7 @@ const deleteComment = async (req, res, next) => {
 
 module.exports = {
     createComment,
+    getComments,
     updateComment,
     deleteComment
 };

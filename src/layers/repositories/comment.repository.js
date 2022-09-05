@@ -31,6 +31,15 @@ const createComment = async (postId, content, userId) => {
 };
 
 /**
+ *
+ * @returns
+ */
+const getComments = async () => {
+    const getComments = await Comment.findAll({});
+    return getComments;
+};
+
+/**
  * Comment 테이블에 content 업데이트.
  * @param { number } commentId
  * @param { string } content
@@ -56,6 +65,7 @@ const deleteComment = async (commentId) => {
 module.exports = {
     findComment,
     createComment,
+    getComments,
     updateComment,
     deleteComment
 };

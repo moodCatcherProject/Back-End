@@ -25,6 +25,41 @@ const createComment = async (postId, content, userId) => {
 };
 
 /**
+ *
+ * @returns
+ */
+const getComments = async (page, count) => {
+    const getComments = await commentRepository.getComments(page, count);
+
+    return getComments;
+};
+
+// data: {
+//     comments: [
+//         {
+//          userId:
+//          commentId:
+//          content:
+//          imgUrl:
+//          nickname:
+//          grade:
+//          createdAt:
+//          recomments: [
+//                         {
+//                             userId:
+//                             recommentId:
+//                             content:
+//                             imgUrl:
+//                             nickname:
+//                             grade:
+//                             createdAt:
+//                         } * 여러 개
+//                     ]
+//         } * 여러 개
+//             ]
+//         }
+
+/**
  * 댓글 수정
  * @param { number } commentId
  * @param { string } content
@@ -77,6 +112,7 @@ const deleteComment = async (commentId, userId) => {
 
 module.exports = {
     createComment,
+    getComments,
     updateComment,
     deleteComment
 };
