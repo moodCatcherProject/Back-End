@@ -1,12 +1,20 @@
-const { Post, Auth, Like, User, UserDetail } = require('../src/sequelize/models');
+const { Post, Auth, Like, User, UserDetail, StartMessage } = require('../src/sequelize/models');
 const bcrypt = require('bcrypt');
+const fs = require('fs');
 
 const createPostMul = async (title, content, userId, i) => {
+    const genderData = await UserDetail.findOne({
+        where: { detailId: userId },
+        raw: true,
+        attributes: ['gender']
+    });
+
     await Post.create({
         title: `${title} ${i} 번 `,
         content: `${content} ${i}번 `,
         imgUrl: 'defalt',
-        userId
+        userId,
+        gender: genderData.gender
     });
 };
 
@@ -46,12 +54,19 @@ const updateAccLike = async (postId) => {
     console.log(accLike.count);
     await Post.update(
         {
-            accLike: accLike.count
+            likeCount: accLike.count
         },
         {
             where: { postId }
         }
     );
+};
+
+const createStartMsg = () => {
+    const startMessage = fs.readFileSync('startMsg.txt', 'utf8').split(`\n`);
+    for (let i = 0; i < startMessage.length; i++) {
+        StartMessage.create({ message: startMessage[i] });
+    }
 };
 
 const createTestDatabase = async (req, res, next) => {
@@ -70,6 +85,22 @@ const createTestDatabase = async (req, res, next) => {
                 j
             );
         }
+        for (let j = 1; j <= 8; j++) {
+            await createPostMul(
+                '3번유저가 만든 테스트용 제목',
+                '3번 유저가 만든 내용입니다. 테스트용',
+                3,
+                j
+            );
+        }
+        for (let j = 1; j <= 5; j++) {
+            await createPostMul(
+                '4번유저가 만든 테스트용 제목',
+                '4번 유저가 만든 내용입니다. 테스트용',
+                4,
+                j
+            );
+        }
         await createLike(1, 5);
         await createLike(2, 8);
         await createLike(3, 11);
@@ -78,6 +109,7 @@ const createTestDatabase = async (req, res, next) => {
         for (let i = 1; i <= 20; i++) {
             await updateAccLike(i);
         }
+        createStartMsg();
         res.status(200).send('데이터 베이스 생성!');
     } catch (err) {
         next(err);

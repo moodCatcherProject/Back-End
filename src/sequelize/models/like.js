@@ -36,6 +36,11 @@ module.exports = (sequelize, DataTypes) => {
             userId: {
                 type: DataTypes.INTEGER,
                 allowNull: false
+            },
+            likeStatus: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: true
             }
         },
         {

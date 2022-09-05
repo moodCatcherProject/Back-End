@@ -50,19 +50,28 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false
             },
+            gender: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
             imgUrl: {
                 type: DataTypes.STRING,
                 allowNull: false
             },
-            accLike: {
+            likeCount: {
                 type: DataTypes.INTEGER,
                 defaultValue: 0,
                 allowNull: false
+            },
+            createdAt: {
+                allowNull: false,
+                type: DataTypes.DATE,
+                defaultValue: DataTypes.NOW
             }
         },
         {
             sequelize,
-            timestamps: true,
+            timestamps: false,
             modelName: 'Post'
         }
     );

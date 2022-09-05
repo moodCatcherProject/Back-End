@@ -25,11 +25,16 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
             },
             notice: { type: DataTypes.STRING, allowNull: false },
-            userId: { type: DataTypes.INTEGER, allowNull: false }
+            userId: { type: DataTypes.INTEGER, allowNull: false },
+            createdAt: {
+                allowNull: false,
+                type: DataTypes.DATE,
+                defaultValue: DataTypes.NOW
+            }
         },
         {
             sequelize,
-            timestamps: true,
+            timestamps: false,
             modelName: 'Notice'
         }
     );

@@ -123,7 +123,7 @@ describe('회원가입 ', () => {
 
 const agent = request.agent(app);
 
-describe('로그인 후 닉네임 나이 성별 추가 ', () => {
+describe('로그인 후 닉네임 나이 성별 추가', () => {
     test('로그인 200 (성공)', (done) => {
         agent
             .post('/api/auth/login')
@@ -140,7 +140,7 @@ describe('로그인 후 닉네임 나이 성별 추가 ', () => {
         agent
             .post('/api/auth/detail')
             .send({
-                nickname: 'rph',
+                nickname: 'Rph',
                 age: '10대',
                 gender: '여자'
             })
@@ -166,11 +166,31 @@ describe('로그인 후 닉네임 나이 성별 추가 ', () => {
             })
             .expect(400, done);
     });
+    test('닉네임 유효성이 맞지 않을때 (닉네임은 한글 대문자 소문자 허용 2~16글자) 400 (실패)', (done) => {
+        agent
+            .post('/api/auth/detail')
+            .send({
+                nickname: '1',
+                age: '10대',
+                gender: '여자'
+            })
+            .expect(400, done);
+    });
+    test('닉네임이 증복될때 400 (실패)', (done) => {
+        agent
+            .post('/api/auth/detail')
+            .send({
+                nickname: 'Rph',
+                age: '10대',
+                gender: '여자'
+            })
+            .expect(400, done);
+    });
     test('나이가 빈값일때 400 (실패)', (done) => {
         agent
             .post('/api/auth/detail')
             .send({
-                nickname: 'rph',
+                nickname: 'Rph',
                 age: '',
                 gender: '여자'
             })
@@ -180,8 +200,18 @@ describe('로그인 후 닉네임 나이 성별 추가 ', () => {
         agent
             .post('/api/auth/detail')
             .send({
-                nickname: 'rph',
+                nickname: 'Rph',
                 age: 123,
+                gender: '여자'
+            })
+            .expect(400, done);
+    });
+    test('나이 유효성이 맞지 않을때 (나이는 "10대"or"20대"or"30대"or"40대"or"50대" 만 입력 가능) 400 (실패)', (done) => {
+        agent
+            .post('/api/auth/detail')
+            .send({
+                nickname: 'Rph',
+                age: '60대',
                 gender: '여자'
             })
             .expect(400, done);
@@ -190,7 +220,7 @@ describe('로그인 후 닉네임 나이 성별 추가 ', () => {
         agent
             .post('/api/auth/detail')
             .send({
-                nickname: 'rph',
+                nickname: 'Rph',
                 age: '10대',
                 gender: ''
             })
@@ -200,11 +230,135 @@ describe('로그인 후 닉네임 나이 성별 추가 ', () => {
         agent
             .post('/api/auth/detail')
             .send({
-                nickname: 'rph',
+                nickname: 'Rph',
                 age: '10대',
                 gender: 123
             })
             .expect(400, done);
     });
+    test('성별 유효성이 맞지 않을때 (성별은 "남자" 또는 "여자" 만 입력 가능) 400 (실패)', (done) => {
+        agent
+            .post('/api/auth/detail')
+            .send({
+                nickname: 'Rph',
+                age: '10대',
+                gender: '중성'
+            })
+            .expect(400, done);
+    });
 });
-// 닉네임 / 성별 / 나이 / 유효성 / 닉네임중복확인 / 이메일형식 / 이메일중복 / 닉네힘형식 / 닉네임중복 남음
+
+describe('로그인 전 닉네임 확인', () => {
+    test('닉네임 중복확인 200 (성공)', (done) => {
+        request(app).get(`/api/auth/checkNickname?nickname=${'Rph1'}`).expect(200, done);
+    });
+    test('닉네임이 빈값일때 400 (실패)', (done) => {
+        request(app).get(`/api/auth/checkNickname?nickname=${''}`).expect(400, done);
+    });
+    test('닉네임 유효성이 맞지 않을때 (닉네임은 한글 대문자 소문자 허용 2~16글자) 400 (실패)', (done) => {
+        request(app).get(`/api/auth/checkNickname?nickname=${'1'}`).expect(400, done);
+    });
+    test('닉네임이 증복될때 400 (실패)', (done) => {
+        request(app).get(`/api/auth/checkNickname?nickname=${'Rph'}`).expect(400, done);
+    });
+});
+
+describe('로그인 전 이메일 확인', () => {
+    test('이메일 중복확인 200 (성공)', (done) => {
+        request(app).get(`/api/auth/checkEmail?email=${'Rph2@gmail.com'}`).expect(200, done);
+    });
+    test('이메일이 빈값일때 400 (실패)', (done) => {
+        request(app).get(`/api/auth/checkEmail?email=${''}`).expect(400, done);
+    });
+    test('이메일이 유효성이 맞지 않을때 400 (실패)', (done) => {
+        request(app).get(`/api/auth/checkEmail?email=${'Rph3gmail.com'}`).expect(400, done);
+    });
+    test('이메일이 증복될때 400 (실패)', (done) => {
+        request(app).get(`/api/auth/checkEmail?email=${'Rph1@gmail.com'}`).expect(400, done);
+    });
+});
+// 게시글을 만들어줘야함
+// 댓글 작성
+// 댓글 수정
+// 댓글 삭제
+// describe('댓글 작성', () => {
+//     test('댓글 작성 201 (성공)', (done) => {
+//         agent
+//             .post(`/api/comments?postId=${1}`)
+//             .send({
+//                 content: 'Rph content'
+//             })
+//             .expect(201, done);
+//     });
+//     test('댓글 내용이 빈칸일때 400 (성공)', (done) => {
+//         agent
+//             .post(`/api/comments?postId=${1}`)
+//             .send({
+//                 content: ''
+//             })
+//             .expect(400, done);
+//     });
+//     test('댓글을 작성하려는 게시글이 없을때 400 (성공)', (done) => {
+//         agent
+//             .post(`/api/comments?postId=${2}`)
+//             .send({
+//                 content: 'Rph content'
+//             })
+//             .expect(400, done);
+//     });
+// });
+// describe('댓글 수정', () => {
+//     test('댓글 수정 201 (성공)', (done) => {
+//         agent
+//             .put('/api/comments/:commentId')
+//             .send({
+//                 content: 'Rph content'
+//             })
+//             .expect(201, done);
+//     });
+//     test('댓글을 수정하려는 내용이 빈칸일때 400 (실패)', (done) => {
+//         agent
+//             .put('/api/comments/:commentId')
+//             .send({
+//                 content: ''
+//             })
+//             .expect(400, done);
+//     });
+//     test('댓글을 수정하려는 게시글이 없을때 400 (실패)', (done) => {
+//         agent
+//             .put('/api/comments/:commentId')
+//             .send({
+//                 content: 'Rph content'
+//             })
+//             .expect(400, done);
+//     });
+//     test('댓글을 수정하려는 댓글이 없을때 400 (실패)', (done) => {
+//         agent
+//             .put('/api/comments/:commentId')
+//             .send({
+//                 content: 'Rph content'
+//             })
+//             .expect(400, done);
+//     });
+// });
+// describe('댓글 삭제', () => {
+//     test('댓글 삭제 201 (성공)', (done) => {
+//         agent.delete('/api/comments/:commentId').expect(201, done);
+//     });
+//     test('댓글을 삭제하려는 게시글이 없을때 400 (실패)', (done) => {
+//         agent.post('/api/comments/:commentId').expect(400, done);
+//     });
+//     test('댓글을 삭제하려는 댓글이 없을때 400 (실패)', (done) => {
+//         agent.post('/api/comments/:commentId').expect(400, done);
+//     });
+// });
+// 게시글을 만들어줘야함
+// 댓글을 만들어 줘야함
+// 대댓글 작성
+// 대댓글 수정
+// 대댓글 삭제
+describe('회원 탈퇴', () => {
+    test('회원탈퇴 200 (성공)', (done) => {
+        agent.delete('/api/user/signout').expect(200, done);
+    });
+});

@@ -1,15 +1,17 @@
 const authRepository = require('../repositories/auth.repository');
+const userRepository = require('../repositories/user.repository');
 const exception = require('../exceptModels/_.models.loader');
 
-// EM : 8자~ 30자
+// EM : 8자~ 30자 이메일형식
 // PW : 영소대문자+숫자+특수문자 8자 ~ 20자
 // NN : 한글, 영소 대문자. 숫자 2자~16자
 
-// 비밀번호 비밀번호확인 이메일 닉네임 성별 나이 문자열 확인만 남음
-
 /**
- * @throws { Error } @param { string } email @param { string } password @param { string } confirmPw
- * @returns { Promise<{ email: string, password: string }> } 이메일,비밀번호 생성
+ * 회원가입
+ * @param { string } email
+ * @param { string } password
+ * @param { string } confirmPw
+ * @returns { Promise<{ email: string, password: string }> | null }
  */
 const localSignUp = async (email, password, confirmPw) => {
     new exception.isString({ email }).value;
@@ -37,13 +39,19 @@ const localSignUp = async (email, password, confirmPw) => {
 };
 
 /**
- * @throws { Error } @param { string } nickname @param {string} age
- * @returns { Promise<{ nickname: string, age: string }> } null이였던 nickname / age / gender 업데이트
+ * 닉네임 나이 성별 추가
+ * @param { string } nickname
+ * @param {string} age
+ * @returns { Promise<{ nickname: string, age: string }> | null }
  */
 const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
     new exception.isString({ nickname }).value;
     new exception.isString({ gender }).value;
     new exception.isString({ age }).value;
+
+    const ExistUser = await userRepository.getUserStatusByUserId(userId);
+    if (ExistUser.nickname)
+        throw new exception.ForbiddenException('초기설정한 유저정보가 있습니다.');
 
     const checkNickname = /^(?=.*[a-zA-Z0-9가-힣])[a-zA-Z0-9가-힣]{2,16}$/;
     if (checkNickname.test(nickname) == false) {
@@ -58,24 +66,29 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
         throw new exception.BadRequestException('나이 유효성 에러');
     }
 
-    const ExisNickname = await authRepository.findByNickname(nickname);
+    const ExisNickname = await userRepository.findByNickname(nickname);
     if (ExisNickname) {
-        throw new exception.BadRequestException('닉네임 중복 확인 실패!');
+        throw new exception.BadRequestException('닉네임 중복확인 실패');
     }
+
+    let grade = 'man 1';
+    if (gender === '여자') grade = 'woman 1';
 
     const updatedNicknameAgeGender = await authRepository.updateNicknameAgeGender(
         nickname,
         age,
         gender,
-        userId
+        userId,
+        grade
     );
 
     return updatedNicknameAgeGender;
 };
 
 /**
- * @throws { Error } @param { string } email
- * @returns { Promise<{ email: string }> }
+ * 이메일 중복확인
+ * @param { string } email
+ * @returns { Promise<{ email: string }> | null }
  */
 const checkEmail = async (email) => {
     new exception.isString({ email }).value;
@@ -83,7 +96,7 @@ const checkEmail = async (email) => {
     const checkEmail =
         /^[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/;
     if (checkEmail.test(email) == false) {
-        throw new exception.BadRequestException('이메일 형식 확인 실패!');
+        throw new exception.BadRequestException('이메일 유효성 에러');
     }
 
     const ExisEmail = await authRepository.findByEmail(email);
@@ -95,20 +108,21 @@ const checkEmail = async (email) => {
 };
 
 /**
- * @throws { Error } @param { string } nickname
- * @returns { Promise<{ nickname: string }> }
+ * 닉네임 중복확인
+ * @param { string } nickname
+ * @returns { Promise<{ nickname: string }> | null }
  */
 const checkNickname = async (nickname) => {
     new exception.isString({ nickname }).value;
 
     const checkNickname = /^(?=.*[a-zA-Z0-9가-힣])[a-zA-Z0-9가-힣]{2,16}$/;
     if (checkNickname.test(nickname) == false) {
-        throw new exception.BadRequestException('닉네임 형식 확인 실패!');
+        throw new exception.BadRequestException('닉네임 유효성 에러');
     }
 
     const ExisNickname = await authRepository.findByNickname(nickname);
     if (ExisNickname) {
-        throw new exception.BadRequestException('닉네임 중복 확인 실패!');
+        throw new exception.BadRequestException('닉네임 중복확인 실패');
     }
 
     return ExisNickname;

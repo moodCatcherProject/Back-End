@@ -23,7 +23,6 @@ module.exports = (sequelize, DataTypes) => {
                 autoIncrement: true,
                 allowNull: false
             },
-
             gender: {
                 type: DataTypes.STRING
             },

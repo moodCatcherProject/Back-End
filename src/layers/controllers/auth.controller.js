@@ -3,13 +3,15 @@ const authService = require('../services/auth.service');
 const exception = require('../exceptModels/_.models.loader');
 const passport = require('passport');
 const { User } = require('../../sequelize/models');
+const jwt = require('jsonwebtoken');
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const localSignUp = async (req, res, next) => {
     const { email, password, confirmPw } = req.body;
+
     try {
         const signUp = await authService.localSignUp(email, password, confirmPw);
-        return res.status(201).json(new exception.FormDto('회원가입 성공', { signUp }));
+        return res.status(201).json(new exception.FormDto('회원가입 성공', {}));
     } catch (err) {
         next(err);
     }
@@ -17,8 +19,9 @@ const localSignUp = async (req, res, next) => {
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const updateNicknameAgeGender = async (req, res, next) => {
-    const userId = req.user.userId;
+    const { userId } = res.locals.user;
     const { nickname, age, gender } = req.body;
+
     try {
         const updateNicknameAgeGender = await authService.updateNicknameAgeGender(
             nickname,
@@ -27,7 +30,7 @@ const updateNicknameAgeGender = async (req, res, next) => {
             userId
         );
         return res.status(201).json(
-            new exception.FormDto('닉네임 나이 추가 성공', {
+            new exception.FormDto('닉네임, 성별, 나이 추가 성공', {
                 updateNicknameAgeGender
             })
         );
@@ -39,6 +42,7 @@ const updateNicknameAgeGender = async (req, res, next) => {
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const checkEmail = async (req, res, next) => {
     const { email } = req.query;
+
     try {
         await authService.checkEmail(email);
         return res.status(200).json(new exception.FormDto('이메일 확인 성공'));
@@ -50,6 +54,7 @@ const checkEmail = async (req, res, next) => {
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const checkNickname = async (req, res, next) => {
     const { nickname } = req.query;
+
     try {
         await authService.checkNickname(nickname);
         return res.status(200).json(new exception.FormDto('닉네임 확인 성공'));
@@ -89,8 +94,13 @@ const localLogin = async (req, res, next) => {
                 // done(null, user)로 로직이 성공적이라면, 세션에 사용자 정보를 저장해놔서 로그인 상태가 된다.
                 isExistUserNickname(req.user.authId).then((data) => {
                     const exist = data.nickname ? true : false;
-
-                    res.status(200).redirect(`http://localhost:3000/?exist=${exist}}`);
+                    const token = jwt.sign({ userId: req.user.authId }, process.env.SECRET_KEY, {
+                        expiresIn: '1h'
+                    });
+                    res.header({ authorization: `Bearer ${token}` });
+                    res.status(200).redirect(
+                        `http://localhost:3000/?exist=${exist}&token=${token}`
+                    );
                 });
             } catch (err) {
                 console.log(err);
@@ -117,8 +127,17 @@ const kakaoCallback = async (req, res, next) => {
         //카카오 Strategy에서 성공한다면 콜백 실행
         isExistUserNickname(req.user.authId).then((data) => {
             const exist = data.nickname ? true : false;
+            const token = jwt.sign({ userId: req.user.authId }, process.env.SECRET_KEY, {
+                expiresIn: '1h'
+            });
+            // const refreshToken = jwt.sign({}, process.env.SECRET_KEY , {
+            //     expiresIn : '1w'
+            // }) 리프레시 토큰을 사용할 지 팀원과 논의하기
+            res.header({ authorization: `Bearer ${token}` });
             //카카오 Strategy에서 성공한다면 콜백 실행
-            res.status(200).redirect(`http://localhost:3000/login/detail?exist=${exist}`);
+            res.status(200).redirect(
+                `http://localhost:3000/login/detail?exist=${exist}&token=${token}`
+            );
         });
     } catch (err) {
         next(err);
