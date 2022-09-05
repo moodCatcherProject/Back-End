@@ -8,9 +8,10 @@ const jwt = require('jsonwebtoken');
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const localSignUp = async (req, res, next) => {
     const { email, password, confirmPw } = req.body;
+
     try {
         const signUp = await authService.localSignUp(email, password, confirmPw);
-        return res.status(201).json(new exception.FormDto('회원가입 성공', { signUp }));
+        return res.status(201).json(new exception.FormDto('회원가입 성공', {}));
     } catch (err) {
         next(err);
     }
@@ -20,6 +21,7 @@ const localSignUp = async (req, res, next) => {
 const updateNicknameAgeGender = async (req, res, next) => {
     const userId = req.user.userId;
     const { nickname, age, gender } = req.body;
+
     try {
         const updateNicknameAgeGender = await authService.updateNicknameAgeGender(
             nickname,
@@ -40,6 +42,7 @@ const updateNicknameAgeGender = async (req, res, next) => {
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const checkEmail = async (req, res, next) => {
     const { email } = req.query;
+
     try {
         await authService.checkEmail(email);
         return res.status(200).json(new exception.FormDto('이메일 확인 성공'));
@@ -51,6 +54,7 @@ const checkEmail = async (req, res, next) => {
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const checkNickname = async (req, res, next) => {
     const { nickname } = req.query;
+
     try {
         await authService.checkNickname(nickname);
         return res.status(200).json(new exception.FormDto('닉네임 확인 성공'));

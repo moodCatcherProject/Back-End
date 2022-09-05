@@ -9,7 +9,6 @@ const findReComment = async (recommentId) => {
     const findReComment = await Recomment.findOne({
         where: { recommentId }
     });
-
     return findReComment;
 };
 
@@ -26,7 +25,6 @@ const createReComment = async (commentId, content, userId) => {
         content,
         userId
     });
-
     return createdComment;
 };
 
@@ -38,7 +36,6 @@ const createReComment = async (commentId, content, userId) => {
  */
 const updateReComment = async (recommentId, content) => {
     const updatedComment = await Recomment.update({ content }, { where: { recommentId } });
-
     return updatedComment;
 };
 
@@ -49,7 +46,6 @@ const updateReComment = async (recommentId, content) => {
  */
 const deleteReComment = async (recommentId) => {
     const deleteComment = await Recomment.destroy({ where: { recommentId } });
-
     return deleteComment;
 };
 

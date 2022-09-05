@@ -6,6 +6,7 @@ const exception = require('../exceptModels/_.models.loader');
  * @param { number } commentId
  * @param { string } content
  * @param { number } userId
+ * @returns { Promise<{ commentId: number, content: string, userId: number }> | null }
  */
 const createReComment = async (commentId, content, userId) => {
     if (!content) {
@@ -27,6 +28,7 @@ const createReComment = async (commentId, content, userId) => {
  * @param { number } recommentId
  * @param { string } content
  * @param { number } userId
+ * @returns { Promise<{ recommentId: number, content: string, userId: number }> | null }
  */
 const updateReComment = async (recommentId, content, userId) => {
     if (!content) {
@@ -57,6 +59,7 @@ const updateReComment = async (recommentId, content, userId) => {
  * 대댓글 삭제
  * @param { number } recommentId
  * @param { number } userId
+ * @returns { Promise<{ recommentId: number, userId: number }> | null }
  */
 const deleteReComment = async (recommentId, userId) => {
     const reComment = await reCommentRepository.findReComment(recommentId);
