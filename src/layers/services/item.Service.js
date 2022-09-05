@@ -1,11 +1,12 @@
 const axios = require('axios');
-//html을 쉽게 파싱 할 수 있게 만들어준다.
+//브라우저와 Node 환경에서 사용하는 Promise 기반의 HTTP Client로 사이트의 HTML을 가져올 때 사용할 라이브러리
 const cheerio = require('cheerio');
-const exception = require('../exceptModels/_.models.loader');
+//Node.js 환경에서 JQuery처럼 DOM Selector 기능들을 제공. Axios의 결과로 받은 데이터에서 필요한 데이터를 추출하는데 사용하는 라이브러리
 
 const crawlingMusinsa = async (keyword) => {
     const getHTML = async (keyword) => {
         try {
+            //무신사 상품 검색 결과 페이지(무신사 추천순 90개)
             return await axios.get(
                 `https://www.musinsa.com/search/musinsa/goods?q=${encodeURI(
                     keyword
@@ -18,18 +19,16 @@ const crawlingMusinsa = async (keyword) => {
     const parsing = async (keyword) => {
         const html = await getHTML(keyword);
 
-        //실제 코드는 html.data안에 있음.
         const $ = cheerio.load(html.data);
-        const $courseList = $('.li_box');
+        const $itemList = $('.li_box');
 
         let items = [];
-        //첫 인자는 인덱스 , 두번째 인자는 자료 하나하나
-        $courseList.each((idx, node) => {
+        $itemList.each((idx, node) => {
             const brand = $(node).find('.item_title').text();
             const image = $(node).find('.list_img> a> img').attr('data-original');
             const price = $(node).find('.price').text();
             const title = $(node).find('.list_info>a').attr('title');
-            // console.log(title)
+
             items.push({
                 brand,
                 title,
