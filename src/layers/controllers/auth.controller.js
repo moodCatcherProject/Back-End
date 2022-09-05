@@ -3,6 +3,7 @@ const authService = require('../services/auth.service');
 const exception = require('../exceptModels/_.models.loader');
 const passport = require('passport');
 const { User } = require('../../sequelize/models');
+const jwt = require('jsonwebtoken');
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const localSignUp = async (req, res, next) => {
@@ -93,8 +94,13 @@ const localLogin = async (req, res, next) => {
                 // done(null, user)로 로직이 성공적이라면, 세션에 사용자 정보를 저장해놔서 로그인 상태가 된다.
                 isExistUserNickname(req.user.authId).then((data) => {
                     const exist = data.nickname ? true : false;
-
-                    res.status(200).redirect(`http://localhost:3000/?exist=${exist}}`);
+                    const token = jwt.sign({ userId: req.user.authId }, process.env.SECRET_KEY, {
+                        expiresIn: '1h'
+                    });
+                    res.header({ authorization: `Bearer ${token}` });
+                    res.status(200).redirect(
+                        `http://localhost:3000/?exist=${exist}&token=${token}`
+                    );
                 });
             } catch (err) {
                 console.log(err);
@@ -121,8 +127,17 @@ const kakaoCallback = async (req, res, next) => {
         //카카오 Strategy에서 성공한다면 콜백 실행
         isExistUserNickname(req.user.authId).then((data) => {
             const exist = data.nickname ? true : false;
+            const token = jwt.sign({ userId: req.user.authId }, process.env.SECRET_KEY, {
+                expiresIn: '1h'
+            });
+            // const refreshToken = jwt.sign({}, process.env.SECRET_KEY , {
+            //     expiresIn : '1w'
+            // }) 리프레시 토큰을 사용할 지 팀원과 논의하기
+            res.header({ authorization: `Bearer ${token}` });
             //카카오 Strategy에서 성공한다면 콜백 실행
-            res.status(200).redirect(`http://localhost:3000/login/detail?exist=${exist}`);
+            res.status(200).redirect(
+                `http://localhost:3000/login/detail?exist=${exist}&token=${token}`
+            );
         });
     } catch (err) {
         next(err);

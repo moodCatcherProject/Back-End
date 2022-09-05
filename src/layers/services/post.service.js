@@ -9,8 +9,8 @@ const exception = require('../exceptModels/_.models.loader');
  * @param {Array} items
  * @returns 생성 된 게시물의 데이터
  */
-const createPost = async (userId, title, content) => {
-    const createPostData = await postRepository.createPost(userId, title, content);
+const createPost = async (userId, title, content, gender) => {
+    const createPostData = await postRepository.createPost(userId, title, content, gender);
 
     return createPostData;
 };
@@ -26,10 +26,10 @@ const findRepPost = async (userId) => {
  *
  * @returns 업데이트 된 게시물의 데이터
  */
-const updatePost = async (userId, postId, title, content) => {
+const updatePost = async (userId, postId, title, content, gender) => {
     title = new exception.isString({ title }).trim;
     await isExistPostOfUser(userId, postId);
-    const createPostData = await postRepository.updatePost(postId, title, content);
+    const createPostData = await postRepository.updatePost(postId, title, content, gender);
 
     return createPostData;
 };
