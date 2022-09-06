@@ -12,7 +12,7 @@ const createPostMul = async (title, content, userId, i) => {
     await Post.create({
         title: `${title} ${i} 번 `,
         content: `${content} ${i}번 `,
-        imgUrl: 'defalt',
+        imgUrl: 'https://gwonyeong.s3.ap-northeast-2.amazonaws.com/post/1662125456004.jpg',
         userId,
         gender: genderData.gender
     });

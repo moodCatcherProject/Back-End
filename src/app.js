@@ -57,6 +57,7 @@ class App {
         this.app.use(cors()); // 화이트 리스트 생성 예정
         this.app.use((req, res, next) => {
             res.header('Access-Control-Allow-Origin', '*');
+            next();
         }); // 모든 도메인
 
         this.app.use(express.json({ limit: '10mb' }));
