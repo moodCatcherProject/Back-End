@@ -120,7 +120,7 @@ const checkNickname = async (nickname) => {
         throw new exception.BadRequestException('닉네임 유효성 에러');
     }
 
-    const ExisNickname = await authRepository.findByNickname(nickname);
+    const ExisNickname = await userRepository.findByNickname(nickname);
     if (ExisNickname) {
         throw new exception.BadRequestException('닉네임 중복확인 실패');
     }
