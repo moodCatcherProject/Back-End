@@ -19,7 +19,7 @@ const localSignUp = async (req, res, next) => {
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const updateNicknameAgeGender = async (req, res, next) => {
-    const userId = req.user.userId;
+    const { userId } = res.locals.user;
     const { nickname, age, gender } = req.body;
 
     try {
