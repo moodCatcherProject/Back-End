@@ -99,7 +99,7 @@ const localLogin = async (req, res, next) => {
                     });
                     //main
                     res.status(200).json({
-                        url: `http://localhost:3000/?exist=${exist}&token=${token}`
+                        url: `http://localhost:3000/login/detail?exist=${exist}&token=${token}`
                     });
                 });
             } catch (err) {
