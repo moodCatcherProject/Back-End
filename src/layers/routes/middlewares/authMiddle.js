@@ -50,12 +50,14 @@ exports.isNotLoggedIn = (req, res, next) => {
         const { authorization } = req.headers;
         const [tokenType, tokenValue] = (authorization || '').split(' ');
 
+
         if (tokenValue && tokenType === 'Bearer') {
             res.send({
                 errorMessage: '이미 로그인 상태'
             });
             return;
         }
+
         next();
     } catch (err) {
         next(err);
