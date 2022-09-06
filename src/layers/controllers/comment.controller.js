@@ -7,9 +7,16 @@ const createComment = async (req, res, next) => {
     const { postId } = req.query;
     const { content } = req.body;
     const { userId } = res.locals.user;
+    const { grade, nickname } = res.locals;
 
     try {
-        const createComment = await commentService.createComment(postId, content, userId);
+        const createComment = await commentService.createComment(
+            postId,
+            content,
+            userId,
+            grade,
+            nickname
+        );
         return res.status(201).json(new exception.FormDto('댓글 생성 성공', { createComment }));
     } catch (err) {
         next(err);
@@ -18,12 +25,13 @@ const createComment = async (req, res, next) => {
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const getComments = async (req, res, next) => {
+    const { postId } = req.query;
+    const { userId } = res.locals.user;
     try {
-        const postId = req.query;
         const page = Number(req.query.page || 1);
         const count = Number(req.query.count || 8);
 
-        const getComments = await commentService.getComments(postId, page, count);
+        const getComments = await commentService.getComments(postId, page, count, userId);
         return res.status(200).json(new exception.FormDto('댓글 조회 성공', { getComments }));
     } catch (err) {
         next(err);

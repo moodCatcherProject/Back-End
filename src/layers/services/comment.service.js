@@ -7,68 +7,68 @@ const exception = require('../exceptModels/_.models.loader');
  * @param { number } postId
  * @param { string } content
  * @param { number } userId
- * @returns { Promise<{ postId: number, content: string, userId: number }> | null }
+ * @param { string } grade
+ * @param { string } nickname
+ * @returns { Promise<{ postId: number, content: string, userId: number, grade: string, nickname: string }> | null }
  */
-const createComment = async (postId, content, userId) => {
+const createComment = async (postId, content, userId, grade, nickname) => {
     if (!content) {
         throw new exception.BadRequestException('댓글 내용 없음.');
+    }
+
+    const findUser = await commentRepository.findUser(userId);
+    const userNickname = findUser.nickname;
+    const userGrade = findUser.grade;
+    const userImgUrl = findUser.imgUrl;
+
+    // if (userNickname === '' && userGrade === null && userImgUrl === null) {
+    //     throw new exception.BadRequestException('없음.');
+    // }
+
+    if (userNickname === '') {
+        throw new exception.BadRequestException('nickname 없음.');
+    }
+
+    if (userGrade === null) {
+        throw new exception.BadRequestException('grade 없음.');
+    }
+
+    if (userImgUrl === null) {
+        throw new exception.BadRequestException('imgUrl 없음.');
     }
 
     const post = await postRepository.findPost(postId);
     if (post === null) {
         throw new exception.BadRequestException('게시물 없음.');
     }
-    // nickname, grade, imgUrl이 없으면 댓글 작성 못하게
 
-    const createdComment = await commentRepository.createComment(postId, content, userId);
+    const createdComment = await commentRepository.createComment(
+        postId,
+        content,
+        userId,
+        grade,
+        nickname
+    );
 
     return createdComment;
 };
 
 /**
  * 댓글 조회
+ * @param { number } postId
  * @param { number } page
  * @param { number } count
- * @returns { Promise<{ page: number, count: number }> | null }
+ * @param { number } userId
+ * @returns { Promise<{ postId: number, page: number, count: number, userId: number }> | null }
  */
-const getComments = async (postId, page, count) => {
-    const getComments = await commentRepository.getComments(postId, page, count);
+const getComments = async (postId, page, count, userId) => {
+    const getComments = await commentRepository.getComments(postId, page, count, userId);
+    const findUserInfo = await commentRepository.findUserInfo(userId);
+    console.log(findUserInfo);
+    // 게시물이 없을때
 
     return getComments;
 };
-
-// data: {
-//     comments: [
-//         {
-//          ----Comment table
-//          userId:
-//          commentId:
-//          content:
-//          ----Comment table
-//          ---- User table
-//          imgUrl:
-//          nickname:
-//          grade:
-//          ---- User table
-//          createdAt:
-//          recomments: [
-//                         {
-//                             ----Comment table
-//                             userId:
-//                             recommentId:
-//                             content:
-//                             ----Comment table
-//                             ---- User table
-//                             imgUrl:
-//                             nickname:
-//                             grade:
-//                             ---- User table
-//                             createdAt:
-//                         } * 여러 개
-//                     ]
-//         } * 여러 개
-//             ]
-//         }
 
 /**
  * 댓글 수정
@@ -82,8 +82,8 @@ const updateComment = async (commentId, content, userId) => {
         throw new exception.BadRequestException('댓글 내용 없음.');
     }
 
-    const comment = await commentRepository.findComment(commentId);
-    if (comment === null) {
+    const findComment = await commentRepository.findComment(commentId);
+    if (findComment === null) {
         throw new exception.BadRequestException('댓글이 없음.');
     }
 
