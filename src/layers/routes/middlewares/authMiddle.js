@@ -50,7 +50,7 @@ exports.isNotLoggedIn = (req, res, next) => {
         const { authorization } = req.headers;
         const [tokenType, tokenValue] = (authorization || '').split(' ');
         console.log(tokenType, typeof tokenValue);
-        if (tokenType === 'Bearer' && tokenValue !== undefined && tokenType !== null) {
+        if ((tokenType === 'Bearer' && tokenValue !== undefined) || tokenType !== null) {
             next(new exception.ForbiddenException('로그인 한 상태'));
         } else next();
     } catch (err) {
