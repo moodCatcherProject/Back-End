@@ -48,7 +48,7 @@ exports.isLoggedIn = async (req, res, next) => {
 exports.isNotLoggedIn = (req, res, next) => {
     try {
         const { authorization } = req.headers;
-        const [tokenType, tokenValue] = authorization.split(' ');
+        const [tokenType, tokenValue] = (authorization || '').split(' ');
         console.log(tokenType, tokenValue);
         if (tokenType === 'Bearer' && tokenValue) {
             next(new exception.ForbiddenException('로그인 한 상태'));
