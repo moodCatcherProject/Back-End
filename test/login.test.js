@@ -24,7 +24,7 @@ describe('회원가입 테스트', () => {
         request(app)
             .post('/api/auth/signup')
             .send({
-                email: 'test@naver.com',
+                email: 'test0@naver.com',
                 password: '1234asdf!',
                 confirmPw: '1234asdf!'
             })
@@ -34,7 +34,7 @@ describe('회원가입 테스트', () => {
         request(app)
             .post('/api/auth/signup')
             .send({
-                email: 'test2@naver.com',
+                email: 'test0@naver.com',
                 password: '1234asdf!',
                 confirmPw: '1234asdf!'
             })
@@ -44,7 +44,7 @@ describe('회원가입 테스트', () => {
         request(app)
             .post('/api/auth/signup')
             .send({
-                email: 'test@naver.com',
+                email: 'test0@naver.com',
                 password: '1234as!',
                 confirmPw: '1234asdf!'
             })
@@ -57,7 +57,7 @@ describe('로그인 테스트', () => {
         request(app)
             .post('/api/auth/login')
             .send({
-                email: 'test@naver.com',
+                email: 'test0@naver.com',
                 password: '1234asdf!'
             })
             .expect(200)
@@ -69,7 +69,7 @@ describe('로그인 테스트', () => {
         request(app)
             .post('/api/auth/login')
             .send({
-                email: 'tes@naver.com',
+                email: 'tes0@naver.com',
                 password: '1234asdf!'
             })
             .expect(404, done);

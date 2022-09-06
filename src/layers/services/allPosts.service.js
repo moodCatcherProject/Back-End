@@ -23,8 +23,8 @@ const exception = require('../exceptModels/_.models.loader');
 
 const pageHandller = async (
     userId,
-    keyword,
-    sort,
+    keyword, //검색결과
+    sort, // 검색결과 title, writer
     type = 'all',
     gender = ['남자', '여자'],
     page = 1,
