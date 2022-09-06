@@ -5,6 +5,13 @@ const exception = require('../exceptModels/_.models.loader');
 // CRUD
 // //POST
 
+/**
+ * @version 확인데이터
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns 작성한 게시물의 데이터
+ */
 const createPost = async (req, res, next) => {
     try {
         const { userId } = res.locals.user;
@@ -25,6 +32,13 @@ const createPost = async (req, res, next) => {
     }
 };
 
+/**
+ *
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns 필터를 거친 전체게시물 데이터
+ */
 const findPost = async (req, res, next) => {
     try {
         let { userId } = req.query;
@@ -32,14 +46,15 @@ const findPost = async (req, res, next) => {
         if (!userId) {
             userId = res.locals.user.userId;
         }
+
         const postData = await allPostService.pageHandller(
             userId,
             keyword,
             sort,
             type,
             gender,
-            page,
-            count,
+            parseInt(page),
+            parseInt(count),
             order
         );
         // console.log(postData);
@@ -55,6 +70,13 @@ const findPost = async (req, res, next) => {
     }
 };
 
+/**
+ *
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns 수정한 게시물의 데이터
+ */
 const updatePost = async (req, res, next) => {
     try {
         const { userId } = res.locals.user;
