@@ -1,44 +1,56 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    class Recomment extends Model {
+    class MoodPoint extends Model {
         /**
          * Helper method for defining associations.
          * This method is not a part of Sequelize lifecycle.
          * The `models/index` file will call this method automatically.
          */
         static associate(models) {
-            // define association here
-            models.Recomment.belongsTo(models.Comment, {
-                foreignKey: 'commentId',
-                onDelete: 'cascade',
-                onUpdate: 'cascade'
-            });
-            models.Recomment.belongsTo(models.User, {
-                foreignKey: 'userId',
+            models.MoodPoint.belongsTo(models.User, {
+                foreignKey: 'pointId',
                 onDelete: 'cascade',
                 onUpdate: 'cascade'
             });
         }
     }
-    Recomment.init(
+    MoodPoint.init(
         {
-            recommentId: {
+            pointId: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true,
                 allowNull: false
             },
-            userId: {
+            whenLogin: {
                 type: DataTypes.INTEGER,
+                defaultValue: 0,
                 allowNull: false
             },
-            content: {
-                type: DataTypes.STRING,
+            whenLookCloset: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0,
                 allowNull: false
             },
-            commentId: {
+            whenCreatePost: {
                 type: DataTypes.INTEGER,
+                defaultValue: 0,
+                allowNull: false
+            },
+            whenCreateItem: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0,
+                allowNull: false
+            },
+            whenGetLike: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0,
+                allowNull: false
+            },
+            whenGetComment: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0,
                 allowNull: false
             },
             createdAt: {
@@ -50,8 +62,8 @@ module.exports = (sequelize, DataTypes) => {
         {
             sequelize,
             timestamps: false,
-            modelName: 'Recomment'
+            modelName: 'MoodPoint'
         }
     );
-    return Recomment;
+    return MoodPoint;
 };

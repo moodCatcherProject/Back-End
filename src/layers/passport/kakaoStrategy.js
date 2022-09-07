@@ -32,6 +32,7 @@ module.exports = () => {
                         await User.create({
                             imgUrl: profile._json.properties.profile_image
                         });
+                        await MoodPoint.create({});
                         const newUser = await Auth.create({
                             sessionId: profile.id,
                             provider: 'kakao'

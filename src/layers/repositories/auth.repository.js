@@ -1,4 +1,4 @@
-const { User, Auth, UserDetail } = require('../../sequelize/models');
+const { User, Auth, UserDetail, MoodPoint } = require('../../sequelize/models');
 const bcrypt = require('bcrypt');
 
 /**
@@ -19,6 +19,7 @@ const findByEmail = async (email) => {
 const createSignUp = async (email, password) => {
     const user = await User.create({});
     await UserDetail.create({});
+    await MoodPoint.create({});
     const hash = await bcrypt.hash(password, 12);
     const auth = await Auth.create({
         email,

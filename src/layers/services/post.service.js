@@ -53,7 +53,7 @@ const deletePost = async (userId, postId) => {
  * @returns 대표 게시물로 지정된 postId
  */
 const updateRepPost = async (userId, repPostId) => {
-    isExistPostOfUser(userId, repPostId);
+    await isExistPostOfUser(userId, repPostId);
     return await postRepository.updateRepPost(userId, repPostId);
 };
 
