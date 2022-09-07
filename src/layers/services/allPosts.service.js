@@ -89,6 +89,8 @@ const pageHandller = async (
 
             break;
         }
+        case 'alg': {
+        }
         default: {
             data = await postRepository.findAllPosts(page, count, orderKey, order, gender);
 

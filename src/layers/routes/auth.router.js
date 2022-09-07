@@ -12,7 +12,7 @@ authRouter.post('/signup', isNotLoggedIn, authController.localSignUp);
 authRouter.get('/checkEmail', isNotLoggedIn, authController.checkEmail);
 
 // 닉네임 확인(/api/auth/checkNickname?nickname)
-authRouter.get('/checkNickname', isNotLoggedIn, authController.checkNickname);
+authRouter.get('/checkNickname', isLoggedIn, authController.checkNickname);
 
 // 닉네임/나이/성별 추가(/api/auth/detail)
 authRouter.post('/detail', isLoggedIn, authController.updateNicknameAgeGender);

@@ -20,7 +20,7 @@ exports.isLoggedIn = async (req, res, next) => {
     try {
         const { authorization } = req.headers;
 
-        if (authorization === null) {
+        if (authorization == null) {
             throw new exception.UnauthorizedException('로그인 필요');
         }
         const [tokenType, tokenValue] = authorization.split(' ');
@@ -49,10 +49,14 @@ exports.isNotLoggedIn = (req, res, next) => {
     try {
         const { authorization } = req.headers;
         const [tokenType, tokenValue] = (authorization || '').split(' ');
-        console.log(tokenType, typeof tokenValue);
-        if ((tokenType === 'Bearer' && tokenValue !== undefined) || tokenType !== null) {
-            next(new exception.ForbiddenException('로그인 한 상태'));
-        } else next();
+        console.log(tokenType, tokenValue);
+        if (tokenValue.length > 15 && tokenType == 'Bearer') {
+            res.status(404).send({
+                errorMessage: '로그인 상태'
+            });
+            return;
+        }
+        next();
     } catch (err) {
         next();
     }

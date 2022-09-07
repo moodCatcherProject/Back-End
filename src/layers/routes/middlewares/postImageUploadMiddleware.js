@@ -23,6 +23,9 @@ class S3ImageController {
                     case 'image/jpg':
                         file.mimetype = 'jpg';
                         break;
+                    case 'image/gif':
+                        file.mimetype = 'gif';
+                        break;
                     default:
                         return cb(exception.NotFoundException('이미지 파일이 아닙니다!'));
                 }
