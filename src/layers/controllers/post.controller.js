@@ -5,6 +5,13 @@ const exception = require('../exceptModels/_.models.loader');
 // CRUD
 // //POST
 
+/**
+ * @version 확인데이터
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns 작성한 게시물의 데이터
+ */
 const createPost = async (req, res, next) => {
     try {
         const { userId } = res.locals.user;
@@ -25,21 +32,29 @@ const createPost = async (req, res, next) => {
     }
 };
 
+/**
+ *
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns 필터를 거친 전체게시물 데이터
+ */
 const findPost = async (req, res, next) => {
     try {
         let { userId } = req.query;
-        const { type, keyword, sort, gender, page, count, order } = req.query;
-        if (!userId) {
-            userId = res.locals.user.userId;
-        }
+        let { type, keyword, sort, gender, page, count, order } = req.query;
+        userId = userId ? userId : res.locals.user.userId;
+        page = page ? page : 1;
+        count = count ? count : 8;
+
         const postData = await allPostService.pageHandller(
             userId,
             keyword,
             sort,
             type,
             gender,
-            page,
-            count,
+            parseInt(page),
+            parseInt(count),
             order
         );
         // console.log(postData);
@@ -55,6 +70,13 @@ const findPost = async (req, res, next) => {
     }
 };
 
+/**
+ *
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns 수정한 게시물의 데이터
+ */
 const updatePost = async (req, res, next) => {
     try {
         const { userId } = res.locals.user;
@@ -91,14 +113,18 @@ const deletePost = async (req, res, next) => {
 // // //POST ADD
 
 const updateRepPost = async (req, res, next) => {
-    const { userId } = res.locals.user;
-    const { postId } = req.params;
-    const repPostIdData = await postService.updateRepPost(userId, postId);
-    res.status(200).json(
-        new exception.FormDto('대표 게시물 지정 성공', {
-            repPostId: repPostIdData
-        })
-    );
+    try {
+        const { userId } = res.locals.user;
+        const { postId } = req.params;
+        const repPostIdData = await postService.updateRepPost(userId, postId);
+        res.status(200).json(
+            new exception.FormDto('대표 게시물 지정 성공', {
+                repPostId: repPostIdData
+            })
+        );
+    } catch (err) {
+        next(err);
+    }
 };
 // // IMAGE
 const updateImage = async (req, res, next) => {

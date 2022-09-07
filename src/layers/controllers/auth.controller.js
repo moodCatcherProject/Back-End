@@ -95,12 +95,13 @@ const localLogin = async (req, res, next) => {
                 isExistUserNickname(req.user.authId).then((data) => {
                     const exist = data.nickname ? true : false;
                     const token = jwt.sign({ userId: req.user.authId }, process.env.SECRET_KEY, {
-                        expiresIn: '1h'
+                        expiresIn: '1y'
                     });
                     res.header({ authorization: `Bearer ${token}` });
-                    res.status(200).redirect(
-                        `http://localhost:3000/?exist=${exist}&token=${token}`
-                    );
+                    //main
+                    res.status(200).json({
+                        url: `http://localhost:3000/login/detail?exist=${exist}&token=${token}`
+                    });
                 });
             } catch (err) {
                 console.log(err);
@@ -133,7 +134,7 @@ const kakaoCallback = async (req, res, next) => {
             // const refreshToken = jwt.sign({}, process.env.SECRET_KEY , {
             //     expiresIn : '1w'
             // }) 리프레시 토큰을 사용할 지 팀원과 논의하기
-            res.header({ authorization: `Bearer ${token}` });
+
             //카카오 Strategy에서 성공한다면 콜백 실행
             res.status(200).redirect(
                 `http://localhost:3000/login/detail?exist=${exist}&token=${token}`

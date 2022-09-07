@@ -48,16 +48,17 @@ exports.isLoggedIn = async (req, res, next) => {
 exports.isNotLoggedIn = (req, res, next) => {
     try {
         const { authorization } = req.headers;
-        if (!authorization) {
-            next();
-        } else {
-            const [tokenType, tokenValue] = authorization.split(' ');
+        const [tokenType, tokenValue] = (authorization || '').split(' ');
 
-            if (tokenType === 'Bearer') {
-                throw new exception.ForbiddenException('로그인 한 상태');
-            }
+        console.log(tokenType, tokenValue);
+        if (tokenValue.length > 15 && tokenType == 'Bearer') {
+            res.status(404).send({
+                errorMessage: '로그인 상태'
+            });
+            return;
         }
+        next();
     } catch (err) {
-        next(err);
+        next();
     }
 };

@@ -10,7 +10,7 @@ const { sequelize } = require('../src/sequelize/models');
 // supertest: 통합테스트를 위한 모듈, 통합테스트 : 서버에 직접 요청을 보내보며 원하는 값이
 // 오는지 확인
 const request = require('supertest');
-
+const agent = request.agent(app);
 //테스트를 들어가기 전 beforeAll을 실행
 // => 매번 테스트 DB를 새로 만들어 줘야 함.
 beforeAll(async () => {
@@ -24,7 +24,7 @@ describe('회원가입 테스트', () => {
         request(app)
             .post('/api/auth/signup')
             .send({
-                email: 'test@naver.com',
+                email: 'test0@naver.com',
                 password: '1234asdf!',
                 confirmPw: '1234asdf!'
             })
@@ -34,7 +34,7 @@ describe('회원가입 테스트', () => {
         request(app)
             .post('/api/auth/signup')
             .send({
-                email: 'test2@naver.com',
+                email: 'test1@naver.com',
                 password: '1234asdf!',
                 confirmPw: '1234asdf!'
             })
@@ -44,24 +44,26 @@ describe('회원가입 테스트', () => {
         request(app)
             .post('/api/auth/signup')
             .send({
-                email: 'test@naver.com',
+                email: 'test0@naver.com',
                 password: '1234as!',
                 confirmPw: '1234asdf!'
             })
             .expect(400, done);
     });
 });
-
+let token;
 describe('로그인 테스트', () => {
     test('기존에 가입한 아이디로 로그인', (done) => {
         request(app)
             .post('/api/auth/login')
             .send({
-                email: 'test@naver.com',
+                email: 'test0@naver.com',
                 password: '1234asdf!'
             })
             .expect(200)
             .end((err, res) => {
+                console.log(res.body.url.split('=')[2]);
+                token = res.body.url.split('=')[2];
                 done();
             });
     });
@@ -69,7 +71,7 @@ describe('로그인 테스트', () => {
         request(app)
             .post('/api/auth/login')
             .send({
-                email: 'tes@naver.com',
+                email: 'tes0@naver.com',
                 password: '1234asdf!'
             })
             .expect(404, done);
@@ -78,9 +80,42 @@ describe('로그인 테스트', () => {
         request(app)
             .post('/api/auth/login')
             .send({
-                email: 'test@naver.com',
+                email: 'test0@naver.com',
                 password: '1234as!'
             })
             .expect(404, done);
+    });
+});
+
+describe('로그인 한 상태에서 회원가입, 로그인', () => {
+    test('회원가입', (done) => {
+        request(app)
+            .post('/api/auth/signup')
+            .set('authorization', `Bearer ` + token)
+            .send({
+                email: 'test0@naver.com',
+                password: '1234asdf!',
+                confirmPw: '1234asdf!'
+            })
+            .expect(404)
+            .end((err, res) => {
+                console.log(err, res.body);
+                done();
+            });
+    });
+    test('로그인', (done) => {
+        request(app)
+            .post('/api/auth/login')
+            .set('authorization', `Bearer ` + token)
+            .send({
+                email: 'test0@naver.com',
+                password: '1234asdf!',
+                confirmPw: '1234asdf!'
+            })
+            .expect(404)
+            .end((err, res) => {
+                console.log(err, res.body);
+                done();
+            });
     });
 });

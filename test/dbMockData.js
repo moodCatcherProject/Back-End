@@ -1,4 +1,12 @@
-const { Post, Auth, Like, User, UserDetail, StartMessage } = require('../src/sequelize/models');
+const {
+    Post,
+    Auth,
+    Like,
+    User,
+    UserDetail,
+    StartMessage,
+    MoodPoint
+} = require('../src/sequelize/models');
 const bcrypt = require('bcrypt');
 const fs = require('fs');
 
@@ -12,7 +20,7 @@ const createPostMul = async (title, content, userId, i) => {
     await Post.create({
         title: `${title} ${i} 번 `,
         content: `${content} ${i}번 `,
-        imgUrl: 'defalt',
+        imgUrl: 'post/1662125456004.jpg',
         userId,
         gender: genderData.gender
     });
@@ -36,6 +44,7 @@ const createUser = async (email, password, i) => {
         userId: i,
         gender: random < 0.5 ? '남자' : '여자'
     });
+    await MoodPoint.create({});
 };
 
 const createLike = async (userId, postId) => {

@@ -32,7 +32,18 @@ const findPost = async (postId) => {
         where: { postId }
     });
 };
+/**
+ *
+ * @param {number} page 페이지 네이션을 위한 페이지 번호
+ * @param {number} count 출력되는 게시물 수
+ * @param {string} orderKey 정렬의 기준 ex : createdAt, likeCount 등등
+ * @param {string} order 정렬 방법 : DESC, ASC ...
+ * @param {string} gender 성별을 기준으로 게시물을 출력할 때 ex : 여자 작성자의 게시물등
+ *
+ * @returns
+ */
 const findAllPosts = async (page, count, orderKey, order, gender) => {
+    console.log(page, count, orderKey, order, gender);
     return await Post.findAll({
         offset: count * (page - 1),
         limit: count,
@@ -41,6 +52,11 @@ const findAllPosts = async (page, count, orderKey, order, gender) => {
     });
 };
 
+/**
+ *
+ * @param {number} userId
+ * @returns userId의 유저의 대표게시물의 데이터
+ */
 const findRepPost = async (userId) => {
     const repPostIdAttr = await UserDetail.findOne({
         where: { detailId: userId },
@@ -50,6 +66,16 @@ const findRepPost = async (userId) => {
     return await Post.findByPk(repPostIdAttr.repPostId);
 };
 
+/**
+ *
+ * @param {number} userId 이 유저의 마이페이지를 출력합니다.
+ * @param {number} page 페이지 네이션을 위한 페이지 번호
+ * @param {number} count 출력되는 게시물 수
+ * @param {string} orderKey 정렬의 기준 ex : createdAt, likeCount 등등
+ * @param {string} order 정렬 방법 : DESC, ASC ...
+ * @param {string} gender 성별을 기준으로 게시물을 출력할 때 ex : 여자 작성자의 게시물등
+ * @returns userId의 유저가 작성한 게시물
+ */
 const findMyPage = async (userId, page, count, orderKey, order) => {
     return await Post.findAll({
         where: { userId },
@@ -58,9 +84,17 @@ const findMyPage = async (userId, page, count, orderKey, order) => {
         order: [[orderKey, order]]
     });
 };
-
+/**
+ *
+ * @param {number} userId 이 유저가 좋아요를 한 게시물을 출력해 줄거임.
+ * @param {number} page 페이지 네이션을 위한 페이지 번호
+ * @param {number} count 출력되는 게시물 수
+ * @param {string} orderKey 정렬의 기준 ex : createdAt, likeCount 등등
+ * @param {string} order 정렬 방법 : DESC, ASC ...
+ * @param {string} gender 성별을 기준으로 게시물을 출력할 때 ex : 여자 작성자의 게시물등
+ * @returns userId의 유저가 좋아요를 한 게시물 데이터
+ */
 const findLikePage = async (userId, page, count, orderKey, order, gender) => {
-    console.log(orderKey, order);
     const likeIdData = await Like.findAll({
         where: { userId, likeStatus: true }
     });
@@ -69,15 +103,24 @@ const findLikePage = async (userId, page, count, orderKey, order, gender) => {
     });
     console.log(likeIdArr);
     return await Post.findAll({
-        where: { gender },
+        where: { gender, postId: likeIdArr },
         order: [[orderKey, order]],
         offset: count * (page - 1),
         limit: count
     });
 };
 
+/**
+ *
+ * @param {string} keyword 이 단어로 검색을 해줄 겁니다.
+ * @param {number} page 페이지 네이션을 위한 페이지 번호
+ * @param {number} count 출력되는 게시물 수
+ * @param {string} orderKey 정렬의 기준 ex : createdAt, likeCount 등등
+ * @param {string} order 정렬 방법 : DESC, ASC ...
+ * @param {string} gender 성별을 기준으로 게시물을 출력할 때 ex : 여자 작성자의 게시물등
+ * @returns 키워드로 제목에서 검색해 게시물 데이터
+ */
 const findSearchTitleKeyword = async (keyword, page, count, orderKey, order, gender) => {
-    console.log(keyword);
     return await Post.findAll({
         offset: count * (page - 1),
         limit: count,
@@ -90,6 +133,13 @@ const findSearchTitleKeyword = async (keyword, page, count, orderKey, order, gen
         order: [[orderKey, order]]
     });
 };
+/**
+ *
+ * @param {string} keyword 이 키워드를 이용해 작성자 검색
+ * @param {number} page 페이지 네이션을 위한 페이지 번호
+ * @param {number} count 출력되는 게시물 수
+ * @returns 키워드로 작성자를 검색해 그 작성자의 대표게시물 데이터
+ */
 const findSearchWriterKeyword = async (keyword, page, count) => {
     const userData = await User.findAll({
         offset: count * (page - 1),
@@ -105,12 +155,16 @@ const findSearchWriterKeyword = async (keyword, page, count) => {
 
     for (let user of userData) {
         const rep = await findRepPost(user.userId);
-        console.log(rep.postId);
         result.push(await findPost(rep.postId));
     }
     return result;
 };
 
+/**
+ *
+ * @param {number} postId
+ * @returns postId의 게시물의 좋아요 숫자
+ */
 const findLikeNumByPostId = async (postId) => {
     return await Like.findAndCountAll({
         where: { postId }
