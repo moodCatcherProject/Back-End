@@ -24,6 +24,11 @@ module.exports = {
             isExistsNotice: {
                 type: Sequelize.BOOLEAN,
                 defaultValue: false
+            },
+            pointArray: {
+                type: Sequelize.STRING,
+                default: '[0,0,0,0,0,0,0]',
+                allowNull: false
             }
         });
     },

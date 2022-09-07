@@ -99,6 +99,7 @@ const localLogin = async (req, res, next) => {
                     });
                     res.header({ authorization: `Bearer ${token}` });
                     //main
+
                     res.status(200).json({
                         url: `http://localhost:3000/login/detail?exist=${exist}&token=${token}`
                     });
