@@ -4,12 +4,24 @@ const exception = require('../exceptModels/_.models.loader');
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const pressLike = async (req, res, next) => {
-    const { userId } = res.locals.user;
-    const { postId } = req.query;
+    try {
+        const { userId } = res.locals.user;
+        const { postId } = req.query;
 
-    const likeStatus = await likeService.pressLike(userId, postId);
+        const likeCountArray = await likeService.pressLike(userId, postId);
 
-    return res.status(201).json(new exception.FormDto('좋아요 변경 성공', { likeStatus }));
+        if (likeCountArray[0] < likeCountArray[1]) {
+            return res
+                .status(201)
+                .json(new exception.FormDto('좋아요 등록 성공', { likeCount: likeCountArray[1] }));
+        } else {
+            return res
+                .status(201)
+                .json(new exception.FormDto('좋아요 취소 성공', { likeCount: likeCountArray[1] }));
+        }
+    } catch (err) {
+        next(err);
+    }
 };
 
 module.exports = { pressLike };
