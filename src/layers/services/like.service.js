@@ -14,25 +14,25 @@ const pressLike = async (userId, postId) => {
 
     const isExistsLike = await likeRepository.findLikeByUserIdAndPostId(userId, postId);
 
+    let likeStatus;
+    let IAD;
     if (!isExistsLike) {
         await likeRepository.registerLike(userId, postId);
-        const likeCount = await postRepository.plusLikeCount(postId);
+        const IAD = 1;
+        const likeCount = await postRepository.updateLikeCount(postId, IAD);
 
         return likeCount;
     } else {
         if (isExistsLike.likeStatus) {
-            const likeStatus = false;
-            await likeRepository.updateLike(userId, postId, likeStatus);
-            const likeCount = await postRepository.minusLikeCount(postId);
-
-            return likeCount;
+            likeStatus = false;
+            IAD = -1;
         } else {
-            const likeStatus = true;
-            await likeRepository.updateLike(userId, postId, likeStatus);
-            const likeCount = await postRepository.plusLikeCount(postId);
-
-            return likeCount;
+            likeStatus = true;
+            IAD = 1;
         }
+        await likeRepository.updateLike(userId, postId, likeStatus);
+        const likeCount = await postRepository.updateLikeCount(postId, IAD);
+        return likeCount;
     }
 };
 
