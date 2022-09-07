@@ -25,14 +25,14 @@ const crawlingMusinsa = async (keyword) => {
         let items = [];
         $itemList.each((idx, node) => {
             const brand = $(node).find('.item_title').text();
-            const image = $(node).find('.list_img> a> img').attr('data-original');
+            const imgUrl = $(node).find('.list_img> a> img').attr('data-original');
             const price = $(node).find('.price').text();
-            const title = $(node).find('.list_info>a').attr('title');
+            const name = $(node).find('.list_info>a').attr('title');
 
             items.push({
+                imgUrl: 'https:' + imgUrl,
                 brand,
-                title,
-                image: 'https:' + image,
+                name,
                 price: price.trim()
             });
         });
