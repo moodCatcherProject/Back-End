@@ -308,6 +308,38 @@ const isExistNotice = async (userId) => {
         attributes: ['isExistsNotice']
     });
 };
+
+/**
+ * postId가 일치하는 게시글의 likeCount 1만큼 증가 후 exLikeCount, likeCount 배열 반환
+ * @param {number} postId
+ * @returns 해당 게시글의 plusLikeCount 함수 실행 전과 실행 후 likeCount의 배열
+ */
+const plusLikeCount = async (postId) => {
+    const post = await findPost(postId);
+    const exLikeCount = post.likeCount;
+    const likeCount = exLikeCount + 1;
+    await Post.update({ likeCount }, { where: { postId } });
+
+    const data = [exLikeCount, likeCount];
+
+    return data;
+};
+
+/**
+ * postId가 일치하는 게시글의 likeCount 1만큼 감소 후 exLikeCount, likeCount 배열 반환
+ * @param {number} postId
+ * @returns 해당 게시글의 minusLikeCount 함수 실행 전과 실행 후 likeCount의 배열
+ */
+const minusLikeCount = async (postId) => {
+    const post = await findPost(postId);
+    const exLikeCount = post.likeCount;
+    const likeCount = exLikeCount - 1;
+    await Post.update({ likeCount }, { where: { postId } });
+
+    const data = [exLikeCount, likeCount];
+
+    return data;
+};
 //FUNCTION
 
 module.exports = {
@@ -331,5 +363,8 @@ module.exports = {
 
     updateImage,
 
-    isExistNotice
+    isExistNotice,
+
+    plusLikeCount,
+    minusLikeCount
 };

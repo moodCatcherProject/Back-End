@@ -16,4 +16,17 @@ const findRandomStartMessage = async (req, res, next) => {
     }
 };
 
-module.exports = findRandomStartMessage;
+const testMoodPoint = async (req, res, next) => {
+    try {
+        const data = await exception.MoodPoint.whenGetLike(1);
+
+        res.send(data);
+    } catch (err) {
+        next(err);
+    }
+};
+
+module.exports = {
+    findRandomStartMessage,
+    testMoodPoint
+};

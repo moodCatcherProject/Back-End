@@ -8,6 +8,7 @@ const {
     UnkownException,
     UnhandleMysqlSequelizeError
 } = require('./exception/custom.exception');
+const MoodPoint = require('./form/moodPoint');
 
 const { isString, isNumber, isObject } = require('./form/checkType');
 
@@ -19,6 +20,8 @@ module.exports = {
     isString,
     isNumber,
     isObject,
+
+    MoodPoint,
 
     CustomException,
     BadRequestException,
