@@ -95,7 +95,6 @@ const findMyPage = async (userId, page, count, orderKey, order) => {
  * @returns userId의 유저가 좋아요를 한 게시물 데이터
  */
 const findLikePage = async (userId, page, count, orderKey, order, gender) => {
-    console.log(orderKey, order);
     const likeIdData = await Like.findAll({
         where: { userId, likeStatus: true }
     });
@@ -104,7 +103,7 @@ const findLikePage = async (userId, page, count, orderKey, order, gender) => {
     });
     console.log(likeIdArr);
     return await Post.findAll({
-        where: { gender },
+        where: { gender, postId: likeIdArr },
         order: [[orderKey, order]],
         offset: count * (page - 1),
         limit: count
@@ -122,7 +121,6 @@ const findLikePage = async (userId, page, count, orderKey, order, gender) => {
  * @returns 키워드로 제목에서 검색해 게시물 데이터
  */
 const findSearchTitleKeyword = async (keyword, page, count, orderKey, order, gender) => {
-    console.log(keyword);
     return await Post.findAll({
         offset: count * (page - 1),
         limit: count,
@@ -157,7 +155,6 @@ const findSearchWriterKeyword = async (keyword, page, count) => {
 
     for (let user of userData) {
         const rep = await findRepPost(user.userId);
-        console.log(rep.postId);
         result.push(await findPost(rep.postId));
     }
     return result;
