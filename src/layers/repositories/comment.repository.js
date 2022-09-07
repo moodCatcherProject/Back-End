@@ -51,26 +51,31 @@ const createComment = async (postId, content, userId) => {
 
 const getComments = async (postId, page, count, userId) => {
     const getComments = await Comment.findAll({
+        where: { postId },
         offset: count * (page - 1),
         limit: count,
-        raw: true,
         attributes: ['userId', 'commentId', 'content', 'createdAt'],
-        where: { postId },
-        include: [
-            {
-                model: User,
-                raw: true,
-                attributes: ['nickname', 'imgUrl', 'grade']
-            }
+        order: [
+            ['createdAt', 'DESC'],
+            [Recomment, 'createdAt', 'ASC']
         ],
         include: [
             {
+                model: User,
+                attributes: ['nickname', 'imgUrl', 'grade']
+            },
+            {
                 model: Recomment,
-                raw: true
+                attributes: ['userId', 'recommentId', 'content', 'createdAt'],
+                include: [
+                    {
+                        model: User,
+                        attributes: ['nickname', 'imgUrl', 'grade']
+                    }
+                ]
             }
         ]
     });
-
     return getComments;
 };
 // const getComments = async (postId, page, count, userId) => {
@@ -90,14 +95,30 @@ const getComments = async (postId, page, count, userId) => {
 //                      }
 //         ]
 //     });
+// include: [
+//     {
+//         model: Recomment,
+//         raw: true,
+//         attributes: ['userId', 'recommentId', 'content', 'createdAt'],
+//         include: [
+//             {
+//                 model: User,
+//                 raw: true,
+//                 attributes: ['nickname', 'imgUrl', 'grade']
+//             }
+//         ]
+//     }
+// ],
 
 //     return getComments;
 // };
-
-const findUserInfo = async (userId) => {
-    const findUserInfo = await User.findAll({ userId });
-    return findUserInfo;
-};
+// include: [
+//     {
+//         model: User,
+//         raw: true,
+//         attributes: ['nickname', 'imgUrl', 'grade']
+//     }
+// ]
 // User테이블에서 nickname, imgUrl, grade 가져와서 보여주기
 
 /**
@@ -126,7 +147,6 @@ module.exports = {
     findUser,
     createComment,
     getComments,
-    findUserInfo,
     updateComment,
     deleteComment
 };

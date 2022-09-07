@@ -63,11 +63,66 @@ const createComment = async (postId, content, userId, grade, nickname) => {
  */
 const getComments = async (postId, page, count, userId) => {
     const getComments = await commentRepository.getComments(postId, page, count, userId);
-    const findUserInfo = await commentRepository.findUserInfo(userId);
-    console.log(findUserInfo);
+    data = getComments.map((e) => e.get({ plain: true }));
     // 게시물이 없을때
+    console.log(data[2]);
 
-    return getComments;
+    return data.map((f) => {
+        return {
+            userId: f.userId,
+            commentId: f.commentId,
+            content: f.content,
+            nickname: f.User.nickname,
+            imgUrl: process.env.S3_STORAGE_URL + f.User.imgUrl,
+            grade: f.User.grade,
+            createdAt: f.createdAt,
+            recommentId: f.Recomments.map((a) => {
+                return {
+                    userId: a.userId,
+                    recommentId: a.recommentId,
+                    content: a.content,
+                    nickname: a.User.nickname,
+                    imgUrl: process.env.S3_STORAGE_URL + a.User.imgUrl,
+                    grade: a.User.grade,
+                    createdAt: a.createdAt
+                };
+            })
+        };
+    });
+
+    // const realResult = result.map((F) => {
+    //     return {
+    //         userId: F.userId,
+    //         commentId: F.commentId,
+    //         content: F.content,
+    //         nickname: F.nickname,
+    //         imgUrl: process.env.S3_STORAGE_URL + F.imgUrl,
+    //         grade: F.grade,
+    //         createdAt: F.createdAt
+    //     };
+    // });
+
+    // console.log(getComments);
+    // return getComments.map((f) => {
+    //     return {
+    //         userId: f.userId,
+    //         commentId: f.commentId,
+    //         content: f.content,
+    //         imgUrl: process.env.S3_STORAGE_URL + f['User.imgUrl'],
+    //         nickname: f['User.nickname'],
+    //         grade: f['User.grade'],
+    //         createdAt: f.createdAt,
+    //         recomments: {
+    //             userId: f['Recomments.userId'],
+    //             recommentId: f['Recomments.recommentId'],
+    //             content: f['Recomments.content'],
+    //             imgUrl: process.env.S3_STORAGE_URL + f['Recomments.User.imgUrl'],
+    //             nickname: f['Recomments.User.nickname'],
+    //             grade: f['Recomments.User.grade'],
+    //             createdAt: f['Recomments.createdAt']
+    //         }
+    //     };
+    // });
 };
 
 /**

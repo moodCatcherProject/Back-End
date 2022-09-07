@@ -32,7 +32,9 @@ const getComments = async (req, res, next) => {
         const count = Number(req.query.count || 8);
 
         const getComments = await commentService.getComments(postId, page, count, userId);
-        return res.status(200).json(new exception.FormDto('댓글 조회 성공', { getComments }));
+        return res
+            .status(200)
+            .json(new exception.FormDto('댓글 조회 성공', { Comments: getComments }));
     } catch (err) {
         next(err);
     }
