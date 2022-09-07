@@ -49,6 +49,7 @@ exports.isNotLoggedIn = (req, res, next) => {
     try {
         const { authorization } = req.headers;
         const [tokenType, tokenValue] = (authorization || '').split(' ');
+
         console.log(tokenType, tokenValue);
         if (tokenValue.length > 15 && tokenType == 'Bearer') {
             res.status(404).send({
