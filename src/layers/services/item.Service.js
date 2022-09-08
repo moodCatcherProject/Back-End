@@ -24,19 +24,20 @@ const crawlingMusinsa = async (keyword) => {
 
         let items = [];
         $itemList.each((idx, node) => {
-            const brand = $(node).find('.item_title').text();
-            const imgUrl = $(node).find('.list_img> a> img').attr('data-original');
-            const price = $(node).find('.price').text();
-            const name = $(node).find('.list_info>a').attr('title');
+            if (idx < 30) {
+                const brand = $(node).find('.item_title').text();
+                const imgUrl = $(node).find('.list_img> a> img').attr('data-original');
+                const price = $(node).find('.price').text();
+                const name = $(node).find('.list_info>a').attr('title');
 
-            items.push({
-                imgUrl: 'https:' + imgUrl,
-                brand,
-                name,
-                price: price.trim()
-            });
+                items.push({
+                    imgUrl: 'https:' + imgUrl,
+                    brand,
+                    name,
+                    price: price.trim()
+                });
+            }
         });
-        // throw new Exception.NotFoundException("찾을 수 없음!")
         return { items };
     };
     return await parsing(keyword);

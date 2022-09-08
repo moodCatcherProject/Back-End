@@ -39,6 +39,11 @@ module.exports = (sequelize, DataTypes) => {
             isExistsNotice: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false
+            },
+            pointArray: {
+                type: DataTypes.STRING,
+                defaultValue: '[0,0,0,0,0,0,0]',
+                allowNull: false
             }
         },
         {
