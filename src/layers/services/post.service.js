@@ -1,4 +1,5 @@
 const postRepository = require('../repositories/post.repository');
+const likeRepository = require('../repositories/like.repository');
 const exception = require('../exceptModels/_.models.loader');
 //CRUD
 // // POST
@@ -13,6 +14,41 @@ const createPost = async (userId, title, content, gender) => {
     const createPostData = await postRepository.createPost(userId, title, content, gender);
 
     return createPostData;
+};
+
+/**
+ * 게시물 상세 조회
+ * @param {number} postId
+ * @param {number} userId
+ * @returns { Promise<{ post: {postId:number, title:string, content:string, userId:number, imgUrl:string,
+ *  likeCount:number, createdAt:date, likeStatus:string }, items: [{ brand:string, name:string, price:string, imgUrl:string }] } | null>}
+ */
+const findOnePost = async (postId, userId) => {
+    const isExistsPost = await postRepository.findPost(postId);
+    if (!isExistsPost) throw new exception.NotFoundException('해당 게시물 없음');
+
+    let post;
+    const isExistsLike = await likeRepository.findLikeByUserIdAndPostId(userId, postId);
+    if (isExistsLike) {
+        post = await postRepository.findPostDetailWithLikeStatus(postId, userId);
+    } else {
+        post = await postRepository.findPostDetail(postId);
+    }
+    const items = await postRepository.findItems(postId);
+
+    return {
+        post: {
+            userId: post['userId'],
+            postId: post['postId'],
+            title: post['title'],
+            content: post['content'],
+            imgUrl: process.env.S3_STORAGE_URL + post['imgUrl'],
+            likeCount: post['likeCount'],
+            createdAt: post['createdAt'],
+            likeStatus: post['Likes.likeStatus']
+        },
+        items
+    };
 };
 
 const findRepPost = async (userId) => {
@@ -132,6 +168,7 @@ const isExistPostOfUser = async (userId, postId) => {
 
 module.exports = {
     createPost,
+    findOnePost,
     updatePost,
     deletePost,
 
