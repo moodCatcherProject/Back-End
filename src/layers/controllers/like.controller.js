@@ -3,7 +3,7 @@ const likeService = require('../services/like.service');
 const exception = require('../exceptModels/_.models.loader');
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
-const pressLike = async (req, res, next) => {
+const toggleLike = async (req, res, next) => {
     try {
         const { userId } = res.locals.user;
         const { postId } = req.query;
@@ -24,4 +24,4 @@ const pressLike = async (req, res, next) => {
     }
 };
 
-module.exports = { pressLike };
+module.exports = { toggleLike };

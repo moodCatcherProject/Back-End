@@ -39,7 +39,7 @@ const createPost = async (req, res, next) => {
  * @param {*} next
  * @returns 필터를 거친 전체게시물 데이터
  */
-const findPost = async (req, res, next) => {
+const findAllPosts = async (req, res, next) => {
     try {
         let { userId } = req.query;
         let { type, keyword, sort, gender, page, count, order } = req.query;
@@ -65,6 +65,20 @@ const findPost = async (req, res, next) => {
 
         // console.log(isExistNotice, repPostData);
         res.status(200).send(postData);
+    } catch (err) {
+        next(err);
+    }
+};
+
+/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
+const findOnePost = async (req, res, next) => {
+    try {
+        const { postId } = req.params;
+        const { userId } = res.locals.user;
+
+        const post = await postService.findOnePost(postId, userId);
+
+        return res.status(200).json(new exception.FormDto('게시물 상세 조회 성공', post));
     } catch (err) {
         next(err);
     }
@@ -126,6 +140,20 @@ const updateRepPost = async (req, res, next) => {
         next(err);
     }
 };
+
+/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
+const findRepPost = async (req, res, next) => {
+    try {
+        const { userId } = req.query;
+
+        const repPost = await postService.findRepPost(userId);
+
+        return res.status(200).json(new exception.FormDto('대표 게시물 조회 성공', { repPost }));
+    } catch (err) {
+        next(err);
+    }
+};
+
 // // IMAGE
 const updateImage = async (req, res, next) => {
     try {
@@ -146,11 +174,13 @@ const updateImage = async (req, res, next) => {
 
 module.exports = {
     createPost,
-    findPost,
+    findAllPosts,
+    findOnePost,
     updatePost,
     deletePost,
 
     updateRepPost,
+    findRepPost,
 
     updateImage
 };
