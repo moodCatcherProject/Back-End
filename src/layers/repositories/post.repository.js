@@ -240,19 +240,19 @@ const deletePost = async (postId) => {
 };
 // // POST ADD
 
-// /**
-//  * UserDetail 테이블에서 userId로 repPostId를 찾아 Post 테이블에서 일치하는 데이터 반환
-//  * @param {number} userId
-//  * @returns { Promise<{ postId:number, userId:number, imgUrl:string, title:string, content:string, likeCount:number, createdAt:date } | null>}
-//  */
-// const findRepPostId = async (userId) => {
-//     const repPostIdAttr = await UserDetail.findOne({
-//         where: { detailId: userId },
-//         attributes: ['repPostId']
-//     });
+/**
+ *
+ * @param {number} userId
+ * @returns userId의 유저의 대표게시물의 데이터
+ */
+const findRepPost = async (userId) => {
+    const repPostIdAttr = await UserDetail.findOne({
+        where: { detailId: userId },
+        attributes: ['repPostId']
+    });
 
-//     return await findPost(repPostIdAttr.repPostId);
-// };
+    return await Post.findByPk(repPostIdAttr.repPostId);
+};
 
 /**
  *
