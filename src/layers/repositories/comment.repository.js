@@ -1,4 +1,4 @@
-const { Comment, User, Post } = require('../../sequelize/models');
+const { Comment, User, Post, Recomment } = require('../../sequelize/models');
 
 /**
  * Comment 테이블에 있는 commentId를 찾음.
@@ -10,6 +10,18 @@ const findComment = async (commentId) => {
         where: { commentId }
     });
     return findComment;
+};
+
+/**
+ * User 테이블에있는 userId를 찾음.
+ * @param { number } userId
+ * @returns { Promise<{ userId: number }> | null }
+ */
+const findUser = async (userId) => {
+    const findUser = await User.findOne({
+        where: { userId }
+    });
+    return findUser;
 };
 
 /**
@@ -30,37 +42,84 @@ const createComment = async (postId, content, userId) => {
 
 /**
  * 설명
+ * @param { number } postId
  * @param { number } page
  * @param { number } count
+ * @param { number } userId
  * @returns { Promise<{ page: number, count: number }> | null }
  */
-const getComments = async (postId, page, count) => {
+
+const getComments = async (postId, page, count, userId) => {
     const getComments = await Comment.findAll({
+        where: { postId },
         offset: count * (page - 1),
         limit: count,
-        raw: true,
+        attributes: ['userId', 'commentId', 'content', 'createdAt'],
+        order: [
+            ['createdAt', 'DESC'],
+            [Recomment, 'createdAt', 'ASC']
+        ],
         include: [
             {
-                model: Post,
-                attributes: ['gender'],
+                model: User,
+                attributes: ['nickname', 'imgUrl', 'grade']
+            },
+            {
+                model: Recomment,
+                attributes: ['userId', 'recommentId', 'content', 'createdAt'],
                 include: [
                     {
                         model: User,
-                        attributes: ['nickname', 'imgUrl']
+                        attributes: ['nickname', 'imgUrl', 'grade']
                     }
                 ]
             }
-        ],
-        attributes: ['userId', 'commentId', 'content', 'createdAt']
+        ]
     });
-    console.log(getComments);
-
     return getComments;
 };
-// Commet table에 userId, commentId, content, createdAt이 있고 User table에 nickname, imgUrl이 있어서
-// Commet에서 attributes로 userId, commentId, content, createdAt을빼서 보여주고,
-// User에서 nickname, imgUrl, gender를 빼서 보여주려는데 Comment와 User가 연결되어있지 않아서 안됨.
-// postId 1번에 있는 comment들만 보여줘야 하는데, 전부 보여주고있다.
+// const getComments = async (postId, page, count, userId) => {
+//     const getComments = await Comment.findAll({
+//         offset: count * (page - 1),
+//         limit: count,
+//         raw: true,
+//         attributes: ['userId', 'commentId', 'content', 'createdAt'],
+//         where: { postId },
+//         include: [
+//             {
+//                 model: Recomment,
+//                 raw: true,
+//                 attributes: ['userId', 'recommentId', 'content', 'createdAt']
+//             }
+//             {   model:
+//                      }
+//         ]
+//     });
+// include: [
+//     {
+//         model: Recomment,
+//         raw: true,
+//         attributes: ['userId', 'recommentId', 'content', 'createdAt'],
+//         include: [
+//             {
+//                 model: User,
+//                 raw: true,
+//                 attributes: ['nickname', 'imgUrl', 'grade']
+//             }
+//         ]
+//     }
+// ],
+
+//     return getComments;
+// };
+// include: [
+//     {
+//         model: User,
+//         raw: true,
+//         attributes: ['nickname', 'imgUrl', 'grade']
+//     }
+// ]
+// User테이블에서 nickname, imgUrl, grade 가져와서 보여주기
 
 /**
  * Comment 테이블에 content 업데이트.
@@ -85,6 +144,7 @@ const deleteComment = async (commentId) => {
 
 module.exports = {
     findComment,
+    findUser,
     createComment,
     getComments,
     updateComment,
