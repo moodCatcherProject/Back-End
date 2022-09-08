@@ -11,7 +11,7 @@ const exception = require('../exceptModels/_.models.loader');
  */
 const createPost = async (userId, title, content, gender) => {
     const createPostData = await postRepository.createPost(userId, title, content, gender);
-
+    exception.MoodPoint.whenCreatePost(userId);
     return createPostData;
 };
 
@@ -65,10 +65,11 @@ const updateRepPost = async (userId, repPostId) => {
  * @desc items는 배열 그대로 받아 repository의 함수를 배열 수만큼 실행합니다.
  * @returns 생성 된 아이템들의 데이터
  */
-const createItem = async (postId, items) => {
+const createItem = async (userId, postId, items) => {
     const createItemData = [];
     for (let item of items) {
         createItemData.push(await postRepository.createItem(postId, item));
+        exception.MoodPoint.whenCreateItem(userId);
     }
     console.log();
     return createItemData;
@@ -97,11 +98,11 @@ const updateItem = async (postId, items) => {
  * @returns 업데이트 된 이미지가 들어간 게시물 데이터
  */
 
-const updateImage = async (postId, imageFileName) => {
+const updateImage = async (userId, postId, imageFileName) => {
     if (!imageFileName) throw new exception.BadRequestException('게시물 이미지가 빈 값');
+    isExistPostOfUser(userId, postId);
     const updateImageData = await postRepository.updateImage(postId, imageFileName);
     updateImageData.imgUrl = process.env.S3_STORAGE_URL + updateImageData.imgUrl;
-    console.log(updateImageData.imgUrl);
     return updateImageData;
 };
 

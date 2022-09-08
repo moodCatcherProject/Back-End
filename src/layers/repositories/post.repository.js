@@ -160,6 +160,16 @@ const findSearchWriterKeyword = async (keyword, page, count) => {
     return result;
 };
 
+// const findAlgorithmPost = async(userId) => {
+//     const postData = await Post.findAll({
+//         where : {
+//             createdAt: {
+//             [Op.gte] :
+//             }
+//         }
+//     })
+// }
+
 /**
  *
  * @param {number} postId
@@ -330,7 +340,7 @@ const plusLikeCount = async (postId) => {
  * @param {number} postId
  * @returns 해당 게시글의 minusLikeCount 함수 실행 전과 실행 후 likeCount의 배열
  */
-const minusLikeCount = async (postId) => {
+const minusLikeCount = async (postId, IAD) => {
     const post = await findPost(postId);
     const exLikeCount = post.likeCount;
     const likeCount = exLikeCount - 1;
