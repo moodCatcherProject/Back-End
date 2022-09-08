@@ -310,14 +310,14 @@ const isExistNotice = async (userId) => {
 };
 
 /**
- * postId가 일치하는 게시글의 likeCount IAD(Increase And Decrease)만큼 증감 후 exLikeCount, likeCount 배열 반환
+ * postId가 일치하는 게시글의 likeCount variation(1 또는 -1)만큼 증감 후 exLikeCount, likeCount 배열 반환
  * @param {number} postId
  * @returns 해당 게시글의 plusLikeCount 함수 실행 전과 실행 후 likeCount의 배열
  */
-const updateLikeCount = async (postId, IAD) => {
+const updateLikeCount = async (postId, variation) => {
     const post = await findPost(postId);
     const exLikeCount = post.likeCount;
-    const likeCount = exLikeCount + IAD;
+    const likeCount = exLikeCount + variation;
     await Post.update({ likeCount }, { where: { postId } });
 
     const data = [exLikeCount, likeCount];
