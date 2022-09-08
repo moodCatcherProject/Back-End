@@ -1,5 +1,6 @@
 const postRepository = require('../repositories/post.repository');
 const likeRepository = require('../repositories/like.repository');
+const userRepository = require('../repositories/user.repository');
 const exception = require('../exceptModels/_.models.loader');
 //CRUD
 // // POST
@@ -51,10 +52,6 @@ const findOnePost = async (postId, userId) => {
     };
 };
 
-const findRepPost = async (userId) => {
-    return await postRepository.findRepPost(userId);
-};
-
 /**
  *
  * @param {string} title
@@ -91,6 +88,30 @@ const deletePost = async (userId, postId) => {
 const updateRepPost = async (userId, repPostId) => {
     await isExistPostOfUser(userId, repPostId);
     return await postRepository.updateRepPost(userId, repPostId);
+};
+
+/**
+ * 대표 게시물 조회
+ * @param {number} userId
+ * @returns { Promise<{ postId:number, userId:number, imgUrl:string, title:string, content:string, likeCount:number, createdAt:date } | null>}
+ */
+const findRepPost = async (userId) => {
+    const userStatus = await userRepository.getUserStatusByUserId(userId);
+    if (!userStatus.repPostId) {
+        return {};
+    }
+
+    const repPost = await postRepository.findPost(userStatus.repPostId);
+
+    return {
+        postId: repPost['postId'],
+        userId: repPost['userId'],
+        imgUrl: process.env.S3_STORAGE_URL + repPost['imgUrl'],
+        title: repPost['title'],
+        content: repPost['content'],
+        likeCount: repPost['likeCount'],
+        createdAt: repPost['createdAt']
+    };
 };
 
 // //ITEM

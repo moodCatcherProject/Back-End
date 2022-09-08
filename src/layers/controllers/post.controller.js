@@ -140,6 +140,20 @@ const updateRepPost = async (req, res, next) => {
         next(err);
     }
 };
+
+/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
+const findRepPost = async (req, res, next) => {
+    try {
+        const { userId } = req.query;
+
+        const repPost = await postService.findRepPost(userId);
+
+        return res.status(200).json(new exception.FormDto('대표 게시물 조회 성공', { repPost }));
+    } catch (err) {
+        next(err);
+    }
+};
+
 // // IMAGE
 const updateImage = async (req, res, next) => {
     try {
@@ -166,6 +180,7 @@ module.exports = {
     deletePost,
 
     updateRepPost,
+    findRepPost,
 
     updateImage
 };

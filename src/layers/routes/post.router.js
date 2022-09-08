@@ -13,11 +13,14 @@ router.put('/:postId', postController.updatePost);
 // 게시물 전체 조회(/api/posts)
 router.get('/', postController.findAllPosts);
 
-// 게시물 상세 조회(/api/posts/:postId)
-router.get('/:postId', postController.findOnePost);
+// 게시물 상세 조회(/api/posts/detail/:postId)
+router.get('/detail/:postId', postController.findOnePost);
 
 // 대표 게시물 지정(/api/posts/:postId)
 router.patch('/:postId', postController.updateRepPost);
+
+// 대표 게시물 조회(/api/posts/rep)
+router.get('/rep', postController.findRepPost);
 
 // 게시물 삭제(/api/posts/:postId)
 router.delete('/:postId', upload.delete_file, postController.deletePost);
