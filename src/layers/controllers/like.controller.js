@@ -8,7 +8,7 @@ const pressLike = async (req, res, next) => {
         const { userId } = res.locals.user;
         const { postId } = req.query;
 
-        const likeCountArray = await likeService.pressLike(userId, postId);
+        const likeCountArray = await likeService.toggleLike(userId, postId);
 
         if (likeCountArray[0] < likeCountArray[1]) {
             return res
