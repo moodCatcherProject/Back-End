@@ -13,7 +13,8 @@ const findByEmail = async (email) => {
 
 /**
  * Auth 테이블에 email, 해쉬password 생성.
- * @param { string } email @param { string } password
+ * @param { string } email
+ * @param { string } password
  * @returns { Promise<{ email: string, password: string }> | null> }
  */
 const createSignUp = async (email, password) => {
@@ -31,8 +32,12 @@ const createSignUp = async (email, password) => {
 
 /**
  * User 테이블에 null이였던 nickname , age , gender 업데이트.
- * @param { string } nickname @param { string } age @param { string } gender
- * @returns { Promise<{ nickname: string, age: string, gender: string }> | null> }
+ * @param { string } nickname
+ * @param { string } age
+ * @param { string } gender
+ * @param { number } userId
+ * @param { string } grade
+ * @returns { Promise<{ nickname: string, age: string, gender: string, userId: number, grade: string }> | null> }
  */
 const updateNicknameAgeGender = async (nickname, age, gender, userId, grade) => {
     await User.update({ nickname, grade }, { where: { userId } });
