@@ -13,7 +13,7 @@ const findComment = async (commentId) => {
 };
 
 /**
- * User 테이블에있는 userId를 찾음.
+ * User 테이블에있는 userId를 찾음. -> 이거 user repo로 옮겨야함?
  * @param { number } userId
  * @returns { Promise<{ userId: number }> | null }
  */
@@ -41,15 +41,15 @@ const createComment = async (postId, content, userId) => {
 };
 
 /**
- * 설명
+ * 유저정보를 포함한 댓글과 유저정보를 포함한 대댓글을 조회.
+ * 댓글은 최신순으로 대댓글은 오래된순으로 조회.
  * @param { number } postId
  * @param { number } page
  * @param { number } count
- * @param { number } userId
- * @returns { Promise<{ page: number, count: number }> | null }
+ * @returns { Promise<{ postId: number, page: number, count: number }> | null }
  */
 
-const getComments = async (postId, page, count, userId) => {
+const getComments = async (postId, page, count) => {
     const getComments = await Comment.findAll({
         where: { postId },
         offset: count * (page - 1),
@@ -78,48 +78,6 @@ const getComments = async (postId, page, count, userId) => {
     });
     return getComments;
 };
-// const getComments = async (postId, page, count, userId) => {
-//     const getComments = await Comment.findAll({
-//         offset: count * (page - 1),
-//         limit: count,
-//         raw: true,
-//         attributes: ['userId', 'commentId', 'content', 'createdAt'],
-//         where: { postId },
-//         include: [
-//             {
-//                 model: Recomment,
-//                 raw: true,
-//                 attributes: ['userId', 'recommentId', 'content', 'createdAt']
-//             }
-//             {   model:
-//                      }
-//         ]
-//     });
-// include: [
-//     {
-//         model: Recomment,
-//         raw: true,
-//         attributes: ['userId', 'recommentId', 'content', 'createdAt'],
-//         include: [
-//             {
-//                 model: User,
-//                 raw: true,
-//                 attributes: ['nickname', 'imgUrl', 'grade']
-//             }
-//         ]
-//     }
-// ],
-
-//     return getComments;
-// };
-// include: [
-//     {
-//         model: User,
-//         raw: true,
-//         attributes: ['nickname', 'imgUrl', 'grade']
-//     }
-// ]
-// User테이블에서 nickname, imgUrl, grade 가져와서 보여주기
 
 /**
  * Comment 테이블에 content 업데이트.
@@ -128,8 +86,8 @@ const getComments = async (postId, page, count, userId) => {
  * @returns { Promise<{ commentId: number, content: string }> | null }
  */
 const updateComment = async (commentId, content) => {
-    const updatedComment = await Comment.update({ content }, { where: { commentId } });
-    return updatedComment;
+    await Comment.update({ content }, { where: { commentId } });
+    return await Comment.findOne({ where: { commentId } });
 };
 
 /**

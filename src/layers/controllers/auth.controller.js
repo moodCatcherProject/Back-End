@@ -10,7 +10,7 @@ const localSignUp = async (req, res, next) => {
     const { email, password, confirmPw } = req.body;
 
     try {
-        const signUp = await authService.localSignUp(email, password, confirmPw);
+        await authService.localSignUp(email, password, confirmPw);
         return res.status(201).json(new exception.FormDto('회원가입 성공', {}));
     } catch (err) {
         next(err);
@@ -29,11 +29,11 @@ const updateNicknameAgeGender = async (req, res, next) => {
             gender,
             userId
         );
-        return res.status(201).json(
-            new exception.FormDto('닉네임, 성별, 나이 추가 성공', {
-                updateNicknameAgeGender
-            })
-        );
+        return res
+            .status(201)
+            .json(
+                new exception.FormDto('닉네임, 성별, 나이 추가 성공', { updateNicknameAgeGender })
+            );
     } catch (err) {
         next(err);
     }

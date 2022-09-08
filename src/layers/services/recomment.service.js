@@ -1,6 +1,7 @@
 const reCommentRepository = require('../repositories/recomment.repository');
 const commentRepository = require('../repositories/comment.repository');
 const exception = require('../exceptModels/_.models.loader');
+
 /**
  * 대댓글 생성
  * @param { number } commentId
@@ -15,7 +16,7 @@ const createReComment = async (commentId, content, userId) => {
 
     const comment = await commentRepository.findComment(commentId);
     if (comment === null) {
-        throw new exception.BadRequestException('댓글이 없음.');
+        throw new exception.BadRequestException('댓글 없음.');
     }
 
     const createdReComment = await reCommentRepository.createReComment(commentId, content, userId);
@@ -37,7 +38,7 @@ const updateReComment = async (recommentId, content, userId) => {
 
     const reComment = await reCommentRepository.findReComment(recommentId);
     if (reComment === null) {
-        throw new exception.BadRequestException('대댓글이 없음.');
+        throw new exception.BadRequestException('대댓글 없음.');
     }
 
     const user = await reCommentRepository.findReComment(recommentId);
@@ -64,7 +65,7 @@ const updateReComment = async (recommentId, content, userId) => {
 const deleteReComment = async (recommentId, userId) => {
     const reComment = await reCommentRepository.findReComment(recommentId);
     if (reComment === null) {
-        throw new exception.BadRequestException('대댓글이 없음.');
+        throw new exception.BadRequestException('대댓글 없음.');
     }
 
     const user = await reCommentRepository.findReComment(recommentId);

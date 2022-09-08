@@ -18,7 +18,7 @@ const findByEmail = async (email) => {
  * @returns { Promise<{ email: string, password: string }> | null> }
  */
 const createSignUp = async (email, password) => {
-    const user = await User.create({});
+    await User.create({});
     await UserDetail.create({});
 
     const hash = await bcrypt.hash(password, 12);
@@ -47,9 +47,9 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId, grade) => 
     });
 
     const detailId = findByDetailId.UserDetail.dataValues.detailId;
-    await UserDetail.update({ age }, { where: { detailId } });
-    await UserDetail.update({ gender }, { where: { detailId } });
+    await UserDetail.update({ age, gender }, { where: { detailId } });
 };
+// 디테일에 나이 성별 유저에 닉네임
 
 module.exports = {
     findByEmail,
