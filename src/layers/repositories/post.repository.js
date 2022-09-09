@@ -189,6 +189,20 @@ const findSearchWriterKeyword = async (keyword, page, count) => {
     return result;
 };
 
+const findAlgorithmPost = async (page, count) => {
+    return await Post.findAll({
+        offset: count * (page - 1),
+        limit: count,
+        order: [['likeCount', 'DESC']],
+        where: {
+            createdAt: {
+                [Op.lt]: new Date(),
+                [Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)
+            }
+        }
+    });
+};
+
 /**
  *
  * @param {number} postId
@@ -393,8 +407,9 @@ module.exports = {
     findAllPosts,
     deletePost,
 
-    // findRepPostId,
+    findRepPost,
     updateRepPost,
+    findAlgorithmPost,
 
     findMyPage,
     findLikePage,

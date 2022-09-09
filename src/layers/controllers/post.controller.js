@@ -1,5 +1,5 @@
 const postService = require('../services/post.service');
-const allPostService = require('../services/allPosts.service');
+
 const exception = require('../exceptModels/_.models.loader');
 
 // CRUD
@@ -19,7 +19,7 @@ const createPost = async (req, res, next) => {
         const { title, content } = req.body.post;
         const { items } = req.body;
         const postData = await postService.createPost(userId, title, content, gender);
-        const itemsData = await postService.createItem(postData.postId, items);
+        const itemsData = await postService.createItem(userId, postData.postId, items);
 
         return res.status(201).json(
             new exception.FormDto('게시물 작성 성공', {
@@ -47,7 +47,7 @@ const findAllPosts = async (req, res, next) => {
         page = page ? page : 1;
         count = count ? count : 8;
 
-        const postData = await allPostService.pageHandller(
+        const postData = await postService.findAllPosts(
             userId,
             keyword,
             sort,
@@ -57,13 +57,11 @@ const findAllPosts = async (req, res, next) => {
             parseInt(count),
             order
         );
-        // console.log(postData);
-        //로그인한 사용자의 알림 유무 체크
-        // const isExistNotice = await postService.isExistNotice(type, userId, keyword);
-        //로그인한 사용자의 대표 게시물 체크
-        // const repPostData = await postService.findRepPost(userId);
+        for (let post of postData) {
+            post.likeStatus = await postService.findLikeStatus(res.locals.user.userId, post.postId);
+            post.imgUrl = process.env.S3_STORAGE_URL + post.imgUrl;
+        }
 
-        // console.log(isExistNotice, repPostData);
         res.status(200).send(postData);
     } catch (err) {
         next(err);
@@ -158,8 +156,9 @@ const findRepPost = async (req, res, next) => {
 const updateImage = async (req, res, next) => {
     try {
         const { postId } = req.params;
+        const { userId } = res.locals.user;
         const imageFileName = req.file ? req.file.key : null;
-        const imageData = await postService.updateImage(postId, imageFileName);
+        const imageData = await postService.updateImage(userId, postId, imageFileName);
         return res.status(201).json(
             new exception.FormDto('이미지 업데이트 성공!', {
                 image: imageData
