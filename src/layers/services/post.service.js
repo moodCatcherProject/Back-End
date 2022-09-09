@@ -165,7 +165,7 @@ const findOnePost = async (postId, userId) => {
             imgUrl: process.env.S3_STORAGE_URL + post['imgUrl'],
             likeCount: post['likeCount'],
             createdAt: post['createdAt'],
-            likeStatus: post['Likes.likeStatus']
+            likeStatus: post.Likes[0].dataValues.likeStatus
         },
         items
     };
