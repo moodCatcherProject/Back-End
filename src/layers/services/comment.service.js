@@ -7,68 +7,123 @@ const exception = require('../exceptModels/_.models.loader');
  * @param { number } postId
  * @param { string } content
  * @param { number } userId
- * @returns { Promise<{ postId: number, content: string, userId: number }> | null }
+ * @param { string } grade
+ * @param { string } nickname
+ * @returns { Promise<{ postId: number, content: string, userId: number, grade: string, nickname: string }> | null }
  */
-const createComment = async (postId, content, userId) => {
+const createComment = async (postId, content, userId, grade, nickname) => {
     if (!content) {
         throw new exception.BadRequestException('댓글 내용 없음.');
+    }
+
+    const findUser = await commentRepository.findUser(userId);
+    const userNickname = findUser.nickname;
+    const userGrade = findUser.grade;
+    const userImgUrl = findUser.imgUrl;
+
+    // if (userNickname === '' && userGrade === null && userImgUrl === null) {
+    //     throw new exception.BadRequestException('없음.');
+    // }
+
+    if (userNickname === '') {
+        throw new exception.BadRequestException('nickname 없음.');
+    }
+
+    if (userGrade === null) {
+        throw new exception.BadRequestException('grade 없음.');
+    }
+
+    if (userImgUrl === null) {
+        throw new exception.BadRequestException('imgUrl 없음.');
     }
 
     const post = await postRepository.findPost(postId);
     if (post === null) {
         throw new exception.BadRequestException('게시물 없음.');
     }
-    // nickname, grade, imgUrl이 없으면 댓글 작성 못하게
 
-    const createdComment = await commentRepository.createComment(postId, content, userId);
+    const createdComment = await commentRepository.createComment(
+        postId,
+        content,
+        userId,
+        grade,
+        nickname
+    );
 
     return createdComment;
 };
 
 /**
  * 댓글 조회
+ * @param { number } postId
  * @param { number } page
  * @param { number } count
- * @returns { Promise<{ page: number, count: number }> | null }
+ * @param { number } userId
+ * @returns { Promise<{ postId: number, page: number, count: number, userId: number }> | null }
  */
-const getComments = async (postId, page, count) => {
-    const getComments = await commentRepository.getComments(postId, page, count);
+const getComments = async (postId, page, count, userId) => {
+    const getComments = await commentRepository.getComments(postId, page, count, userId);
+    data = getComments.map((e) => e.get({ plain: true }));
+    // 게시물이 없을때
+    console.log(data[2]);
 
-    return getComments;
+    return data.map((f) => {
+        return {
+            userId: f.userId,
+            commentId: f.commentId,
+            content: f.content,
+            nickname: f.User.nickname,
+            imgUrl: process.env.S3_STORAGE_URL + f.User.imgUrl,
+            grade: f.User.grade,
+            createdAt: f.createdAt,
+            recommentId: f.Recomments.map((a) => {
+                return {
+                    userId: a.userId,
+                    recommentId: a.recommentId,
+                    content: a.content,
+                    nickname: a.User.nickname,
+                    imgUrl: process.env.S3_STORAGE_URL + a.User.imgUrl,
+                    grade: a.User.grade,
+                    createdAt: a.createdAt
+                };
+            })
+        };
+    });
+
+    // const realResult = result.map((F) => {
+    //     return {
+    //         userId: F.userId,
+    //         commentId: F.commentId,
+    //         content: F.content,
+    //         nickname: F.nickname,
+    //         imgUrl: process.env.S3_STORAGE_URL + F.imgUrl,
+    //         grade: F.grade,
+    //         createdAt: F.createdAt
+    //     };
+    // });
+
+    // console.log(getComments);
+    // return getComments.map((f) => {
+    //     return {
+    //         userId: f.userId,
+    //         commentId: f.commentId,
+    //         content: f.content,
+    //         imgUrl: process.env.S3_STORAGE_URL + f['User.imgUrl'],
+    //         nickname: f['User.nickname'],
+    //         grade: f['User.grade'],
+    //         createdAt: f.createdAt,
+    //         recomments: {
+    //             userId: f['Recomments.userId'],
+    //             recommentId: f['Recomments.recommentId'],
+    //             content: f['Recomments.content'],
+    //             imgUrl: process.env.S3_STORAGE_URL + f['Recomments.User.imgUrl'],
+    //             nickname: f['Recomments.User.nickname'],
+    //             grade: f['Recomments.User.grade'],
+    //             createdAt: f['Recomments.createdAt']
+    //         }
+    //     };
+    // });
 };
-
-// data: {
-//     comments: [
-//         {
-//          ----Comment table
-//          userId:
-//          commentId:
-//          content:
-//          ----Comment table
-//          ---- User table
-//          imgUrl:
-//          nickname:
-//          grade:
-//          ---- User table
-//          createdAt:
-//          recomments: [
-//                         {
-//                             ----Comment table
-//                             userId:
-//                             recommentId:
-//                             content:
-//                             ----Comment table
-//                             ---- User table
-//                             imgUrl:
-//                             nickname:
-//                             grade:
-//                             ---- User table
-//                             createdAt:
-//                         } * 여러 개
-//                     ]
-//         } * 여러 개
-//             ]
-//         }
 
 /**
  * 댓글 수정
@@ -82,8 +137,8 @@ const updateComment = async (commentId, content, userId) => {
         throw new exception.BadRequestException('댓글 내용 없음.');
     }
 
-    const comment = await commentRepository.findComment(commentId);
-    if (comment === null) {
+    const findComment = await commentRepository.findComment(commentId);
+    if (findComment === null) {
         throw new exception.BadRequestException('댓글이 없음.');
     }
 

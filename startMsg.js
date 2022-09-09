@@ -1,5 +1,6 @@
 const { Post } = require('./src/sequelize/models');
-
+const sequelize = require('sequelize');
+const Op = sequelize.Op;
 // const fs = require('fs');
 
 // const startMsg = fs.readFileSync('startMsg.txt', 'utf8').split(`\n`);
@@ -10,9 +11,9 @@ const { Post } = require('./src/sequelize/models');
 // }
 
 let today = new Date();
-let yesterDay = new Date();
+let yesterDay = new Date(new Date() - 24 * 60 * 60 * 1000);
 
-today.setDate(today.getDate() - 1);
+// today.setDate(today.getDate() - 1);
 
 console.log(today);
 console.log(yesterDay);
@@ -26,12 +27,18 @@ const to =
 
 console.log(today < yesterDay);
 
-Post.findAll({
-    attributes: ['createdAt'],
+Post.count({
+    where: {
+        createdAt: {
+            [Op.lt]: today,
+            [Op.gt]: yesterDay
+        }
+    },
+
     raw: true
 }).then((data) => {
     console.log(data);
-    console.log(new Date(data[0].createdAt.split(' ')[0]));
+    // console.log(new Date(data[0].createdAt.split(' ')[0]));
 });
 
 Post.findAll({

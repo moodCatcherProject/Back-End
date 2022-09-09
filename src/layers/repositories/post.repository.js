@@ -22,6 +22,49 @@ const createPost = async (userId, title, content, gender) => {
         imgUrl: 'default'
     });
 };
+
+/**
+ * user가 좋아요를 누른 적이 있는 Post 조회 : Post 테이블에서 Like 테이블을 참조하여 postId 값이 일치하는 data 반환(likeStatus는 postId, userId가 일치하는 값 반환)
+ * @param { number } postId
+ * @param { number } userId
+ * @returns { Promise<{ postId:number, title:string, content:string, userId:number, imgUrl:string, likeCount:number, createdAt:date, Likes.likeStatus:string } | null>}
+ */
+const findPostDetailWithLikeStatus = async (postId, userId) => {
+    const post = await Post.findOne({
+        where: { postId },
+        attributes: { exclude: ['gender'] },
+        raw: true,
+        include: [
+            {
+                model: Like,
+                where: { postId, userId },
+                attributes: ['likeStatus'],
+                raw: true
+            }
+        ]
+    });
+
+    return post;
+};
+
+/**
+ *
+ * user가 좋아요를 누른 적이 없는 Post 조회 : Post 테이블에서 postId 값이 일치하는 data 반환(likeStatus는 0)
+ * @param { number } postId
+ * @returns { Promise<{ postId:number, title:string, content:string, userId:number, imgUrl:string, likeCount:number, createdAt:date, Likes.likeStatus:string } | null>}
+ */
+const findPostDetail = async (postId) => {
+    const post = await Post.findOne({
+        where: { postId },
+        attributes: { exclude: ['gender'] },
+        raw: true
+    });
+
+    post['Likes.likeStatus'] = 0;
+
+    return post;
+};
+
 /**
  *
  * @param {number} postId
@@ -50,20 +93,6 @@ const findAllPosts = async (page, count, orderKey, order, gender) => {
         order: [[orderKey, order]],
         where: { gender }
     });
-};
-
-/**
- *
- * @param {number} userId
- * @returns userId의 유저의 대표게시물의 데이터
- */
-const findRepPost = async (userId) => {
-    const repPostIdAttr = await UserDetail.findOne({
-        where: { detailId: userId },
-        attributes: ['repPostId']
-    });
-
-    return await Post.findByPk(repPostIdAttr.repPostId);
 };
 
 /**
@@ -160,15 +189,19 @@ const findSearchWriterKeyword = async (keyword, page, count) => {
     return result;
 };
 
-// const findAlgorithmPost = async(userId) => {
-//     const postData = await Post.findAll({
-//         where : {
-//             createdAt: {
-//             [Op.gte] :
-//             }
-//         }
-//     })
-// }
+const findAlgorithmPost = async (page, count) => {
+    return await Post.findAll({
+        offset: count * (page - 1),
+        limit: count,
+        order: [['likeCount', 'DESC']],
+        where: {
+            createdAt: {
+                [Op.lt]: new Date(),
+                [Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)
+            }
+        }
+    });
+};
 
 /**
  *
@@ -220,6 +253,21 @@ const deletePost = async (postId) => {
     }
 };
 // // POST ADD
+
+/**
+ *
+ * @param {number} userId
+ * @returns userId의 유저의 대표게시물의 데이터
+ */
+const findRepPost = async (userId) => {
+    const repPostIdAttr = await UserDetail.findOne({
+        where: { detailId: userId },
+        attributes: ['repPostId']
+    });
+
+    return await Post.findByPk(repPostIdAttr.repPostId);
+};
+
 /**
  *
  * @param {number} userId
@@ -261,6 +309,19 @@ const createItem = async (postId, item) => {
         name,
         imgUrl,
         price
+    });
+};
+
+/**
+ * Item 테이블에서 postId 값이 일치하는 data 배열 반환
+ * @param {number} postId
+ * @returns { Promise<{ brand:string, name:string, price:string, imgUrl:string } | null>}
+ */
+const findItems = async (postId) => {
+    return await Item.findAll({
+        where: { postId },
+        attributes: { exclude: ['itemId', 'postId'] },
+        raw: true
     });
 };
 
@@ -320,14 +381,14 @@ const isExistNotice = async (userId) => {
 };
 
 /**
- * postId가 일치하는 게시글의 likeCount 1만큼 증가 후 exLikeCount, likeCount 배열 반환
+ * postId가 일치하는 게시글의 likeCount variation(1 또는 -1)만큼 증감 후 exLikeCount, likeCount 배열 반환
  * @param {number} postId
  * @returns 해당 게시글의 plusLikeCount 함수 실행 전과 실행 후 likeCount의 배열
  */
-const plusLikeCount = async (postId) => {
+const updateLikeCount = async (postId, variation) => {
     const post = await findPost(postId);
     const exLikeCount = post.likeCount;
-    const likeCount = exLikeCount + 1;
+    const likeCount = exLikeCount + variation;
     await Post.update({ likeCount }, { where: { postId } });
 
     const data = [exLikeCount, likeCount];
@@ -335,32 +396,20 @@ const plusLikeCount = async (postId) => {
     return data;
 };
 
-/**
- * postId가 일치하는 게시글의 likeCount 1만큼 감소 후 exLikeCount, likeCount 배열 반환
- * @param {number} postId
- * @returns 해당 게시글의 minusLikeCount 함수 실행 전과 실행 후 likeCount의 배열
- */
-const minusLikeCount = async (postId, IAD) => {
-    const post = await findPost(postId);
-    const exLikeCount = post.likeCount;
-    const likeCount = exLikeCount - 1;
-    await Post.update({ likeCount }, { where: { postId } });
-
-    const data = [exLikeCount, likeCount];
-
-    return data;
-};
 //FUNCTION
 
 module.exports = {
     createPost,
     updatePost,
+    findPostDetailWithLikeStatus,
+    findPostDetail,
     findPost,
     findAllPosts,
     deletePost,
 
     findRepPost,
     updateRepPost,
+    findAlgorithmPost,
 
     findMyPage,
     findLikePage,
@@ -369,12 +418,12 @@ module.exports = {
     findLikeNumByPostId,
 
     createItem,
+    findItems,
     updateItem,
 
     updateImage,
 
     isExistNotice,
 
-    plusLikeCount,
-    minusLikeCount
+    updateLikeCount
 };

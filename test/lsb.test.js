@@ -136,116 +136,116 @@ describe('로그인 후 닉네임 나이 성별 추가', () => {
                 done();
             });
     });
-    test('닉네임 나이 성별 추가 201 (성공)', (done) => {
-        agent
-            .post('/api/auth/detail')
-            .send({
-                nickname: 'Rph',
-                age: '10대',
-                gender: '여자'
-            })
-            .expect(201, done);
-    });
-    test('닉네임이 빈값일때 400 (실패)', (done) => {
-        agent
-            .post('/api/auth/detail')
-            .send({
-                nickname: '',
-                age: '10대',
-                gender: '여자'
-            })
-            .expect(400, done);
-    });
-    test('닉네임이 문자열이 아닐때 400 (실패)', (done) => {
-        agent
-            .post('/api/auth/detail')
-            .send({
-                nickname: 123,
-                age: '10대',
-                gender: '여자'
-            })
-            .expect(400, done);
-    });
-    test('닉네임 유효성이 맞지 않을때 (닉네임은 한글 대문자 소문자 허용 2~16글자) 400 (실패)', (done) => {
-        agent
-            .post('/api/auth/detail')
-            .send({
-                nickname: '1',
-                age: '10대',
-                gender: '여자'
-            })
-            .expect(400, done);
-    });
-    test('닉네임이 증복될때 400 (실패)', (done) => {
-        agent
-            .post('/api/auth/detail')
-            .send({
-                nickname: 'Rph',
-                age: '10대',
-                gender: '여자'
-            })
-            .expect(400, done);
-    });
-    test('나이가 빈값일때 400 (실패)', (done) => {
-        agent
-            .post('/api/auth/detail')
-            .send({
-                nickname: 'Rph',
-                age: '',
-                gender: '여자'
-            })
-            .expect(400, done);
-    });
-    test('나이가 문자열이 아닐때 400 (실패)', (done) => {
-        agent
-            .post('/api/auth/detail')
-            .send({
-                nickname: 'Rph',
-                age: 123,
-                gender: '여자'
-            })
-            .expect(400, done);
-    });
-    test('나이 유효성이 맞지 않을때 (나이는 "10대"or"20대"or"30대"or"40대"or"50대" 만 입력 가능) 400 (실패)', (done) => {
-        agent
-            .post('/api/auth/detail')
-            .send({
-                nickname: 'Rph',
-                age: '60대',
-                gender: '여자'
-            })
-            .expect(400, done);
-    });
-    test('성별이 빈값일때 400 (실패)', (done) => {
-        agent
-            .post('/api/auth/detail')
-            .send({
-                nickname: 'Rph',
-                age: '10대',
-                gender: ''
-            })
-            .expect(400, done);
-    });
-    test('성별이 문자열이 아닐때 400 (실패)', (done) => {
-        agent
-            .post('/api/auth/detail')
-            .send({
-                nickname: 'Rph',
-                age: '10대',
-                gender: 123
-            })
-            .expect(400, done);
-    });
-    test('성별 유효성이 맞지 않을때 (성별은 "남자" 또는 "여자" 만 입력 가능) 400 (실패)', (done) => {
-        agent
-            .post('/api/auth/detail')
-            .send({
-                nickname: 'Rph',
-                age: '10대',
-                gender: '중성'
-            })
-            .expect(400, done);
-    });
+    // test('닉네임 나이 성별 추가 201 (성공)', (done) => {
+    //     agent
+    //         .post('/api/auth/detail')
+    //         .send({
+    //             nickname: 'Rph',
+    //             age: '10대',
+    //             gender: '여자'
+    //         })
+    //         .expect(201, done);
+    // });
+    // test('닉네임이 빈값일때 400 (실패)', (done) => {
+    //     agent
+    //         .post('/api/auth/detail')
+    //         .send({
+    //             nickname: '',
+    //             age: '10대',
+    //             gender: '여자'
+    //         })
+    //         .expect(400, done);
+    // });
+    // test('닉네임이 문자열이 아닐때 400 (실패)', (done) => {
+    //     agent
+    //         .post('/api/auth/detail')
+    //         .send({
+    //             nickname: 123,
+    //             age: '10대',
+    //             gender: '여자'
+    //         })
+    //         .expect(400, done);
+    // });
+    // test('닉네임 유효성이 맞지 않을때 (닉네임은 한글 대문자 소문자 허용 2~16글자) 400 (실패)', (done) => {
+    //     agent
+    //         .post('/api/auth/detail')
+    //         .send({
+    //             nickname: '1',
+    //             age: '10대',
+    //             gender: '여자'
+    //         })
+    //         .expect(400, done);
+    // });
+    // test('닉네임이 증복될때 400 (실패)', (done) => {
+    //     agent
+    //         .post('/api/auth/detail')
+    //         .send({
+    //             nickname: 'Rph',
+    //             age: '10대',
+    //             gender: '여자'
+    //         })
+    //         .expect(400, done);
+    // });
+    // test('나이가 빈값일때 400 (실패)', (done) => {
+    //     agent
+    //         .post('/api/auth/detail')
+    //         .send({
+    //             nickname: 'Rph',
+    //             age: '',
+    //             gender: '여자'
+    //         })
+    //         .expect(400, done);
+    // });
+    // test('나이가 문자열이 아닐때 400 (실패)', (done) => {
+    //     agent
+    //         .post('/api/auth/detail')
+    //         .send({
+    //             nickname: 'Rph',
+    //             age: 123,
+    //             gender: '여자'
+    //         })
+    //         .expect(400, done);
+    // });
+    // test('나이 유효성이 맞지 않을때 (나이는 "10대"or"20대"or"30대"or"40대"or"50대" 만 입력 가능) 400 (실패)', (done) => {
+    //     agent
+    //         .post('/api/auth/detail')
+    //         .send({
+    //             nickname: 'Rph',
+    //             age: '60대',
+    //             gender: '여자'
+    //         })
+    //         .expect(400, done);
+    // });
+    // test('성별이 빈값일때 400 (실패)', (done) => {
+    //     agent
+    //         .post('/api/auth/detail')
+    //         .send({
+    //             nickname: 'Rph',
+    //             age: '10대',
+    //             gender: ''
+    //         })
+    //         .expect(400, done);
+    // });
+    // test('성별이 문자열이 아닐때 400 (실패)', (done) => {
+    //     agent
+    //         .post('/api/auth/detail')
+    //         .send({
+    //             nickname: 'Rph',
+    //             age: '10대',
+    //             gender: 123
+    //         })
+    //         .expect(400, done);
+    // });
+    // test('성별 유효성이 맞지 않을때 (성별은 "남자" 또는 "여자" 만 입력 가능) 400 (실패)', (done) => {
+    //     agent
+    //         .post('/api/auth/detail')
+    //         .send({
+    //             nickname: 'Rph',
+    //             age: '10대',
+    //             gender: '중성'
+    //         })
+    //         .expect(400, done);
+    // });
 });
 
 describe('로그인 전 닉네임 확인', () => {
