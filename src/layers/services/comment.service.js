@@ -1,6 +1,5 @@
 const commentRepository = require('../repositories/comment.repository');
 const postRepository = require('../repositories/post.repository');
-const userRepository = require('../repositories/user.repository');
 const exception = require('../exceptModels/_.models.loader');
 
 /**
@@ -20,10 +19,6 @@ const createComment = async (postId, content, userId) => {
     const userGrade = findUser.grade;
     const userImgUrl = findUser.imgUrl;
 
-    // if (userNickname === '' && userGrade === null && userImgUrl === null) {
-    //     throw new exception.BadRequestException('없음.');
-    // }
-
     if (userNickname === '') {
         throw new exception.BadRequestException('nickname 없음.');
     }
@@ -32,9 +27,9 @@ const createComment = async (postId, content, userId) => {
         throw new exception.BadRequestException('grade 없음.');
     }
 
-    // if (userImgUrl === null) {
-    //     throw new exception.BadRequestException('imgUrl 없음.');
-    // }
+    if (userImgUrl === null) {
+        throw new exception.BadRequestException('imgUrl 없음.');
+    }
 
     const post = await postRepository.findPost(postId);
     if (post === null) {

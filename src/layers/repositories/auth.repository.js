@@ -48,6 +48,7 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId, grade) => 
 
     const detailId = findByDetailId.UserDetail.dataValues.detailId;
     await UserDetail.update({ age, gender }, { where: { detailId } });
+    return;
 };
 // 디테일에 나이 성별 유저에 닉네임
 

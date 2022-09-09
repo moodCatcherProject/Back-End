@@ -76,15 +76,9 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
     let grade = 'man 1';
     if (gender === '여자') grade = 'woman 1';
 
-    const updatedNicknameAgeGender = await authRepository.updateNicknameAgeGender(
-        nickname,
-        age,
-        gender,
-        userId,
-        grade
-    );
+    await authRepository.updateNicknameAgeGender(nickname, age, gender, userId, grade);
 
-    return updatedNicknameAgeGender;
+    return await userRepository.getUserStatusByUserId(userId);
 };
 
 /**
