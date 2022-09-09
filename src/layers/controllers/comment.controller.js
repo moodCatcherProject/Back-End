@@ -6,18 +6,16 @@ const exception = require('../exceptModels/_.models.loader');
 const createComment = async (req, res, next) => {
     const { postId } = req.query;
     const { content } = req.body;
-    const { userId } = res.locals.user;
-    const { grade, nickname } = res.locals;
+    const { userId, nickname, grade, imgUrl } = res.locals.user;
 
     try {
-        const createComment = await commentService.createComment(
-            postId,
-            content,
-            userId,
-            grade,
-            nickname
-        );
-        return res.status(201).json(new exception.FormDto('댓글 생성 성공', { createComment }));
+        const createComment = await commentService.createComment(postId, content, userId);
+        createComment.dataValues.nickname = nickname;
+        createComment.dataValues.grade = grade;
+        createComment.dataValues.imgUrl = imgUrl;
+        return res
+            .status(201)
+            .json(new exception.FormDto('댓글 생성 성공', { comment: { createComment } }));
     } catch (err) {
         next(err);
     }
@@ -30,11 +28,10 @@ const getComments = async (req, res, next) => {
     try {
         const page = Number(req.query.page || 1);
         const count = Number(req.query.count || 8);
-
         const getComments = await commentService.getComments(postId, page, count, userId);
         return res
             .status(200)
-            .json(new exception.FormDto('댓글 조회 성공', { Comments: getComments }));
+            .json(new exception.FormDto('댓글 조회 성공', { comments: getComments }));
     } catch (err) {
         next(err);
     }
@@ -44,11 +41,16 @@ const getComments = async (req, res, next) => {
 const updateComment = async (req, res, next) => {
     const { commentId } = req.params;
     const { content } = req.body;
-    const { userId } = res.locals.user;
+    const { userId, nickname, grade, imgUrl } = res.locals.user;
 
     try {
-        await commentService.updateComment(commentId, content, userId);
-        return res.status(200).json(new exception.FormDto('댓글 수정 성공'));
+        const updateComment = await commentService.updateComment(commentId, content, userId);
+        updateComment.dataValues.nickname = nickname;
+        updateComment.dataValues.grade = grade;
+        updateComment.dataValues.imgUrl = imgUrl;
+        return res
+            .status(200)
+            .json(new exception.FormDto('댓글 수정 성공', { comment: updateComment }));
     } catch (err) {
         next(err);
     }

@@ -6,11 +6,16 @@ const exception = require('../exceptModels/_.models.loader');
 const createReComment = async (req, res, next) => {
     const { commentId } = req.query;
     const { content } = req.body;
-    const { userId } = res.locals.user;
+    const { userId, nickname, grade, imgUrl } = res.locals.user;
 
     try {
         const createReComment = await reCommentService.createReComment(commentId, content, userId);
-        return res.status(201).json(new exception.FormDto('대댓글 생성 성공', { createReComment }));
+        createReComment.dataValues.nickname = nickname;
+        createReComment.dataValues.grade = grade;
+        createReComment.dataValues.imgUrl = imgUrl;
+        return res
+            .status(201)
+            .json(new exception.FormDto('대댓글 생성 성공', { recomment: createReComment }));
     } catch (err) {
         next(err);
     }
@@ -20,11 +25,20 @@ const createReComment = async (req, res, next) => {
 const updateReComment = async (req, res, next) => {
     const { recommentId } = req.params;
     const { content } = req.body;
-    const { userId } = res.locals.user;
+    const { userId, nickname, grade, imgUrl } = res.locals.user;
 
     try {
-        await reCommentService.updateReComment(recommentId, content, userId);
-        return res.status(200).json(new exception.FormDto('대댓글 수정 성공'));
+        const updateReComment = await reCommentService.updateReComment(
+            recommentId,
+            content,
+            userId
+        );
+        updateReComment.dataValues.nickname = nickname;
+        updateReComment.dataValues.grade = grade;
+        updateReComment.dataValues.imgUrl = imgUrl;
+        return res
+            .status(200)
+            .json(new exception.FormDto('대댓글 수정 성공', { recomment: updateReComment }));
     } catch (err) {
         next(err);
     }

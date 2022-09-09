@@ -35,8 +35,8 @@ const createReComment = async (commentId, content, userId) => {
  * @returns { Promise<{ recommentId: number, content: string }> | null }
  */
 const updateReComment = async (recommentId, content) => {
-    const updatedComment = await Recomment.update({ content }, { where: { recommentId } });
-    return updatedComment;
+    await Recomment.update({ content }, { where: { recommentId } });
+    return await Recomment.findOne({ where: { recommentId } });
 };
 
 /**
