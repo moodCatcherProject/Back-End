@@ -19,7 +19,7 @@ const getUser = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
     try {
         const { userId } = res.locals.user;
-        const { nickname, gender, age } = req.body;
+        const { nickname, gender, age } = req.query;
         const imageFileName = req.file ? req.file.key : null;
 
         const userStatus = await userService.updateUser(
