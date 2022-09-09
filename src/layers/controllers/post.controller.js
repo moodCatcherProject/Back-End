@@ -84,6 +84,13 @@ const findOnePost = async (req, res, next) => {
     }
 };
 
+/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
+const findHotPosts = async (req, res, next) => {
+    const hotPosts = await postService.findHotPosts();
+
+    return res.status(200).json(new exception.FormDto('인기 게시물 조회 성공', { hotPosts }));
+};
+
 /**
  *
  * @param {*} req
@@ -176,6 +183,7 @@ module.exports = {
     createPost,
     findAllPosts,
     findOnePost,
+    findHotPosts,
     updatePost,
     deletePost,
 
