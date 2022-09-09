@@ -3,15 +3,15 @@ const userRepository = require('../repositories/user.repository');
 const exception = require('../exceptModels/_.models.loader');
 
 // EM : 8자~ 30자 이메일형식
-// PW : 영소대문자+숫자+특수문자 8자 ~ 20자
-// NN : 한글, 영소 대문자. 숫자 2자~16자
+// PW : 영소 대문자 + 숫자 + 특수문자 8자 ~ 20자
+// NN : 한글 영소 대문자 숫자 2자~16자
 
 /**
  * 회원가입
  * @param { string } email
  * @param { string } password
  * @param { string } confirmPw
- * @returns { Promise<{ email: string, password: string }> | null }
+ * @returns { Promise<{ email: string, password: string, confirmPw: string }> | null }
  */
 const localSignUp = async (email, password, confirmPw) => {
     new exception.isString({ email }).value;
@@ -19,18 +19,18 @@ const localSignUp = async (email, password, confirmPw) => {
     new exception.isString({ confirmPw }).value;
 
     if (password !== confirmPw) {
-        throw new exception.BadRequestException('비밀번호와 비밀번호 확인란이 다릅니다.');
+        throw new exception.BadRequestException('비밀번호 에러');
     }
 
     const checkEmail =
         /^[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/;
     if (checkEmail.test(email) == false) {
-        throw new exception.BadRequestException('이메일 형식 확인 실패!');
+        throw new exception.BadRequestException('이메일 유효성 에러');
     }
 
     const ExistUser = await authRepository.findByEmail(email);
     if (ExistUser) {
-        throw new exception.BadRequestException('이메일 중복 확인 실패!');
+        throw new exception.BadRequestException('이메일 중복 확인 실패');
     }
 
     const SignUp = await authRepository.createSignUp(email, password);
@@ -41,20 +41,22 @@ const localSignUp = async (email, password, confirmPw) => {
 /**
  * 닉네임 나이 성별 추가
  * @param { string } nickname
- * @param {string} age
- * @returns { Promise<{ nickname: string, age: string }> | null }
+ * @param { string } age
+ * @param { string } gender
+ * @param { number } userId
+ * @returns { Promise<{ nickname: string, age: string, gender: string, userId: number }> | null }
  */
 const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
     new exception.isString({ nickname }).value;
-    new exception.isString({ gender }).value;
     new exception.isString({ age }).value;
+    new exception.isString({ gender }).value;
 
-    const ExistUser = await userRepository.getUserStatusByUserId(userId);
-    if (ExistUser.nickname)
-        throw new exception.ForbiddenException('초기설정한 유저정보가 있습니다.');
+    // const ExistUser = await userRepository.getUserStatusByUserId(userId);
+    // if (ExistUser.nickname)
+    //     throw new exception.ForbiddenException('초기설정한 유저정보가 있습니다.');
 
     const checkNickname = /^(?=.*[a-zA-Z0-9가-힣])[a-zA-Z0-9가-힣]{2,16}$/;
-    if (checkNickname.test(nickname) == false) {
+    if (checkNickname.test(nickname) === false) {
         throw new exception.BadRequestException('닉네임 유효성 에러');
     }
 
@@ -74,15 +76,9 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
     let grade = 'man 1';
     if (gender === '여자') grade = 'woman 1';
 
-    const updatedNicknameAgeGender = await authRepository.updateNicknameAgeGender(
-        nickname,
-        age,
-        gender,
-        userId,
-        grade
-    );
+    await authRepository.updateNicknameAgeGender(nickname, age, gender, userId, grade);
 
-    return updatedNicknameAgeGender;
+    return await userRepository.getUserStatusByUserId(userId);
 };
 
 /**
@@ -95,7 +91,7 @@ const checkEmail = async (email) => {
 
     const checkEmail =
         /^[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/;
-    if (checkEmail.test(email) == false) {
+    if (checkEmail.test(email) === false) {
         throw new exception.BadRequestException('이메일 유효성 에러');
     }
 
