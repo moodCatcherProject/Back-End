@@ -165,10 +165,21 @@ const findOnePost = async (postId, userId) => {
             imgUrl: process.env.S3_STORAGE_URL + post['imgUrl'],
             likeCount: post['likeCount'],
             createdAt: post['createdAt'],
-            likeStatus: post['Likes.likeStatus']
+            likeStatus: post.Likes[0].dataValues.likeStatus
         },
         items
     };
+};
+
+const findHotPosts = async () => {
+    // 하루 단위로 받은 좋아요 수를 집계하여 익일 00:00시 1~3위 선정
+    // like table에서 likeStatus=true, createdAt이 오늘인 data를 찾아서
+    // postId별 총 좋아요 수를 계산한 뒤 제일 높은 순으로 정렬
+
+    const todayLike = await likeRepository.findTodayLike();
+
+    console.log(todayLike);
+    return;
 };
 
 /**
@@ -197,6 +208,7 @@ const deletePost = async (userId, postId) => {
     postRepository.deletePost(postId);
     return;
 };
+
 // // // POST ADD
 /**
  *
@@ -316,6 +328,7 @@ module.exports = {
     createPost,
     findAllPosts,
     findOnePost,
+    findHotPosts,
     updatePost,
     deletePost,
 
