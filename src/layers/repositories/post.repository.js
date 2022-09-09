@@ -33,13 +33,11 @@ const findPostDetailWithLikeStatus = async (postId, userId) => {
     const post = await Post.findOne({
         where: { postId },
         attributes: { exclude: ['gender'] },
-        raw: true,
         include: [
             {
                 model: Like,
                 where: { postId, userId },
-                attributes: ['likeStatus'],
-                raw: true
+                attributes: ['likeStatus']
             }
         ]
     });
@@ -57,10 +55,14 @@ const findPostDetail = async (postId) => {
     const post = await Post.findOne({
         where: { postId },
         attributes: { exclude: ['gender'] },
-        raw: true
+        include: [
+            {
+                model: Like
+            }
+        ]
     });
 
-    post['Likes.likeStatus'] = 0;
+    post.dataValues.Likes.push({ dataValues: { likeStatus: false } });
 
     return post;
 };
