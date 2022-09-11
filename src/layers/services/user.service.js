@@ -10,6 +10,11 @@ const exception = require('../exceptModels/_.models.loader');
 const getUser = async (userId) => {
     if (!userId) throw new exception.NotFoundException('유저 정보 없음');
     const userStatus = await userRepository.getUserStatusByUserId(userId);
+    const authData = await userRepository.findAuth(userId);
+    console.log(authData);
+    if (authData.provider === 'local') {
+        userStatus.imgUrl = process.env.S3_STORAGE_URL + userStatus.imgUrl;
+    }
 
     return userStatus;
 };

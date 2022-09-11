@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             pointArray: {
                 type: DataTypes.STRING,
-                defaultValue: '[0,0,0,0,0,0,0]',
+                defaultValue: `[]`,
                 allowNull: false
             }
         },

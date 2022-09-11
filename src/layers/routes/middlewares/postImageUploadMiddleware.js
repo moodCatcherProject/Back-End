@@ -12,7 +12,8 @@ class S3ImageController {
             acl: 'public-read', //접근 권한
             contentType: multerS3.AUTO_CONTENT_TYPE,
             key: function (req, file, cb) {
-                const filename = file.originalname.split('.')[0];
+                const { postId } = req.params;
+
                 switch (file.mimetype) {
                     case 'image/jpeg':
                         file.mimetype = 'jpg';
@@ -27,10 +28,24 @@ class S3ImageController {
                         file.mimetype = 'gif';
                         break;
                     default:
-                        return cb(exception.NotFoundException('이미지 파일이 아닙니다!'));
+                        Post.destroy({
+                            where: { postId, imgUrl: 'defalt' }
+                        })
+                            .then(() => {
+                                return cb(
+                                    new exception.NotFoundException('이미지 파일이 아닙니다!')
+                                );
+                            })
+                            .catch((err) => {
+                                return cb(
+                                    new exception.NotFoundException(
+                                        '이미지 파일이 아닙니다! + 게시물 없음'
+                                    )
+                                );
+                            });
                 }
 
-                cb(null, `post/${Date.now()}.${file.mimetype}`);
+                // cb(null, `post/${Date.now()}.${file.mimetype}`);
             }
         }),
         limits: { fileSize: 5 * 1024 * 1024 } // 5메가로 용량 제한
