@@ -45,7 +45,7 @@ class S3ImageController {
                             });
                 }
 
-                // cb(null, `post/${Date.now()}.${file.mimetype}`);
+                cb(null, `post/${Date.now()}.${file.mimetype}`);
             }
         }),
         limits: { fileSize: 5 * 1024 * 1024 } // 5메가로 용량 제한
