@@ -1,4 +1,4 @@
-const { User, UserDetail } = require('../../sequelize/models');
+const { User, UserDetail, Auth } = require('../../sequelize/models');
 
 /**
  * User 테이블에서 UserDetail 테이블을 참조하여 userId 값이 일치하는 data 반환
@@ -21,7 +21,7 @@ const getUserStatusByUserId = async (userId) => {
     return {
         userId: userStatus['userId'],
         nickname: userStatus['nickname'],
-        imgUrl: process.env.S3_STORAGE_URL + userStatus['imgUrl'],
+        imgUrl: userStatus['imgUrl'],
         grade: userStatus['grade'],
         gender: userStatus['UserDetail.gender'],
         age: userStatus['UserDetail.age'],
@@ -72,10 +72,17 @@ const deleteUser = async (userId) => {
     await User.destroy({ where: { userId } });
 };
 
+//FUNCTION(권영)
+const findAuth = async (userId) => {
+    const authData = await Auth.findByPk(userId);
+    return authData;
+};
 module.exports = {
     getUserStatusByUserId,
     findByNickname,
     updateUserImage,
     updateGrade,
-    deleteUser
+    deleteUser,
+
+    findAuth
 };

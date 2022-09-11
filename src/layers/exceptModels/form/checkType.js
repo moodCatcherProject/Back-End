@@ -25,7 +25,7 @@ class CheckType {
         }
         if (!checkType) {
             throw new this.exception.BadRequestException(
-                `${keys} 은(는) ${typeof value}이(가) 아닌 ${type}이어야 합니다!`
+                `${keys} 은(는) ${typeof value}이(가) 아닌 ${type}이어야 합니다! 현재 ${keys}의 값은 ${value}입니다.`
             );
         }
         this.value = value;

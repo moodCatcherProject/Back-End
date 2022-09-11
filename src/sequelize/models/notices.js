@@ -26,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             notice: { type: DataTypes.STRING, allowNull: false },
             userId: { type: DataTypes.INTEGER, allowNull: false },
+            postId: { type: DataTypes.INTEGER },
             createdAt: {
                 allowNull: false,
                 type: DataTypes.DATE,
@@ -34,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         {
             sequelize,
-            timestamps: false,
+            timestamps: true,
             modelName: 'Notice'
         }
     );

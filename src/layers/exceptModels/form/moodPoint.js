@@ -1,5 +1,17 @@
 const { UserDetail } = require('../../../sequelize/models');
+const notice = require('../form/notice');
 
+const noticeMessageArray = {
+    whenSignUp: `새로운 무드 캐쳐가 되어`,
+
+    whenLogin: `무드 캐쳐에 방문하여`,
+
+    whenCreatePost: `캐쳐님의 게시물이 성공적으로 무드의 바다에 떠올라`,
+
+    whenLeaveComment: `다른 캐쳐가 캐쳐님의 무드에 관심을 보여`,
+
+    whenInRankingMyPost: `캐쳐님의 무드가 인정받아 랭킹에 등재되어`
+};
 findPointColumn = async (userId) => {
     return await UserDetail.findOne({
         where: { detailId: userId },
@@ -17,10 +29,42 @@ addPoint = async (userId, pointArr) => {
         }
     );
 };
-checkPoint = async (userId, idx, pointArr, point, maxPoint, msg) => {
+
+/**
+ * @desc 포인트를 얻는 방법에 따라 UserDetail테이블의 pointArray 에 배열로 넣어줍니다.
+ * (정확히는 배열을 문자열로 변환), 예를 들어 pointArray[0]은 유저가 로그인 했을 때
+ * 얻는 포인트를 저장합니다.
+ * @param {number} userId usreId의 유저에게 알림을 넣어줌.
+ * @param {number} idx pointArr에서 참조할 index
+ * @param {Array} pointArr 획득한 포인트의 배열
+ * @param {number} point 한 번에 얻는 포인트. maxPoint를 넘어선 안됨.
+ * @param {number} maxPoint 하루에 얻을 수 있는 포인트 제한.
+ * @param {string} msg 서버측에서 알림을 받기위한 확인 작업
+ * @param {string} noticeMessage !!클라이언트에게 보내줄 알림. 주의해서 쓸 것!
+ * @param {number} postId 알림을 눌렀을 때 해당 게시물로 갈 수 있도록 해줌.
+ * @returns
+ */
+const checkPoint = async (
+    userId,
+    idx,
+    pointArr,
+    point,
+    maxPoint,
+    msg,
+    noticeMessage,
+    postId = -1
+) => {
+    while (pointArr[idx] == undefined) {
+        pointArr.push(0);
+    }
+
     if (pointArr[idx] < maxPoint) {
         pointArr[idx] += point;
+
         await addPoint(userId, JSON.stringify(pointArr));
+        if (noticeMessage) {
+            notice.createMessage(userId, noticeMessage, postId);
+        }
         return {
             pointArr,
             msg: msg + `현재: ${pointArr[idx]} , 최대치 : ${maxPoint}`
@@ -30,6 +74,18 @@ checkPoint = async (userId, idx, pointArr, point, maxPoint, msg) => {
         pointArr,
         msg: '최대치에 도달'
     };
+};
+
+const directUpPoint = (userId, message, postId = -1) => {
+    notice.createMessage(userId, message, postId);
+};
+
+/**
+ * @desc 회원가입을 축하한다는 메세지 생성
+ * @param {number} userId
+ */
+exports.whenSignUp = (userId) => {
+    directUpPoint(userId, noticeMessageArray.whenSignUp);
 };
 
 /**
@@ -43,7 +99,16 @@ exports.whenLogin = async (userId) => {
     const maxPoint = 200;
     const pointData = await findPointColumn(userId);
     const pointArr = JSON.parse(pointData.pointArray);
-    return await checkPoint(userId, getPointNumber, pointArr, point, maxPoint, '로그인, 200 증가');
+
+    return await checkPoint(
+        userId,
+        getPointNumber,
+        pointArr,
+        point,
+        maxPoint,
+        '로그인, 200 증가',
+        noticeMessageArray.whenLogin
+    );
 };
 /**
  * @desc 다른 사람이 나의 옷장을 열람할 시 50 무드 획득. 하루 최대1000
@@ -56,6 +121,7 @@ exports.whenLookMyCloser = async (userId) => {
     const maxPoint = 1000;
     const pointData = await findPointColumn(userId);
     const pointArr = JSON.parse(pointData.pointArray);
+
     return await checkPoint(
         userId,
         getPointNumber,
@@ -70,19 +136,22 @@ exports.whenLookMyCloser = async (userId) => {
  * @param {number} userId
  * @returns 포인트를 올렸으면 현재 포인트 배열, 포인트, 최대치 실패시 '최대치에 도달' 메시지
  */
-exports.whenCreatePost = async (userId) => {
+exports.whenCreatePost = async (userId, postId) => {
     const getPointNumber = 2;
     const point = 100;
     const maxPoint = 500;
     const pointData = await findPointColumn(userId);
     const pointArr = JSON.parse(pointData.pointArray);
+
     return await checkPoint(
         userId,
         getPointNumber,
         pointArr,
         point,
         maxPoint,
-        '내 게시물 업로드, 100무드 증가'
+        '내 게시물 업로드, 100무드 증가',
+        noticeMessageArray.whenCreatePost,
+        postId
     );
 };
 /**
@@ -149,7 +218,7 @@ exports.whenLeaveLike = async (userId) => {
 /**
  * @desc 타인의 게시물에 한정, 댓글을 남기면 30무드 증가
  * @param {*} userId
- * @returns
+ * @returns 포인트를 올렸으면 현재 포인트 배열, 포인트, 최대치 실패시 '최대치에 도달' 메시지
  */
 exports.whenLeaveComment = async (userId) => {
     const getPointNumber = 6;
@@ -169,20 +238,48 @@ exports.whenLeaveComment = async (userId) => {
 /**
  * @desc 나의 게시물에 댓글이 달렸을 때, 30무드 증가
  * @param {*} userId
- * @returns
+ * @returns 포인트를 올렸으면 현재 포인트 배열, 포인트, 최대치 실패시 '최대치에 도달' 메시지
  */
-exports.whenLeaveComment = async (userId) => {
+exports.whenLeaveMyPostComment = async (userId, postId) => {
     const getPointNumber = 7;
     const point = 30;
     const maxPoint = 600;
     const pointData = await findPointColumn(userId);
     const pointArr = JSON.parse(pointData.pointArray);
+
     return await checkPoint(
         userId,
         getPointNumber,
         pointArr,
         point,
         maxPoint,
-        '나의 게시물에 댓글이 달림, 30무드 증가'
+        '나의 게시물에 댓글이 달림, 30무드 증가',
+        noticeMessageArray.whenLeaveComment,
+        postId
+    );
+};
+/**
+ * @version 1.0 한 사람이 두 자리를 차지해도 3000 무드 포인트 지급,
+ * @desc 게시물이 hot posts에 등재되면 3000무드
+ * @param {number} userId hot posts에 선정된 게시물의 작성자
+ * @param {number} postId hot posts에 선정된 게시물
+ * @returns 포인트를 올렸으면 현재 포인트 배열, 포인트, 최대치 실패시 '최대치에 도달' 메시지
+ */
+exports.whenInRankingMyPost = async (userId, postId) => {
+    const getPointNumber = 8;
+    const point = 3000;
+    const maxPoint = 3000;
+    const pointData = await findPointColumn(userId);
+    const pointArr = JSON.parse(pointData.pointArray);
+
+    return await checkPoint(
+        userId,
+        getPointNumber,
+        pointArr,
+        point,
+        maxPoint,
+        '게시물 랭킹에 등재, 3000무드 증가',
+        noticeMessageArray.whenInRankingMyPost,
+        postId
     );
 };

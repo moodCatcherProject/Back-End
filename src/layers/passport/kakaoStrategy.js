@@ -1,4 +1,5 @@
 const { User, Auth, UserDetail } = require('../../sequelize/models');
+const exception = require('../exceptModels/form/moodPoint');
 const passport = require('passport');
 const KakaoStrategy = require('passport-kakao').Strategy;
 require('dotenv').config({ path: '.env' });
@@ -37,8 +38,8 @@ module.exports = () => {
                             sessionId: profile.id,
                             provider: 'kakao'
                         });
-                        await UserDetail.create({});
-
+                        UserDetail.create({});
+                        exception.whenSignUp(newUser.authId);
                         done(null, newUser); // 회원가입하고 로그인 인증 완료
                     }
                 } catch (error) {

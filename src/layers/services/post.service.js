@@ -2,6 +2,7 @@ const postRepository = require('../repositories/post.repository');
 const likeRepository = require('../repositories/like.repository');
 const userRepository = require('../repositories/user.repository');
 const exception = require('../exceptModels/_.models.loader');
+
 //CRUD
 // // POST
 /**
@@ -15,7 +16,7 @@ const createPost = async (userId, title, content, gender) => {
     const createPostData = await postRepository.createPost(userId, title, content, gender);
     title = new exception.isString({ title }).trim;
 
-    exception.MoodPoint.whenCreatePost(userId);
+    exception.MoodPoint.whenCreatePost(userId, createPostData.postId);
     return createPostData;
 };
 
@@ -288,7 +289,7 @@ const updateItem = async (postId, items) => {
 
 const updateImage = async (userId, postId, imageFileName) => {
     if (!imageFileName) throw new exception.BadRequestException('게시물 이미지가 빈 값');
-    isExistPostOfUser(userId, postId);
+    await isExistPostOfUser(userId, postId);
     const updateImageData = await postRepository.updateImage(postId, imageFileName);
     updateImageData.imgUrl = process.env.S3_STORAGE_URL + updateImageData.imgUrl;
     return updateImageData;
