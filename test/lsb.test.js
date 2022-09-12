@@ -6,6 +6,9 @@ beforeAll(async () => {
     await sequelize.sync({ force: true });
 });
 
+let token;
+const agent = request.agent(app);
+
 describe('회원가입 ', () => {
     test('회원가입 201 (성공)', (done) => {
         request(app)
@@ -121,9 +124,6 @@ describe('회원가입 ', () => {
     });
 });
 
-let token;
-const agent = request.agent(app);
-
 describe('로그인 후 닉네임 나이 성별 추가', () => {
     test('회원가입 201 (성공)', (done) => {
         request(app)
@@ -147,17 +147,6 @@ describe('로그인 후 닉네임 나이 성별 추가', () => {
                 token = res.body.url.split('=')[2];
                 done();
             });
-    });
-    test('닉네임 나이 성별 추가 201 (성공)', (done) => {
-        agent
-            .post('/api/auth/detail')
-            .set('authorization', `Bearer ` + token)
-            .send({
-                nickname: 'Rph',
-                age: '10대',
-                gender: '여자'
-            })
-            .expect(201, done);
     });
     test('닉네임이 빈값일때 400 (실패)', (done) => {
         agent
@@ -187,17 +176,6 @@ describe('로그인 후 닉네임 나이 성별 추가', () => {
             .set('authorization', `Bearer ` + token)
             .send({
                 nickname: '1',
-                age: '10대',
-                gender: '여자'
-            })
-            .expect(400, done);
-    });
-    test('닉네임이 증복될때 400 (실패)', (done) => {
-        agent
-            .post('/api/auth/detail')
-            .set('authorization', `Bearer ` + token)
-            .send({
-                nickname: 'Rph',
                 age: '10대',
                 gender: '여자'
             })
@@ -266,6 +244,51 @@ describe('로그인 후 닉네임 나이 성별 추가', () => {
                 nickname: 'Rph',
                 age: '10대',
                 gender: '중성'
+            })
+            .expect(400, done);
+    });
+    test('닉네임 나이 성별 추가 201 (성공)', (done) => {
+        agent
+            .post('/api/auth/detail')
+            .set('authorization', `Bearer ` + token)
+            .send({
+                nickname: 'Rph',
+                age: '10대',
+                gender: '여자'
+            })
+            .expect(201, done);
+    });
+    test('회원가입 201 (성공)', (done) => {
+        request(app)
+            .post('/api/auth/signup')
+            .send({
+                email: 'Rph4@gmail.com',
+                password: 'Rph1543',
+                confirmPw: 'Rph1543'
+            })
+            .expect(201, done);
+    });
+    test('로그인 201 (성공)', (done) => {
+        agent
+            .post('/api/auth/login')
+            .send({
+                email: 'Rph4@gmail.com',
+                password: 'Rph1543'
+            })
+            .expect(200)
+            .end((err, res) => {
+                token = res.body.url.split('=')[2];
+                done();
+            });
+    });
+    test('닉네임이 증복될때 400 (실패)', (done) => {
+        agent
+            .post('/api/auth/detail')
+            .set('authorization', `Bearer ` + token)
+            .send({
+                nickname: 'Rph',
+                age: '10대',
+                gender: '여자'
             })
             .expect(400, done);
     });
@@ -412,7 +435,7 @@ describe('댓글 수정', () => {
     //             done();
     //         });
     // });
-    // test('자신이 작성한 댓글이 아닐때 400 (실패)', (done) => {
+    // test('자신이 작성한 댓글이 아닌 댓글을 수정 할 때 400 (실패)', (done) => {
     //     agent
     //         .put('/api/comments/1')
     //         .set('authorization', `Bearer ` + token)
