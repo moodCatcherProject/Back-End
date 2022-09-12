@@ -12,14 +12,14 @@ const noticeMessageArray = {
 
     whenInRankingMyPost: `캐쳐님의 무드가 인정받아 랭킹에 등재되어`
 };
-findPointColumn = async (userId) => {
+const findPointColumn = async (userId) => {
     return await UserDetail.findOne({
         where: { detailId: userId },
         attributes: ['pointArray'],
         raw: true
     });
 };
-addPoint = async (userId, pointArr) => {
+const addPoint = async (userId, pointArr) => {
     await UserDetail.update(
         {
             pointArray: pointArr
@@ -57,10 +57,10 @@ const checkPoint = async (
     while (pointArr[idx] == undefined) {
         pointArr.push(0);
     }
-
     if (pointArr[idx] < maxPoint) {
         pointArr[idx] += point;
 
+        console.log(point, pointArr);
         await addPoint(userId, JSON.stringify(pointArr));
         if (noticeMessage) {
             notice.createMessage(userId, noticeMessage, postId);
@@ -142,7 +142,7 @@ exports.whenCreatePost = async (userId, postId) => {
     const maxPoint = 500;
     const pointData = await findPointColumn(userId);
     const pointArr = JSON.parse(pointData.pointArray);
-
+    console.log('내 게시물 업로드 100무드');
     return await checkPoint(
         userId,
         getPointNumber,
@@ -166,13 +166,14 @@ exports.whenCreateItem = async (userId) => {
     const maxPoint = 2500;
     const pointData = await findPointColumn(userId);
     const pointArr = JSON.parse(pointData.pointArray);
+    console.log('아이템');
     return await checkPoint(
         userId,
         getPointNumber,
         pointArr,
         point,
         maxPoint,
-        '내 아이템 업로드, 50무드 증가'
+        '내 아이템 업로드, 100무드 증가'
     );
 };
 /**
@@ -202,8 +203,8 @@ exports.whenGetLike = async (userId) => {
  */
 exports.whenLeaveLike = async (userId) => {
     const getPointNumber = 5;
-    const point = 10;
-    const maxPoint = 1000;
+    const point = 30;
+    const maxPoint = 600;
     const pointData = await findPointColumn(userId);
     const pointArr = JSON.parse(pointData.pointArray);
     return await checkPoint(
@@ -220,7 +221,7 @@ exports.whenLeaveLike = async (userId) => {
  * @param {*} userId
  * @returns 포인트를 올렸으면 현재 포인트 배열, 포인트, 최대치 실패시 '최대치에 도달' 메시지
  */
-exports.whenLeaveComment = async (userId) => {
+exports.whenLeaveComment = async (userId, postId) => {
     const getPointNumber = 6;
     const point = 30;
     const maxPoint = 600;
