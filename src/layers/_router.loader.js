@@ -8,6 +8,7 @@ const reCommentRouter = require('./routes/recomment.router');
 const postRouter = require('./routes/post.router');
 const userRouter = require('./routes/user.router');
 const likeRouter = require('./routes/like.router');
+const noticeRouter = require('./routes/notice.router');
 
 router.use('/start', startRouter);
 router.use('/musinsa', itemRouter);
@@ -17,5 +18,6 @@ router.use('/recomments', reCommentRouter);
 router.use('/posts', isLoggedIn, postRouter);
 router.use('/users', userRouter);
 router.use('/like', likeRouter);
+router.use('/notice', isLoggedIn, noticeRouter);
 
 module.exports = router;

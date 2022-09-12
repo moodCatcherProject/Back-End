@@ -7,6 +7,7 @@
         "cheerio": "^1.0.0-rc.12",
         "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
+        "crypto-js": "^4.1.1",
         "dotenv": "^16.0.1",
         "express": "^4.18.1",
         "express-session": "^1.17.3",
@@ -29,7 +30,7 @@
     "version": "1.0.0",
     "main": "app.js",
     "scripts": {
-        "startPro": "pm2 start src/server.js",
+        "startPro": "sudo pm2 restart src/server.js --attatc",
         "start": "nodemon src/server.js",
         "test": "jest --forceExit",
         "format": "prettier --write ."

@@ -5,22 +5,31 @@ const {
     User,
     UserDetail,
     StartMessage,
-    MoodPoint
+    Notice
 } = require('../src/sequelize/models');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto-js');
 const fs = require('fs');
-
+const arr = [
+    `1662537838594.jpg`,
+    `1662649575154.jpg`,
+    `1662538074282.jpg`,
+    `1662463368507.jpg`,
+    `1662719323278.jpg`,
+    `1662792812360.png`,
+    `1662792660791.png`
+];
 const createPostMul = async (title, content, userId, i) => {
     const genderData = await UserDetail.findOne({
         where: { detailId: userId },
         raw: true,
         attributes: ['gender']
     });
-
+    const random = Math.random() * arr.length;
     await Post.create({
         title: `${title} ${i} 번 `,
         content: `${content} ${i}번 `,
-        imgUrl: 'post/1662125456004.jpg',
+        imgUrl: `post/${arr[Math.floor(random)]}`,
         userId,
         gender: genderData.gender
     });
@@ -29,6 +38,16 @@ const createPostMul = async (title, content, userId, i) => {
 const createUser = async (email, password, i) => {
     const emailSplit = email.split('@');
     const random = Math.random();
+
+    const secretKey = '12345678901234567890123456789012';
+    const iv = 'abcdefghijklmnop';
+    const cipher = crypto.AES.encrypt(password, crypto.enc.Utf8.parse(secretKey), {
+        iv: crypto.enc.Utf8.parse(iv),
+        padding: crypto.pad.Pkcs7,
+        mode: crypto.mode.CBC
+    });
+
+    const pwpwpw = cipher.key.words[0];
     await User.create({
         nickname: `테스트 닉네임 ${i}`,
 
@@ -36,7 +55,8 @@ const createUser = async (email, password, i) => {
     });
     await Auth.create({
         email: `${emailSplit[0]}${i}@${emailSplit[1]}`,
-        password: await bcrypt.hash(password, 12),
+
+        password: await bcrypt.hash(String(pwpwpw), 12),
         provider: 'local',
         userId: i
     });
@@ -80,10 +100,10 @@ const createStartMsg = () => {
 const createTestDatabase = async (req, res, next) => {
     try {
         for (let i = 1; i <= 5; i++) {
-            await createUser('test@naver.com', 'testPassword', i);
+            await createUser('test@naver.com', 'testPassword1!', i);
         }
         for (let j = 1; j <= 10; j++) {
-            createPostMul('테스트용 제목', '내용입니다. 테스트용', 1, j);
+            await createPostMul('테스트용 제목', '내용입니다. 테스트용', 1, j);
         }
         for (let j = 1; j <= 10; j++) {
             await createPostMul(
