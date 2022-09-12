@@ -87,7 +87,11 @@ const findAllPosts = async (
             //유저의 정보, 이 유저가 작성한 게시물 Posts 배열, UserDetail.gender
 
             data = await postRepository.findMyPage(userId, page, count, orderKey, order);
-
+            try {
+                if (userId !== data[0].userId) {
+                    exception.MoodPoint.whenLookMyCloser(data[0].userId);
+                }
+            } catch (err) {}
             break;
         }
         case 'like': {
@@ -183,6 +187,8 @@ const createHotPosts = async () => {
 const findHotPosts = async () => {
     const hotPosts = await postRepository.findHotPosts();
 
+    console.log(hotPosts);
+
     return hotPosts;
 };
 
@@ -263,7 +269,7 @@ const createItem = async (userId, postId, items) => {
         createItemData.push(await postRepository.createItem(postId, item));
         exception.MoodPoint.whenCreateItem(userId);
     }
-    console.log();
+
     return createItemData;
 };
 

@@ -56,7 +56,7 @@ class S3ImageController {
         const imageName = await Post.findOne({
             where: { postId }
         });
-        console.log(imageName.imgUrl);
+
         let params = {
             Bucket: 'gwonyeong',
             Key: `${imageName.imgUrl}`

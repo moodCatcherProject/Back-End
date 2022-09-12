@@ -123,7 +123,6 @@ const isExistUserNickname = async (userId) => {
 
 const kakaoCallback = async (req, res, next) => {
     try {
-        console.log('여기');
         //카카오 Strategy에서 성공한다면 콜백 실행
         isExistUserNickname(req.user.authId).then((data) => {
             const exist = data.nickname ? true : false;

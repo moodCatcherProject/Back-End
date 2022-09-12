@@ -16,3 +16,52 @@
  *
  *
  */
+
+//스케줄러
+// *    *    *    *    *    *
+// ┬    ┬    ┬    ┬    ┬    ┬
+// │    │    │    │    │    │
+// │    │    │    │    │    └ day of week (0 - 7) (0 or 7 is Sun)
+// │    │    │    │    └───── month (1 - 12)
+// │    │    │    └────────── day of month (1 - 31)
+// │    │    └─────────────── hour (0 - 23)
+// │    └──────────────────── minute (0 - 59)
+// └───────────────────────── second (0 - 59, OPTIONAL)
+const schedule = require('node-schedule');
+const { User, UserDetail, Post } = require('../../../sequelize/models');
+
+//한국시간으로 새벽 00시 10분 00초 마다 실행 (우분투에서는 9시간의 시차가 있어보여요.)
+schedule.scheduleJob('0 10 15 * * *', () => {
+    scheduleHandller();
+});
+
+const totalLikeCount = async () => {
+    const pointArrays = await UserDetail.findAll({
+        attributes: ['detailId', 'moodPoint', 'pointArray'],
+        raw: true
+    });
+
+    for (let pointArray of pointArrays) {
+        const point = JSON.parse(pointArray.pointArray);
+
+        UserDetail.update(
+            {
+                moodPoint:
+                    pointArray.moodPoint +
+                    point.reduce(function add(sum, currValue) {
+                        return sum + currValue;
+                    })
+            },
+            {
+                where: { detailId: pointArray.detailId }
+            }
+        );
+    }
+};
+
+totalLikeCount();
+const scheduleHandller = async () => {};
+
+module.exports = {
+    schedule
+};

@@ -11,7 +11,7 @@ const getUser = async (userId) => {
     if (!userId) throw new exception.NotFoundException('유저 정보 없음');
     const userStatus = await userRepository.getUserStatusByUserId(userId);
     const authData = await userRepository.findAuth(userId);
-    console.log(authData);
+
     if (authData.provider === 'local') {
         userStatus.imgUrl = process.env.S3_STORAGE_URL + userStatus.imgUrl;
     }
@@ -67,6 +67,11 @@ const updateUser = async (userId, nickname, gender, age, imageFileName) => {
     await authRepository.updateNicknameAgeGender(nickname, age, gender, userId, grade);
 
     const updateUser = await userRepository.updateUserImage(userId, imageFileName);
+    const authData = await userRepository.findAuth(userId);
+
+    if (authData.provider === 'local') {
+        updateUser.imgUrl = process.env.S3_STORAGE_URL + updateUser.imgUrl;
+    }
 
     return updateUser;
 };
@@ -94,6 +99,11 @@ const updateProfileIcon = async (userId, profileIcon) => {
     if (profileIcon === 'moody') grade = 'moody ' + user.grade.split(' ')[1];
 
     const userStatus = await userRepository.updateGrade(userId, grade);
+    const authData = await userRepository.findAuth(userId);
+
+    if (authData.provider === 'local') {
+        userStatus.imgUrl = process.env.S3_STORAGE_URL + userStatus.imgUrl;
+    }
 
     return userStatus;
 };
