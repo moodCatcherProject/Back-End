@@ -17,9 +17,8 @@ const createComment = async (postId, content, userId) => {
     const findUser = await commentRepository.findUser(userId);
     const userNickname = findUser.nickname;
     const userGrade = findUser.grade;
-    const userImgUrl = findUser.imgUrl;
 
-    if (userNickname === '') {
+    if (userNickname === null) {
         throw new exception.BadRequestException('nickname 없음.');
     }
 
@@ -27,17 +26,12 @@ const createComment = async (postId, content, userId) => {
         throw new exception.BadRequestException('grade 없음.');
     }
 
-    // if (userImgUrl === null) {
-    //     throw new exception.BadRequestException('imgUrl 없음.');
-    // }
-
     const post = await postRepository.findPost(postId);
     if (post === null) {
         throw new exception.BadRequestException('게시물 없음.');
     }
 
     const createdComment = await commentRepository.createComment(postId, content, userId);
-    exception.MoodPoint.whenLeaveComment(userId);
     return createdComment;
 };
 
