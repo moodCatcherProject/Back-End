@@ -39,7 +39,8 @@ const findPostDetailWithLikeStatus = async (postId, userId) => {
                 model: Like,
                 where: { postId, userId },
                 attributes: ['likeStatus'],
-                raw: true
+                raw: true,
+                delete: false
             }
         ]
     });
@@ -57,7 +58,8 @@ const findPostDetail = async (postId) => {
     const post = await Post.findOne({
         where: { postId },
         attributes: { exclude: ['gender'] },
-        raw: true
+        raw: true,
+        delete: false
     });
 
     post['Likes.likeStatus'] = 0;
@@ -107,7 +109,7 @@ const findAllPosts = async (page, count, orderKey, order, gender) => {
  */
 const findMyPage = async (userId, page, count, orderKey, order) => {
     return await Post.findAll({
-        where: { userId },
+        where: { userId, delete: false },
         offset: count * (page - 1),
         limit: count,
         order: [[orderKey, order]]
@@ -125,7 +127,7 @@ const findMyPage = async (userId, page, count, orderKey, order) => {
  */
 const findLikePage = async (userId, page, count, orderKey, order, gender) => {
     const likeIdData = await Like.findAll({
-        where: { userId, likeStatus: true },
+        where: { userId, likeStatus: true, delete: false },
         order: [['createdAt', 'DESC']]
     });
     const likeIdArr = likeIdData.map((p) => {
@@ -158,7 +160,8 @@ const findSearchTitleKeyword = async (keyword, page, count, orderKey, order, gen
             gender,
             title: {
                 [Op.like]: '%' + keyword + '%'
-            }
+            },
+            delete: false
         },
         order: [[orderKey, order]]
     });
@@ -177,7 +180,8 @@ const findSearchWriterKeyword = async (keyword, page, count) => {
         where: {
             nickname: {
                 [Op.like]: '%' + keyword + '%'
-            }
+            },
+            delete: false
         }
     });
 
@@ -199,7 +203,8 @@ const findAlgorithmPost = async (page, count) => {
             createdAt: {
                 [Op.lt]: new Date(),
                 [Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)
-            }
+            },
+            delete: false
         }
     });
 };
@@ -246,9 +251,14 @@ const updatePost = async (postId, title, content, gender) => {
  */
 const deletePost = async (postId) => {
     try {
-        await Post.destroy({
-            where: { postId }
-        });
+        await Post.update(
+            {
+                delete: true
+            },
+            {
+                where: { postId }
+            }
+        );
     } catch (err) {
         throw new exception.NotFoundException('해당 게시물이 없음.');
     }
