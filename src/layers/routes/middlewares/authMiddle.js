@@ -50,7 +50,6 @@ exports.isNotLoggedIn = (req, res, next) => {
         const { authorization } = req.headers;
         const [tokenType, tokenValue] = (authorization || '').split(' ');
 
-        console.log(tokenType, tokenValue);
         if (tokenValue.length > 15 && tokenType == 'Bearer') {
             res.status(404).send({
                 errorMessage: '로그인 상태'
