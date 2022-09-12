@@ -31,16 +31,14 @@ const createPost = async (userId, title, content, gender) => {
  */
 const findPostDetailWithLikeStatus = async (postId, userId) => {
     const post = await Post.findOne({
-        where: { postId },
+        where: { postId, delete: false },
         attributes: { exclude: ['gender'] },
         raw: true,
         include: [
             {
                 model: Like,
                 where: { postId, userId },
-                attributes: ['likeStatus'],
-                raw: true,
-                delete: false
+                attributes: ['likeStatus']
             }
         ]
     });
@@ -56,10 +54,9 @@ const findPostDetailWithLikeStatus = async (postId, userId) => {
  */
 const findPostDetail = async (postId) => {
     const post = await Post.findOne({
-        where: { postId },
+        where: { postId, delete: false },
         attributes: { exclude: ['gender'] },
-        raw: true,
-        delete: false
+        raw: true
     });
 
     post['Likes.likeStatus'] = 0;
@@ -74,7 +71,7 @@ const findPostDetail = async (postId) => {
  */
 const findPost = async (postId) => {
     return await Post.findOne({
-        where: { postId }
+        where: { postId, delete: false }
     });
 };
 /**
@@ -93,7 +90,7 @@ const findAllPosts = async (page, count, orderKey, order, gender) => {
         offset: count * (page - 1),
         limit: count,
         order: [[orderKey, order]],
-        where: { gender }
+        where: { gender, delete: false }
     });
 };
 
@@ -272,7 +269,7 @@ const deletePost = async (postId) => {
  */
 const findRepPost = async (userId) => {
     const repPostIdAttr = await UserDetail.findOne({
-        where: { detailId: userId },
+        where: { detailId: userId, delete: false },
         attributes: ['repPostId']
     });
 
