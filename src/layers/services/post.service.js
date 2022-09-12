@@ -171,15 +171,18 @@ const findOnePost = async (postId, userId) => {
     };
 };
 
+const createHotPosts = async () => {
+    return await postRepository.createHotPost();
+};
+
+/**
+ * 인기 게시물 조회
+ * @returns
+ */
 const findHotPosts = async () => {
-    // 하루 단위로 받은 좋아요 수를 집계하여 익일 00:00시 1~3위 선정
-    // like table에서 likeStatus=true, createdAt이 오늘인 data를 찾아서
-    // postId별 총 좋아요 수를 계산한 뒤 제일 높은 순으로 정렬
+    const hotPosts = await postRepository.findHotPosts();
 
-    const todayLike = await likeRepository.findTodayLike();
-
-    console.log(todayLike);
-    return;
+    return hotPosts;
 };
 
 /**
@@ -328,6 +331,7 @@ module.exports = {
     createPost,
     findAllPosts,
     findOnePost,
+    createHotPosts,
     findHotPosts,
     updatePost,
     deletePost,

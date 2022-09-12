@@ -1,4 +1,4 @@
-const { User, UserDetail, Post, Item, Like } = require('../../sequelize/models');
+const { User, UserDetail, Post, Item, Like, HotPost } = require('../../sequelize/models');
 const exception = require('../exceptModels/_.models.loader');
 
 const sequelize = require('sequelize');
@@ -27,7 +27,7 @@ const createPost = async (userId, title, content, gender) => {
  * user가 좋아요를 누른 적이 있는 Post 조회 : Post 테이블에서 Like 테이블을 참조하여 postId 값이 일치하는 data 반환(likeStatus는 postId, userId가 일치하는 값 반환)
  * @param { number } postId
  * @param { number } userId
- * @returns { Promise<{ postId:number, title:string, content:string, userId:number, imgUrl:string, likeCount:number, createdAt:date, Likes.likeStatus:string } | null>}
+ * @returns { Promise<{ postId:number, title:string, content:string, userId:number, imgUrl:string, likeCount:number, createdAt:date, Likes.likeStatus:boolean } | null>}
  */
 const findPostDetailWithLikeStatus = async (postId, userId) => {
     const post = await Post.findOne({
@@ -49,7 +49,7 @@ const findPostDetailWithLikeStatus = async (postId, userId) => {
  *
  * user가 좋아요를 누른 적이 없는 Post 조회 : Post 테이블에서 postId 값이 일치하는 data 반환(likeStatus는 0)
  * @param { number } postId
- * @returns { Promise<{ postId:number, title:string, content:string, userId:number, imgUrl:string, likeCount:number, createdAt:date, Likes.likeStatus:string } | null>}
+ * @returns { Promise<{ postId:number, title:string, content:string, userId:number, imgUrl:string, likeCount:number, createdAt:date, Likes.likeStatus:boolean } | null>}
  */
 const findPostDetail = async (postId) => {
     const post = await Post.findOne({
@@ -383,19 +383,47 @@ const isExistNotice = async (userId) => {
 };
 
 /**
- * postId가 일치하는 게시글의 likeCount variation(1 또는 -1)만큼 증감 후 exLikeCount, likeCount 배열 반환
+ * postId가 일치하는 게시글의 likeCount를 variation(1 또는 -1)만큼 증감
+ * todayLikeCount를 todayVariation(1 또는 -1)만큼 증감 후 exLikeCount, likeCount 배열 반환
  * @param {number} postId
  * @returns 해당 게시글의 plusLikeCount 함수 실행 전과 실행 후 likeCount의 배열
  */
-const updateLikeCount = async (postId, variation) => {
+const updateLikeCount = async (postId, variation, todayVariation) => {
     const post = await findPost(postId);
+
     const exLikeCount = post.likeCount;
+    const exTodayLikeCount = post.todayLikeCount;
+
     const likeCount = exLikeCount + variation;
-    await Post.update({ likeCount }, { where: { postId } });
+    const todayLikeCount = exTodayLikeCount + todayVariation;
+
+    await Post.update({ likeCount, todayLikeCount }, { where: { postId } });
 
     const data = [exLikeCount, likeCount];
 
     return data;
+};
+
+const createHotPost = async () => {
+    const hotPosts = await Post.findAll({
+        order: [['todayLikeCount', 'DESC']],
+        attributes: ['postId', 'imgUrl'],
+        limit: 3,
+        raw: true
+    });
+
+    console.log(hotPosts);
+    // hotPosts 불러온거 이미지랑 어떻게 저장할건지 고민해보기
+
+    // const post = await findPost(postId);
+    // const imgUrl = post.imgUrl;
+    // const hotPost = await HotPost.create(postId, imgUrl);
+
+    return hotPosts;
+};
+
+const findHotPosts = async () => {
+    return await HotPost.findAll();
 };
 
 //FUNCTION
@@ -427,5 +455,7 @@ module.exports = {
 
     isExistNotice,
 
-    updateLikeCount
+    updateLikeCount,
+    createHotPost,
+    findHotPosts
 };
