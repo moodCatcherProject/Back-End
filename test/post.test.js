@@ -134,7 +134,7 @@ describe('게시물 작성하기', () => {
             .attach('postImage', 'test/testPicture.jpg')
             .expect(201)
             .end((err, res) => {
-                console.log('2번 게시물 이미지 s3에 저장');
+                console.log('2번 게시물 이미지 s3에 저장', res.body);
                 done();
             });
     });

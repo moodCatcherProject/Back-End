@@ -63,6 +63,11 @@ module.exports = (sequelize, DataTypes) => {
                 defaultValue: 0,
                 allowNull: false
             },
+            todayLikeCount: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0,
+                allowNull: false
+            },
             delete: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false

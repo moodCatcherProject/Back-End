@@ -1,6 +1,5 @@
 const { Post } = require('./src/sequelize/models');
 const sequelize = require('sequelize');
-
 const Op = sequelize.Op;
 // const fs = require('fs');
 
@@ -46,21 +45,7 @@ const Op = sequelize.Op;
 //     where: {}
 // });
 
-// let status = true;
-// status = !status;
-// status = !status;
-// console.log(status);
-
-const data = [
-    { name: '권영', createdAt: 0911 },
-    { name: '수민', createdAt: 0910 },
-    { name: '수범', createdAt: 0909 }
-];
-const calcurateCreatedAt = (createdAt) => {
-    return createdAt + 10;
-};
-
-for (let gwonyeong of data) {
-    gwonyeong.createdAt = calcurateCreatedAt(At.createdAt);
-}
-console.log(data);
+let status = true;
+status = !status;
+status = !status;
+console.log(status);

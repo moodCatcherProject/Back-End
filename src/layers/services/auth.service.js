@@ -34,8 +34,7 @@ const localSignUp = async (email, password, confirmPw) => {
     }
 
     const SignUp = await authRepository.createSignUp(email, password);
-    //회원가입을 축하한다는 포인트 지급, 알림
-    exception.MoodPoint.whenSignUp(SignUp.authId);
+
     return SignUp;
 };
 
@@ -52,9 +51,9 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId) => {
     new exception.isString({ age }).value;
     new exception.isString({ gender }).value;
 
-    // const ExistUser = await userRepository.getUserStatusByUserId(userId);
-    // if (ExistUser.nickname)
-    //     throw new exception.ForbiddenException('초기설정한 유저정보가 있습니다.');
+    const ExistUser = await userRepository.getUserStatusByUserId(userId);
+    if (ExistUser.nickname)
+        throw new exception.ForbiddenException('초기설정한 유저정보가 있습니다.');
 
     const checkNickname = /^(?=.*[a-zA-Z0-9가-힣])[a-zA-Z0-9가-힣]{2,16}$/;
     if (checkNickname.test(nickname) === false) {
