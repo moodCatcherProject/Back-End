@@ -68,15 +68,14 @@ module.exports = (sequelize, DataTypes) => {
                 defaultValue: 0,
                 allowNull: false
             },
-            createdAt: {
-                allowNull: false,
-                type: DataTypes.DATE,
-                defaultValue: DataTypes.NOW
+            delete: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false
             }
         },
         {
             sequelize,
-            timestamps: false,
+            timestamps: true,
             modelName: 'Post'
         }
     );
