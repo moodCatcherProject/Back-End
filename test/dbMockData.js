@@ -51,7 +51,7 @@ const createUser = async (email, password, i) => {
     await User.create({
         nickname: `테스트 닉네임 ${i}`,
 
-        imgUrl: `http://${i}번째 사진`
+        imgUrl: `1662792812360.png`
     });
     await Auth.create({
         email: `${emailSplit[0]}${i}@${emailSplit[1]}`,

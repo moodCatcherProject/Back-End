@@ -32,10 +32,10 @@ module.exports = {
                 defaultValue: 0,
                 allowNull: false
             },
-            createdAt: {
-                allowNull: false,
-                type: Sequelize.DATE,
-                defaultValue: Sequelize.NOW
+            delete: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: false,
+                allowNull: false
             }
         });
     },

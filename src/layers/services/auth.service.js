@@ -34,7 +34,8 @@ const localSignUp = async (email, password, confirmPw) => {
     }
 
     const SignUp = await authRepository.createSignUp(email, password);
-
+    //회원가입을 축하한다는 포인트 지급, 알림
+    exception.MoodPoint.whenSignUp(SignUp.authId);
     return SignUp;
 };
 

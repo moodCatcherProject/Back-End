@@ -20,7 +20,7 @@ const toggleLike = async (userId, postId) => {
         await likeRepository.registerLike(userId, postId);
         const variation = 1;
         const likeCount = await postRepository.updateLikeCount(postId, variation);
-
+        exception.MoodPoint.whenLeaveLike(userId, postId);
         return likeCount;
     } else {
         if (isExistsLike.likeStatus) {
