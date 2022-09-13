@@ -22,11 +22,18 @@ const development = {
 const production = {
     username: env.MYSQL_USERNAME,
     password: env.MYSQL_PASSWORD,
-    database: env.MYSQL_DATABASE,
+    database: env.MYSQL_DATABASE + 'production',
     host: env.MYSQL_HOST,
     dialect: 'mysql',
-    logging: false
-
+    logging: false,
+    timezone: '+09:00',
+    dialectOptions: {
+        dateStrings: true,
+        typeCast: true
+    },
+    define: {
+        timestamps: false
+    }
     //port: env.MYSQL_PORT
 };
 
