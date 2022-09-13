@@ -17,18 +17,13 @@ const createComment = async (postId, content, userId) => {
     const findUser = await commentRepository.findUser(userId);
     const userNickname = findUser.nickname;
     const userGrade = findUser.grade;
-    const userImgUrl = findUser.imgUrl;
 
-    if (userNickname === '') {
+    if (userNickname === null) {
         throw new exception.BadRequestException('nickname 없음.');
     }
 
     if (userGrade === null) {
         throw new exception.BadRequestException('grade 없음.');
-    }
-
-    if (userImgUrl === null) {
-        throw new exception.BadRequestException('imgUrl 없음.');
     }
 
     const post = await postRepository.findPost(postId);
@@ -53,9 +48,43 @@ const createComment = async (postId, content, userId) => {
 const getComments = async (postId, page, count, userId) => {
     const getComments = await commentRepository.getComments(postId, page, count, userId);
     data = getComments.map((e) => e.get({ plain: true }));
-    // 게시물이 없을때
 
-    return data.map((f) => {
+    const post = await postRepository.findPost(postId);
+    if (post === null) {
+        throw new exception.BadRequestException('게시물 없음.');
+    }
+
+    const createdAt = Date.now();
+    console.log(createdAt);
+    const createdAt2 = new Date();
+    console.log(createdAt2);
+    const createdAt3 = Date.parse(new Date());
+    console.log(createdAt3);
+    const created4 = new Date().getTime();
+    console.log(created4);
+
+    const displayedAt = (createdAt) => {
+        const seconds = (Date.now() - Date.parse(createdAt)) / 1000;
+        if (seconds < 60) return `방금 전`;
+        const minutes = seconds / 60;
+        if (minutes < 60) return `${Math.floor(minutes)}분 전`;
+        const hours = minutes / 60;
+        if (hours < 24) return `${Math.floor(hours)}시간 전`;
+        const days = hours / 24;
+        if (days < 7) return `${Math.floor(days)}일 전`;
+        const weeks = days / 7;
+        if (weeks < 5) return `${Math.floor(weeks)}주 전`;
+        const months = days / 30;
+        if (months < 12) return `${Math.floor(months)}개월 전`;
+        const years = days / 365;
+        return `${Math.floor(years)}년 전`;
+    };
+
+    for (let At of data) {
+        At.createdAt = displayedAt(At.createdAt);
+    }
+
+    const result = data.map((f) => {
         return {
             userId: f.userId,
             commentId: f.commentId,
@@ -77,6 +106,7 @@ const getComments = async (postId, page, count, userId) => {
             })
         };
     });
+    return result;
 };
 
 /**
