@@ -51,15 +51,7 @@ const getComments = async (postId, page, count, userId) => {
     if (post === null) {
         throw new exception.BadRequestException('게시물 없음.');
     }
-
-    const createdAt = Date.now();
-    console.log(createdAt);
-    const createdAt2 = new Date();
-    console.log(createdAt2);
-    const createdAt3 = Date.parse(new Date());
-    console.log(createdAt3);
-    const created4 = new Date().getTime();
-    console.log(created4);
+    console.log(data);
 
     const displayedAt = (createdAt) => {
         const seconds = (Date.now() - Date.parse(createdAt)) / 1000;
@@ -80,6 +72,9 @@ const getComments = async (postId, page, count, userId) => {
 
     for (let At of data) {
         At.createdAt = displayedAt(At.createdAt);
+        for (let A of At.Recomments) {
+            A.createdAt = displayedAt(A.createdAt);
+        }
     }
 
     const result = data.map((f) => {
