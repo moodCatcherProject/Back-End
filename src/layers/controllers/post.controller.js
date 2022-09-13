@@ -122,6 +122,7 @@ const deletePost = async (req, res, next) => {
     try {
         const { userId } = res.locals.user;
         const { postId } = req.params;
+        console.log(userId, postId);
         await postService.deletePost(userId, postId);
         res.status(200).json(new exception.FormDto('게시물 삭제 성공'));
     } catch (err) {
