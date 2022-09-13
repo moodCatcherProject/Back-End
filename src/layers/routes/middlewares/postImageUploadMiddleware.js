@@ -1,7 +1,7 @@
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const s3 = require('./config/s3');
-const { Post } = require('../../../sequelize/models');
+const { Post, User } = require('../../../sequelize/models');
 const exception = require('../../exceptModels/_.models.loader');
 
 class S3ImageController {
@@ -55,6 +55,33 @@ class S3ImageController {
         const { postId } = req.params;
         const imageName = await Post.findOne({
             where: { postId }
+        });
+
+        let params = {
+            Bucket: 'gwonyeong',
+            Key: `${imageName.imgUrl}`
+        };
+
+        try {
+            s3.deleteObject(params, function (error, data) {
+                if (error) {
+                    console.log('err: ', error, error.stack);
+                } else {
+                    console.log(data, ' 정상 삭제 되었습니다.');
+                }
+            });
+            next();
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
+    };
+
+    //해당 유저의 이미지 삭제
+    delete_profile = async (req, res, next) => {
+        const { userId } = res.locals.user;
+        const imageName = await User.findOne({
+            where: { userId }
         });
 
         let params = {
