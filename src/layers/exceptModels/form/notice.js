@@ -4,7 +4,7 @@
  *      => '새로운 무드캐쳐가 되어' 무드 포인트를 획득했습니다.
  * 자주 줘야 하는 알림
  *  - 내 게시물에 댓글이 달렸을 때
- *      => '다른 캐쳐가 캐쳐님의 무드에 관심을 보여' 무드 포인트를 획득했습니다.
+ *      => '다른 사용자가 내 게시물에 댓글을 달아' 무드 포인트를 획득했습니다.
  *      => 알림을 클릭하면 해당 페이지로 이동할 수 있도록(postId), 현재 확인해야 할 댓글 갯수를 적으면 좋겠음.
  *  - 게시물을 업로드 할 때(게시물 착장 정보 포함) (완)
  *      => '캐쳐님의 게시물이 성공적으로 무드의 바다에 떠올라' 무드 포인트를 획득했습니다.
@@ -39,7 +39,31 @@ const createNotice = async (userId, message, postId) => {
     });
 };
 
-exports.createMessage = (userId, message, postId) => {
+const updateNotice = async (noticeData) => {
+    Notice.update(
+        {
+            notice: noticeData.notice,
+            duplecation: noticeData.duplecation
+        },
+        {
+            where: { noticeId: noticeData.noticeId }
+        }
+    );
+};
+const checkNotice = async (userId, message, postId) => {
+    const noticeData = await Notice.findOne({
+        where: { userId, postId }
+    });
+    if (noticeData) {
+        noticeData.duplecation += 1;
+
+        updateNotice(noticeData);
+        return;
+    }
     createNotice(userId, message, postId);
+};
+
+exports.createMessage = (userId, message, postId) => {
+    checkNotice(userId, message, postId);
     updateIsExistsNotice(userId);
 };
