@@ -16,6 +16,6 @@ userRouter.put('/', isLoggedIn, upload.upload.single('userValue'), userControlle
 userRouter.patch('/', isLoggedIn, userController.updateProfileIcon);
 
 // 회원탈퇴 (/api/users/signout)
-userRouter.delete('/signout', isLoggedIn, userController.deleteUser);
+userRouter.delete('/signout', isLoggedIn, upload.delete_profile, userController.deleteUser);
 
 module.exports = userRouter;

@@ -20,7 +20,7 @@ router.get('/popular', postController.findHotPosts);
 router.put('/:postId', postController.updatePost);
 
 // 게시물 삭제(/api/posts/:postId)
-router.delete('/:postId', upload.delete_file, postController.deletePost);
+router.delete('/:postId', postController.deletePost);
 
 // 대표 게시물 지정(/api/posts/:postId)
 router.patch('/:postId', postController.updateRepPost);

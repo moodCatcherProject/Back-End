@@ -200,6 +200,8 @@ const findHotPosts = async () => {
  */
 const updatePost = async (userId, postId, title, content, gender) => {
     title = new exception.isString({ title }).trim;
+    const postData = await postRepository.findPost(postId);
+
     await isExistPostOfUser(userId, postId);
     const createPostData = await postRepository.updatePost(postId, title, content, gender);
 
@@ -325,7 +327,9 @@ const findLikeStatus = async (userId, postId) => {
  */
 const isExistPostOfUser = async (userId, postId) => {
     const postData = await postRepository.findPost(postId);
-
+    if (!postData) {
+        throw new exception.NotFoundException('존재하지 않는 게시물');
+    }
     if (userId === postData.userId) {
         return true;
     } else {

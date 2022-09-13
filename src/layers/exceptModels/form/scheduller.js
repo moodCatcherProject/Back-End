@@ -76,10 +76,14 @@ const createHotPost = async () => {
         }
     );
 
-    // 랭킹 등재 moodPoints 적립
-    exception.MoodPoint.whenInRankingMyPost(hotPosts[0].userId, hotPosts[0].postId);
-    exception.MoodPoint.whenInRankingMyPost(hotPosts[1].userId, hotPosts[1].postId);
-    exception.MoodPoint.whenInRankingMyPost(hotPosts[2].userId, hotPosts[2].postId);
+    try {
+        // 랭킹 등재 moodPoints 적립
+        exception.MoodPoint.whenInRankingMyPost(hotPosts[0].userId, hotPosts[0].postId);
+        exception.MoodPoint.whenInRankingMyPost(hotPosts[1].userId, hotPosts[1].postId);
+        exception.MoodPoint.whenInRankingMyPost(hotPosts[2].userId, hotPosts[2].postId);
+    } catch (err) {
+        console.log(err);
+    }
 };
 
 const totalLikeCount = async () => {
@@ -109,6 +113,56 @@ const totalLikeCount = async () => {
     }
 };
 
+const updateGrade = async () => {
+    // User, UserDetail 테이블에서 전체유저의 grade, detailId, moodPoint data 배열로 반환
+    try {
+        const pointArrays = await User.findAll({
+            attributes: ['grade'],
+            raw: true,
+            include: [
+                {
+                    model: UserDetail,
+                    attributes: ['detailId', 'moodPoint'],
+                    raw: true
+                }
+            ]
+        });
+
+        // for of 문을 돌며 유저의 moodPoint에 맞는 grade로 data update
+        for (let pointArray of pointArrays) {
+            const moodPoint = pointArray['UserDetail.moodPoint'];
+            const detailId = pointArray['UserDetail.detailId'];
+            const gradeStr = pointArray['grade'].split(' ')[0];
+
+            //switch 조건문의 case에는 상수값만 올 수 있어 변수, 비교식 등에는 사용할 수 없어서 else if 조건문 선택
+            let gradeNum;
+            if (moodPoint < 1000) {
+                gradeNum = ' 1';
+            } else if (moodPoint < 3000) {
+                //else if(1000<=moodPoint<3000)으로 하면 1000보다 큰지만 확인하고 조건문 참으로 인정,,,
+                gradeNum = ' 2';
+            } else if (moodPoint < 6000) {
+                gradeNum = ' 3';
+            } else if (moodPoint < 10000) {
+                gradeNum = ' 4';
+            } else if (moodPoint >= 10000) {
+                gradeNum = ' 5';
+            }
+
+            await User.update(
+                {
+                    grade: gradeStr + gradeNum
+                },
+                {
+                    where: { userId: detailId }
+                }
+            );
+        }
+    } catch (err) {
+        console.log(err);
+    }
+};
+
 const likeCountInit = () => {
     UserDetail.update(
         {
@@ -129,14 +183,28 @@ const deleteNotice = () => {
         }
     });
 };
+
+const deletePost = () => {
+    Post.destroy({
+        where: {
+            delete: true
+        }
+    });
+};
+
 const scheduleHandller = async () => {
-    await totalLikeCount(); // 오늘 획득한 좋아요를 집계하고
-    likeCountInit(); // pointArray를 모두 0으로 초기화 함.
-    deleteNotice(); // 2일 이상 지난 알림을 모두 삭제
-    createHotPost(); // hot posts 산출
+    try {
+        await totalLikeCount(); // 오늘 획득한 좋아요를 집계하고
+        likeCountInit(); // pointArray를 모두 0으로 초기화 함.
+        deletePost(); // delete 가 true인 게시물들 삭제
+        updateGrade(); // moodPoint에 따라 grade update.
+        deleteNotice(); // 2일 이상 지난 알림을 모두 삭제
+        createHotPost(); // hot posts 산출
+    } catch (err) {
+        console.log(err);
+    }
 };
 
 module.exports = {
-    schedule,
-    createHotPost
+    schedule
 };
