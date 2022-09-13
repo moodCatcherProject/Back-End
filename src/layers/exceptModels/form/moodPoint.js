@@ -9,7 +9,9 @@ const noticeMessageArray = {
 
     whenCreatePost: `캐쳐님의 게시물이 성공적으로 무드의 바다에 떠올라`,
 
-    whenLeaveComment: `다른 캐쳐가 캐쳐님의 무드에 관심을 보여`,
+    whenLeaveMyPostComment: `다른 캐쳐님이 게시물에 댓글을 달아주셔서`,
+
+    whenLeaveComment: `다른 캐쳐님께 댓글을 남겨`,
 
     whenInRankingMyPost: `캐쳐님의 무드가 인정받아 랭킹에 등재되어`
 };
@@ -182,7 +184,7 @@ exports.whenCreatePost = async (userId, postId) => {
 };
 /**
  * @desc 게시물의 아이템을 등록했을 때 100무드, 하루 최대2500
- * 이 함수를 한 번 실행하면 50포인트가 쌓이므로 아이템 갯수를 세어 반복문 돌리기(완)
+ * 이 함수를 한 번 실행하면 100포인트가 쌓이므로 아이템 갯수를 세어 반복문 돌리기(완)
  * @param {number} userId
  * @returns 포인트를 올렸으면 현재 포인트 배열, 포인트, 최대치 실패시 '최대치에 도달' 메시지
  */
@@ -272,7 +274,7 @@ exports.whenLeaveComment = async (userId, postId) => {
         point,
         maxPoint,
         '타인의 게시물에 댓글 남기기, 30무드 증가',
-        '다른 캐쳐님께 댓글을 남겨',
+        noticeMessageArray.whenLeaveComment,
         postId
     );
 };
@@ -299,7 +301,7 @@ exports.whenLeaveMyPostComment = async (userId, postId) => {
         point,
         maxPoint,
         '나의 게시물에 댓글이 달림, 30무드 증가',
-        noticeMessageArray.whenLeaveComment,
+        noticeMessageArray.whenLeaveMyPostComment,
         postId
     );
 };
