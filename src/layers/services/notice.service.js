@@ -13,7 +13,8 @@ const findAllNotice = async (userId) => {
             return {
                 msg: notice.notice,
                 userId: notice.userId,
-                postId: notice.postId
+                postId: notice.postId,
+                duplecation: notice.duplecation
             };
         })
     };
