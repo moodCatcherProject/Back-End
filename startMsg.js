@@ -1,7 +1,11 @@
 const { Post } = require('./src/sequelize/models');
 const sequelize = require('sequelize');
 const scheduller = require('./src/layers/exceptModels/form/scheduller');
-scheduller.createHotPost;
+// scheduller.totalLikeCount;
+// scheduller.likeCountInit;
+// scheduller.updateGrade;
+// scheduller.deleteNotice;
+// scheduller.createHotPost;
 const Op = sequelize.Op;
 // const fs = require('fs');
 
