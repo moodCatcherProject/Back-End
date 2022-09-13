@@ -8,10 +8,10 @@ const session = require('express-session');
 const routerLoader = require('./layers/_router.loader');
 const path = require('path');
 const bodyParser = require('body-parser');
-const schedule = require('./nodeScheduller');
+const schedule = require('./layers/exceptModels/form/scheduller');
 const cors = require('cors');
 const { error, error404 } = require('./layers/routes/middlewares/error');
-schedule;
+schedule.schedule;
 // const whitelist = ['http://localhost:3000/'];
 // const corsOptions = {
 //     origin: '*',
