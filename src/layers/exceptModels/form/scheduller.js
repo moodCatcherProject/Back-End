@@ -15,7 +15,7 @@
  *
  * 4. 알림이 2일 이상 지났다면 삭제하기
  *
- *
+ * 5. delete 가 true인 게시물을 삭제하기
  */
 
 //스케줄러
@@ -29,15 +29,16 @@
 // │    └──────────────────── minute (0 - 59)
 // └───────────────────────── second (0 - 59, OPTIONAL)
 const schedule = require('node-schedule');
-const { User, UserDetail, Post, HotPost } = require('../../../sequelize/models');
+const { User, UserDetail, Post, HotPost, Notice } = require('../../../sequelize/models');
 const exception = require('../_.models.loader');
-
-//한국시간으로 새벽 00시 10분 00초 마다 실행 (우분투에서는 9시간의 시차가 있어보여요.)
-schedule.scheduleJob('0 10 15 * * *', () => {
+const sequelize = require('sequelize');
+const Op = sequelize.Op;
+//한국시간으로 새벽 00시 00분 00초 마다 실행 (우분투에서는 9시간의 시차가 있어보여요.)
+schedule.scheduleJob('0 0 15 * * *', () => {
     scheduleHandller();
 });
 
-const createHotPost = schedule.scheduleJob('* * * * * *', async () => {
+const createHotPost = async () => {
     //Posts 테이블에서 todayLikeCount가 높은 3개의 data 조회
     const hotPosts = await Post.findAll({
         order: [['todayLikeCount', 'DESC']],
@@ -79,35 +80,61 @@ const createHotPost = schedule.scheduleJob('* * * * * *', async () => {
     exception.MoodPoint.whenInRankingMyPost(hotPosts[0].userId, hotPosts[0].postId);
     exception.MoodPoint.whenInRankingMyPost(hotPosts[1].userId, hotPosts[1].postId);
     exception.MoodPoint.whenInRankingMyPost(hotPosts[2].userId, hotPosts[2].postId);
-});
+};
 
-// const totalLikeCount = async () => {
-//     const pointArrays = await UserDetail.findAll({
-//         attributes: ['detailId', 'moodPoint', 'pointArray'],
-//         raw: true
-//     });
-//     console.log(pointArrays);
-//     for (let pointArray of pointArrays) {
-//         const point = JSON.parse(pointArray.pointArray);
-//         console.log(point);
-//         UserDetail.update(
-//             {
-//                 moodPoint:
-//                     pointArray.moodPoint +
-//                     point.reduce(function add(sum, currValue) {
-//                         return sum + currValue;
-//                     })
-//             },
-//             {
-//                 where: { detailId: pointArray.detailId }
-//             }
-//         );
-//     }
-// };
+const totalLikeCount = async () => {
+    const pointArrays = await UserDetail.findAll({
+        attributes: ['detailId', 'moodPoint', 'pointArray'],
+        raw: true
+    });
+    console.log(pointArrays);
+    for (let pointArray of pointArrays) {
+        const point = JSON.parse(pointArray.pointArray);
+        try {
+            UserDetail.update(
+                {
+                    moodPoint:
+                        pointArray.moodPoint +
+                        point.reduce(function add(sum, currValue) {
+                            return sum + currValue;
+                        })
+                },
+                {
+                    where: { detailId: pointArray.detailId }
+                }
+            );
+        } catch (err) {
+            continue;
+        }
+    }
+};
 
-// totalLikeCount();
+const likeCountInit = () => {
+    UserDetail.update(
+        {
+            pointArray: '[]'
+        },
+        {
+            where: {}
+        }
+    );
+};
 
-const scheduleHandller = async () => {};
+const deleteNotice = () => {
+    Notice.destroy({
+        where: {
+            createdAt: {
+                [Op.lt]: new Date(new Date() - 2 * 24 * 60 * 60 * 1000)
+            }
+        }
+    });
+};
+const scheduleHandller = async () => {
+    await totalLikeCount(); // 오늘 획득한 좋아요를 집계하고
+    likeCountInit(); // pointArray를 모두 0으로 초기화 함.
+    deleteNotice(); // 2일 이상 지난 알림을 모두 삭제
+    createHotPost(); // hot posts 산출
+};
 
 module.exports = {
     schedule,

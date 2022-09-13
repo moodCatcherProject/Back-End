@@ -16,7 +16,7 @@ const createPost = async (userId, title, content, gender) => {
     const createPostData = await postRepository.createPost(userId, title, content, gender);
     title = new exception.isString({ title }).trim;
 
-    exception.MoodPoint.whenCreatePost(userId, createPostData.postId);
+    await exception.MoodPoint.whenCreatePost(userId, createPostData.postId);
     return createPostData;
 };
 
@@ -268,7 +268,7 @@ const createItem = async (userId, postId, items) => {
         createItemData.push(await postRepository.createItem(postId, item));
         exception.MoodPoint.whenCreateItem(userId);
     }
-    console.log();
+
     return createItemData;
 };
 

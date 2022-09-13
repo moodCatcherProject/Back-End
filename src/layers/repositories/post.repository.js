@@ -88,7 +88,6 @@ const findPost = async (postId) => {
  * @returns
  */
 const findAllPosts = async (page, count, orderKey, order, gender) => {
-    console.log(page, count, orderKey, order, gender);
     return await Post.findAll({
         offset: count * (page - 1),
         limit: count,

@@ -30,8 +30,10 @@ const createComment = async (postId, content, userId) => {
     if (post === null) {
         throw new exception.BadRequestException('게시물 없음.');
     }
-
+    exception.MoodPoint.whenLeaveComment(userId, postId);
+    exception.MoodPoint.whenLeaveMyPostComment(userId, postId);
     const createdComment = await commentRepository.createComment(postId, content, userId);
+
     return createdComment;
 };
 
