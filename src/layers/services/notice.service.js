@@ -9,7 +9,7 @@ const findAllNotice = async (userId) => {
     const noticeData = await noticeRepository.findAllNotice(userId);
     noticeRepository.updateIsExsitsNotice(userId);
     return {
-        data: noticeData.map((notice) => {
+        notices: noticeData.map((notice) => {
             return {
                 msg: notice.notice,
                 userId: notice.userId,
