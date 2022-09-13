@@ -180,9 +180,18 @@ const deleteNotice = () => {
     });
 };
 
+const deletePost = () => {
+    Post.destroy({
+        where: {
+            delete: true
+        }
+    });
+};
+
 const scheduleHandller = async () => {
     await totalLikeCount(); // 오늘 획득한 좋아요를 집계하고
     likeCountInit(); // pointArray를 모두 0으로 초기화 함.
+    deletePost(); // delete 가 true인 게시물들 삭제
     updateGrade(); // moodPoint에 따라 grade update.
     deleteNotice(); // 2일 이상 지난 알림을 모두 삭제
     createHotPost(); // hot posts 산출

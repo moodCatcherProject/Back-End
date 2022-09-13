@@ -6,7 +6,7 @@ const request = require('supertest');
 beforeAll(async () => {
     await sequelize.sync({ force: true });
 });
-let token;
+let token, token2;
 const agent = request.agent(app);
 describe('게시물 작성하기', () => {
     // let post = new FormData();
@@ -35,6 +35,16 @@ describe('게시물 작성하기', () => {
             .post('/api/auth/signup')
             .send({
                 email: 'test@naver.com',
+                password: '1234asdf!',
+                confirmPw: '1234asdf!'
+            })
+            .expect(201, done);
+    });
+    test('로그인 안 했으면 로컬 회원가입 하기 2번', (done) => {
+        request(app)
+            .post('/api/auth/signup')
+            .send({
+                email: 'test2@naver.com',
                 password: '1234asdf!',
                 confirmPw: '1234asdf!'
             })
@@ -129,14 +139,120 @@ describe('게시물 작성하기', () => {
     });
 });
 describe(`로그인, 게시물 작성 알림이 있어야 함.`, () => {
+    let noticeCount;
+
     test('알림 불러오기', (done) => {
         agent
             .get('/api/notice')
             .set('authorization', `Bearer ` + token)
             .expect(200)
             .end((err, res) => {
-                console.log(res.body.data);
+                console.log();
+                noticeCount = res.body.data.notices.length;
                 done();
             });
     });
+    test('현재 까지 알림은 총 4개여야 함.', (done) => {
+        expect(noticeCount).toBe(4);
+        done();
+    });
+    test('알림 삭제하기', (done) => {
+        agent
+            .delete('/api/notice')
+            .set('authorization', `Bearer ` + token)
+            .expect(200)
+            .end((err, res) => {
+                console.log(res.body);
+
+                done();
+            });
+    });
+    test('agent 에 로그인 ', (done) => {
+        agent
+            .post('/api/auth/login')
+
+            .send({
+                email: 'test2@naver.com',
+                password: '1234asdf!'
+            })
+            .expect(200)
+            .end((err, res) => {
+                token2 = res.body.url.split('=')[2];
+                console.log(res.body, 'test2@naver.com 로그인', token);
+                done();
+            });
+    });
+    test('3번, 4번 게시물을 생성(작성자 2번 유저)', (done) => {
+        agent
+            .post('/api/posts')
+            .set('authorization', `Bearer ` + token)
+            .send({
+                post: {
+                    title: '2번 유저가 작성한 테스트용 제목입니다.',
+                    content: '2번 유저가 작성한 내용입니다. 테스트용!'
+                },
+                items: [
+                    {
+                        imgUrl: 'http://',
+                        brand: '나이키',
+                        name: '가나다 운동화',
+                        price: '79000원'
+                    },
+                    {
+                        imgUrl: 'http://',
+                        brand: '아디다스',
+                        name: '라마바 운동화',
+                        price: '100000원'
+                    },
+                    {
+                        imgUrl: 'http://',
+                        brand: '아디다스',
+                        name: '아자차 운동화',
+                        price: '100000원'
+                    },
+                    {
+                        imgUrl: 'http://',
+                        brand: '아디다스',
+                        name: '카타파 운동화',
+                        price: '100000원'
+                    }
+                ]
+            })
+            .expect(201)
+            .end((err, res) => {
+                console.log(res.body);
+                console.log(res.body.data.items);
+                done();
+            });
+        agent
+            .post('/api/posts')
+            .set('authorization', `Bearer ` + token)
+            .send({
+                post: {
+                    title: '이건 두번 째 글이고 삭제될 거에요!.',
+                    content: '내용입니다. 테스트용!'
+                },
+                items: [
+                    {
+                        imgUrl: 'http://',
+                        brand: '나이키',
+                        name: '가나다 운동화',
+                        price: '79000원'
+                    },
+                    {
+                        imgUrl: 'http://',
+                        brand: '아디다스',
+                        name: '라마바 운동화',
+                        price: '100000원'
+                    }
+                ]
+            })
+            .expect(201)
+            .end((err, res) => {
+                console.log(res.body);
+                console.log(res.body.data.items);
+                done();
+            });
+    });
+    test('댓글 달기');
 });

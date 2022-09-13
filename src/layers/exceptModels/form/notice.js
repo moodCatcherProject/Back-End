@@ -54,7 +54,7 @@ const checkNotice = async (userId, message, postId) => {
     const noticeData = await Notice.findOne({
         where: { userId, postId }
     });
-    if (noticeData) {
+    if (noticeData && noticeData.notice == message + ' 무드 포인트를 획득했습니다.') {
         noticeData.duplecation += 1;
 
         updateNotice(noticeData);
