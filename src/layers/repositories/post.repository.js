@@ -1,4 +1,4 @@
-const { User, UserDetail, Post, Item, Like } = require('../../sequelize/models');
+const { User, UserDetail, Post, Item, Like, HotPost } = require('../../sequelize/models');
 const exception = require('../exceptModels/_.models.loader');
 
 const sequelize = require('sequelize');
@@ -27,11 +27,11 @@ const createPost = async (userId, title, content, gender) => {
  * user가 좋아요를 누른 적이 있는 Post 조회 : Post 테이블에서 Like 테이블을 참조하여 postId 값이 일치하는 data 반환(likeStatus는 postId, userId가 일치하는 값 반환)
  * @param { number } postId
  * @param { number } userId
- * @returns { Promise<{ postId:number, title:string, content:string, userId:number, imgUrl:string, likeCount:number, createdAt:date, Likes.likeStatus:string } | null>}
+ * @returns { Promise<{ postId:number, title:string, content:string, userId:number, imgUrl:string, likeCount:number, createdAt:date, Likes.likeStatus:boolean } | null>}
  */
 const findPostDetailWithLikeStatus = async (postId, userId) => {
     const post = await Post.findOne({
-        where: { postId },
+        where: { postId, delete: false },
         attributes: { exclude: ['gender'] },
         include: [
             {
@@ -49,11 +49,11 @@ const findPostDetailWithLikeStatus = async (postId, userId) => {
  *
  * user가 좋아요를 누른 적이 없는 Post 조회 : Post 테이블에서 postId 값이 일치하는 data 반환(likeStatus는 0)
  * @param { number } postId
- * @returns { Promise<{ postId:number, title:string, content:string, userId:number, imgUrl:string, likeCount:number, createdAt:date, Likes.likeStatus:string } | null>}
+ * @returns { Promise<{ postId:number, title:string, content:string, userId:number, imgUrl:string, likeCount:number, createdAt:date, Likes.likeStatus:boolean } | null>}
  */
 const findPostDetail = async (postId) => {
     const post = await Post.findOne({
-        where: { postId },
+        where: { postId, delete: false },
         attributes: { exclude: ['gender'] },
         include: [
             {
@@ -74,7 +74,7 @@ const findPostDetail = async (postId) => {
  */
 const findPost = async (postId) => {
     return await Post.findOne({
-        where: { postId }
+        where: { postId, delete: false }
     });
 };
 /**
@@ -88,12 +88,11 @@ const findPost = async (postId) => {
  * @returns
  */
 const findAllPosts = async (page, count, orderKey, order, gender) => {
-    console.log(page, count, orderKey, order, gender);
     return await Post.findAll({
         offset: count * (page - 1),
         limit: count,
         order: [[orderKey, order]],
-        where: { gender }
+        where: { gender, delete: false }
     });
 };
 
@@ -109,7 +108,7 @@ const findAllPosts = async (page, count, orderKey, order, gender) => {
  */
 const findMyPage = async (userId, page, count, orderKey, order) => {
     return await Post.findAll({
-        where: { userId },
+        where: { userId, delete: false },
         offset: count * (page - 1),
         limit: count,
         order: [[orderKey, order]]
@@ -127,7 +126,7 @@ const findMyPage = async (userId, page, count, orderKey, order) => {
  */
 const findLikePage = async (userId, page, count, orderKey, order, gender) => {
     const likeIdData = await Like.findAll({
-        where: { userId, likeStatus: true },
+        where: { userId, likeStatus: true, delete: false },
         order: [['createdAt', 'DESC']]
     });
     const likeIdArr = likeIdData.map((p) => {
@@ -160,7 +159,8 @@ const findSearchTitleKeyword = async (keyword, page, count, orderKey, order, gen
             gender,
             title: {
                 [Op.like]: '%' + keyword + '%'
-            }
+            },
+            delete: false
         },
         order: [[orderKey, order]]
     });
@@ -179,7 +179,8 @@ const findSearchWriterKeyword = async (keyword, page, count) => {
         where: {
             nickname: {
                 [Op.like]: '%' + keyword + '%'
-            }
+            },
+            delete: false
         }
     });
 
@@ -201,7 +202,8 @@ const findAlgorithmPost = async (page, count) => {
             createdAt: {
                 [Op.lt]: new Date(),
                 [Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)
-            }
+            },
+            delete: false
         }
     });
 };
@@ -248,9 +250,14 @@ const updatePost = async (postId, title, content, gender) => {
  */
 const deletePost = async (postId) => {
     try {
-        await Post.destroy({
-            where: { postId }
-        });
+        await Post.update(
+            {
+                delete: true
+            },
+            {
+                where: { postId }
+            }
+        );
     } catch (err) {
         throw new exception.NotFoundException('해당 게시물이 없음.');
     }
@@ -264,7 +271,7 @@ const deletePost = async (postId) => {
  */
 const findRepPost = async (userId) => {
     const repPostIdAttr = await UserDetail.findOne({
-        where: { detailId: userId },
+        where: { detailId: userId, delete: false },
         attributes: ['repPostId']
     });
 
@@ -384,19 +391,33 @@ const isExistNotice = async (userId) => {
 };
 
 /**
- * postId가 일치하는 게시글의 likeCount variation(1 또는 -1)만큼 증감 후 exLikeCount, likeCount 배열 반환
+ * postId가 일치하는 게시글의 likeCount를 variation(1 또는 -1)만큼 증감
+ * todayLikeCount를 todayVariation(1 또는 -1)만큼 증감 후 exLikeCount, likeCount 배열 반환
  * @param {number} postId
  * @returns 해당 게시글의 plusLikeCount 함수 실행 전과 실행 후 likeCount의 배열
  */
-const updateLikeCount = async (postId, variation) => {
+const updateLikeCount = async (postId, variation, todayVariation) => {
     const post = await findPost(postId);
+
     const exLikeCount = post.likeCount;
+    const exTodayLikeCount = post.todayLikeCount;
+
     const likeCount = exLikeCount + variation;
-    await Post.update({ likeCount }, { where: { postId } });
+    const todayLikeCount = exTodayLikeCount + todayVariation;
+
+    await Post.update({ likeCount, todayLikeCount }, { where: { postId } });
 
     const data = [exLikeCount, likeCount];
 
     return data;
+};
+
+/**
+ * HotPost 테이블에서 모든 data 반환
+ * @returns { Promise<[{ postId:number, imgUrl:string }, { postId:number, imgUrl:string }, { postId:number, imgUrl:string }] | null>}
+ */
+const findHotPosts = async () => {
+    return await HotPost.findAll();
 };
 
 //FUNCTION
@@ -428,5 +449,6 @@ module.exports = {
 
     isExistNotice,
 
-    updateLikeCount
+    updateLikeCount,
+    findHotPosts
 };

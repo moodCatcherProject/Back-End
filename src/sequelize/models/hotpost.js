@@ -1,7 +1,7 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    class Notice extends Model {
+    class HotPost extends Model {
         /**
          * Helper method for defining associations.
          * This method is not a part of Sequelize lifecycle.
@@ -9,25 +9,18 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            models.Notice.belongsTo(models.User, {
-                foreignKey: 'userId',
-                onDelete: 'cascade',
-                onUpdate: 'cascade'
-            });
         }
     }
-    Notice.init(
+    HotPost.init(
         {
-            noticeId: {
+            postId: {
                 type: DataTypes.INTEGER,
-                primaryKey: true,
-                autoIncrement: true,
                 allowNull: false
             },
-            notice: { type: DataTypes.STRING, allowNull: false },
-            userId: { type: DataTypes.INTEGER, allowNull: false },
-            postId: { type: DataTypes.INTEGER },
-            duplecation: { type: DataTypes.INTEGER, defaultValue: 1 },
+            imgUrl: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
             createdAt: {
                 allowNull: false,
                 type: DataTypes.DATE,
@@ -36,9 +29,9 @@ module.exports = (sequelize, DataTypes) => {
         },
         {
             sequelize,
-            timestamps: true,
-            modelName: 'Notice'
+            timestamps: false,
+            modelName: 'HotPost'
         }
     );
-    return Notice;
+    return HotPost;
 };

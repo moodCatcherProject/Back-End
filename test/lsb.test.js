@@ -6,9 +6,12 @@ beforeAll(async () => {
     await sequelize.sync({ force: true });
 });
 
+let token;
+const agent = request.agent(app);
+
 describe('회원가입 ', () => {
-    test('회원가입 201 (성공)', (done) => {
-        request(app)
+    test('1번 유저 회원가입 201 (성공)', (done) => {
+        agent
             .post('/api/auth/signup')
             .send({
                 email: 'Rph1@gmail.com',
@@ -37,7 +40,7 @@ describe('회원가입 ', () => {
             })
             .expect(400, done);
     });
-    test('이메일 형식이 아닐때 (실패)', (done) => {
+    test('이메일 형식이 아닐때 400 (실패)', (done) => {
         request(app)
             .post('/api/auth/signup')
             .send({
@@ -107,39 +110,11 @@ describe('회원가입 ', () => {
             })
             .expect(400, done);
     });
-    test('로그인 200 (성공)', (done) => {
-        request(app)
-            .post('/api/auth/login')
-            .send({
-                email: 'Rph1@gmail.com',
-                password: 'Rph1543'
-            })
-            .expect(200)
-            .end((err, res) => {
-                done();
-            });
-    });
-});
-
-let token;
-const agent = request.agent(app);
-
-describe('로그인 후 닉네임 나이 성별 추가', () => {
-    test('회원가입 201 (성공)', (done) => {
-        request(app)
-            .post('/api/auth/signup')
-            .send({
-                email: 'Rph2@gmail.com',
-                password: 'Rph1543',
-                confirmPw: 'Rph1543'
-            })
-            .expect(201, done);
-    });
-    test('로그인 201 (성공)', (done) => {
+    test('1번 유저 로그인 200 (성공)', (done) => {
         agent
             .post('/api/auth/login')
             .send({
-                email: 'Rph2@gmail.com',
+                email: 'Rph1@gmail.com',
                 password: 'Rph1543'
             })
             .expect(200)
@@ -148,17 +123,9 @@ describe('로그인 후 닉네임 나이 성별 추가', () => {
                 done();
             });
     });
-    test('닉네임 나이 성별 추가 201 (성공)', (done) => {
-        agent
-            .post('/api/auth/detail')
-            .set('authorization', `Bearer ` + token)
-            .send({
-                nickname: 'Rph',
-                age: '10대',
-                gender: '여자'
-            })
-            .expect(201, done);
-    });
+});
+
+describe('닉네임 나이 성별 추가', () => {
     test('닉네임이 빈값일때 400 (실패)', (done) => {
         agent
             .post('/api/auth/detail')
@@ -187,17 +154,6 @@ describe('로그인 후 닉네임 나이 성별 추가', () => {
             .set('authorization', `Bearer ` + token)
             .send({
                 nickname: '1',
-                age: '10대',
-                gender: '여자'
-            })
-            .expect(400, done);
-    });
-    test('닉네임이 증복될때 400 (실패)', (done) => {
-        agent
-            .post('/api/auth/detail')
-            .set('authorization', `Bearer ` + token)
-            .send({
-                nickname: 'Rph',
                 age: '10대',
                 gender: '여자'
             })
@@ -269,9 +225,54 @@ describe('로그인 후 닉네임 나이 성별 추가', () => {
             })
             .expect(400, done);
     });
+    test('1번 유저 닉네임 나이 성별 추가 201 (성공)', (done) => {
+        agent
+            .post('/api/auth/detail')
+            .set('authorization', `Bearer ` + token)
+            .send({
+                nickname: 'Rph',
+                age: '10대',
+                gender: '여자'
+            })
+            .expect(201, done);
+    });
+    test('2번 유저 회원가입 201 (성공)', (done) => {
+        request(app)
+            .post('/api/auth/signup')
+            .send({
+                email: 'Rph2@gmail.com',
+                password: 'Rph1543',
+                confirmPw: 'Rph1543'
+            })
+            .expect(201, done);
+    });
+    test('2번 유저 로그인 200 (성공)', (done) => {
+        agent
+            .post('/api/auth/login')
+            .send({
+                email: 'Rph2@gmail.com',
+                password: 'Rph1543'
+            })
+            .expect(200)
+            .end((err, res) => {
+                token = res.body.url.split('=')[2];
+                done();
+            });
+    });
+    test('닉네임이 중복 될 때 400 (실패)', (done) => {
+        agent
+            .post('/api/auth/detail')
+            .set('authorization', `Bearer ` + token)
+            .send({
+                nickname: 'Rph',
+                age: '10대',
+                gender: '여자'
+            })
+            .expect(400, done);
+    });
 });
 
-describe('로그인 전 닉네임 확인', () => {
+describe('닉네임 확인', () => {
     test('닉네임 중복확인 200 (성공)', (done) => {
         agent
             .get(`/api/auth/checkNickname?nickname=${'Rph1'}`)
@@ -298,42 +299,59 @@ describe('로그인 전 닉네임 확인', () => {
     });
 });
 
-describe('로그인 전 이메일 확인', () => {
+describe('이메일 확인', () => {
     test('이메일 중복확인 200 (성공)', (done) => {
-        request(app).get(`/api/auth/checkEmail?email=${'Rph3@gmail.com'}`).expect(200, done);
+        request(app).get(`/api/auth/checkEmail?email=${'Rph4@gmail.com'}`).expect(200, done);
     });
     test('이메일이 빈값일때 400 (실패)', (done) => {
         request(app).get(`/api/auth/checkEmail?email=${''}`).expect(400, done);
     });
     test('이메일이 유효성이 맞지 않을때 400 (실패)', (done) => {
-        request(app).get(`/api/auth/checkEmail?email=${'Rph3gmail.com'}`).expect(400, done);
+        request(app).get(`/api/auth/checkEmail?email=${'Rph4gmail.com'}`).expect(400, done);
     });
     test('이메일이 증복될때 400 (실패)', (done) => {
         request(app).get(`/api/auth/checkEmail?email=${'Rph1@gmail.com'}`).expect(400, done);
     });
 });
+
 describe('댓글 작성', () => {
-    test('게시물 생성 201 (성공)', (done) => {
+    test('1번 유저 로그인 200 (성공)', (done) => {
+        agent
+            .post('/api/auth/login')
+            .send({
+                email: 'Rph1@gmail.com',
+                password: 'Rph1543'
+            })
+            .expect(200)
+            .end((err, res) => {
+                token = res.body.url.split('=')[2];
+                done();
+            });
+    });
+    test('1번 유저 게시물 생성 201 (성공)', (done) => {
         agent
             .post('/api/posts')
             .set('authorization', `Bearer ` + token)
             .send({
                 post: {
-                    title: 'Rph',
-                    content: 'Rph Content'
+                    title: 'Rph title',
+                    content: 'Rph content'
                 },
                 items: [
                     {
                         imgUrl: 'http://',
                         brand: 'Rph',
                         name: 'Rph',
-                        price: '0원'
+                        price: 'Rph'
                     }
                 ]
             })
-            .expect(201, done);
+            .expect(201)
+            .end((err, res) => {
+                done();
+            });
     });
-    test('댓글 작성 201 (성공)', (done) => {
+    test('1번 유저 댓글 작성 201 (성공)', (done) => {
         agent
             .post(`/api/comments?postId=${1}`)
             .set('authorization', `Bearer ` + token)
@@ -360,10 +378,45 @@ describe('댓글 작성', () => {
             })
             .expect(400, done);
     });
+    test('2번 유저 로그인 200 (성공)', (done) => {
+        agent
+            .post('/api/auth/login')
+            .send({
+                email: 'Rph2@gmail.com',
+                password: 'Rph1543'
+            })
+            .expect(200)
+            .end((err, res) => {
+                token = res.body.url.split('=')[2];
+                done();
+            });
+    });
+    test('댓글 작성자가 nickname,imgUrl이 없을 때 400 (실패)', (done) => {
+        agent
+            .post(`/api/comments?postId=${1}`)
+            .set('authorization', `Bearer ` + token)
+            .send({
+                content: 'Rph content'
+            })
+            .expect(400, done);
+    });
 });
 
 describe('댓글 수정', () => {
-    test('댓글 수정 200 (성공)', (done) => {
+    test('1번 유저 로그인 200 (성공)', (done) => {
+        agent
+            .post('/api/auth/login')
+            .send({
+                email: 'Rph1@gmail.com',
+                password: 'Rph1543'
+            })
+            .expect(200)
+            .end((err, res) => {
+                token = res.body.url.split('=')[2];
+                done();
+            });
+    });
+    test('1번 유저 댓글 수정 200 (성공)', (done) => {
         agent
             .put('/api/comments/1')
             .set('authorization', `Bearer ` + token)
@@ -390,40 +443,51 @@ describe('댓글 수정', () => {
             })
             .expect(400, done);
     });
-    // test('회원가입 201 (성공)', (done) => {
-    //     request(app)
-    //         .post('/api/auth/signup')
-    //         .send({
-    //             email: 'Rph3@gmail.com',
-    //             password: 'Rph1543',
-    //             confirmPw: 'Rph1543'
-    //         })
-    //         .expect(201, done);
-    // });
-    // test('로그인 200 (성공)', (done) => {
-    //     request(app)
-    //         .post('/api/auth/login')
-    //         .send({
-    //             email: 'Rph3@gmail.com',
-    //             password: 'Rph1543'
-    //         })
-    //         .expect(200)
-    //         .end((err, res) => {
-    //             done();
-    //         });
-    // });
-    // test('자신이 작성한 댓글이 아닐때 400 (실패)', (done) => {
-    //     agent
-    //         .put('/api/comments/1')
-    //         .set('authorization', `Bearer ` + token)
-    //         .send({
-    //             content: 'Rph update'
-    //         })
-    //         .expect(400, done);
-    // }); // => // 자신이 쓴 글이 아닐때
+    test('2번 유저 로그인 200 (성공)', (done) => {
+        agent
+            .post('/api/auth/login')
+            .send({
+                email: 'Rph2@gmail.com',
+                password: 'Rph1543'
+            })
+            .expect(200)
+            .end((err, res) => {
+                token = res.body.url.split('=')[2];
+                done();
+            });
+    });
+    test('자신이 쓴 댓글이 아닌것을 수정하려고 할 때 400 (실패)', (done) => {
+        agent
+            .put('/api/comments/1')
+            .set('authorization', `Bearer ` + token)
+            .send({
+                content: 'Rph content update'
+            })
+            .expect(400, done);
+    });
 });
+
 describe('댓글 삭제', () => {
-    test('댓글 삭제 200 (성공)', (done) => {
+    test('자신이 쓴 댓글이 아닌것을 삭제하려고 할 때 400 (실패)', (done) => {
+        agent
+            .delete('/api/comments/1')
+            .set('authorization', `Bearer ` + token)
+            .expect(400, done);
+    });
+    test('1번 유저 로그인 200 (성공)', (done) => {
+        agent
+            .post('/api/auth/login')
+            .send({
+                email: 'Rph1@gmail.com',
+                password: 'Rph1543'
+            })
+            .expect(200)
+            .end((err, res) => {
+                token = res.body.url.split('=')[2];
+                done();
+            });
+    });
+    test('1번 유저 댓글 삭제 200 (성공)', (done) => {
         agent
             .delete('/api/comments/1')
             .set('authorization', `Bearer ` + token)
@@ -435,10 +499,36 @@ describe('댓글 삭제', () => {
             .set('authorization', `Bearer ` + token)
             .expect(400, done);
     });
-    // 자신이 쓴 글이 아닐때
+    test('2번유저로 로그인 200 (성공)', (done) => {
+        agent
+            .post('/api/auth/login')
+            .send({
+                email: 'Rph2@gmail.com',
+                password: 'Rph1543'
+            })
+            .expect(200)
+            .end((err, res) => {
+                token = res.body.url.split('=')[2];
+                done();
+            });
+    });
 });
+
 describe('대댓글 작성', () => {
-    test('댓글 작성 201 (성공)', (done) => {
+    test('1번 유저 로그인 200 (성공)', (done) => {
+        agent
+            .post('/api/auth/login')
+            .send({
+                email: 'Rph1@gmail.com',
+                password: 'Rph1543'
+            })
+            .expect(200)
+            .end((err, res) => {
+                token = res.body.url.split('=')[2];
+                done();
+            });
+    });
+    test('1번 유저 댓글 작성 201 (성공)', (done) => {
         agent
             .post(`/api/comments?postId=${1}`)
             .set('authorization', `Bearer ` + token)
@@ -447,7 +537,7 @@ describe('대댓글 작성', () => {
             })
             .expect(201, done);
     });
-    test('대댓글 작성 201 (성공)', (done) => {
+    test('1번 유저 대댓글 작성 201 (성공)', (done) => {
         agent
             .post(`/api/recomments?commentId=${2}`)
             .set('authorization', `Bearer ` + token)
@@ -465,16 +555,162 @@ describe('대댓글 작성', () => {
             })
             .expect(400, done);
     });
+    test('대댓글을 작성할 댓글이 없을 때 400 (실패)', (done) => {
+        agent
+            .post(`/api/recomments?commentId=${3}`)
+            .set('authorization', `Bearer ` + token)
+            .send({
+                content: 'Rph re content'
+            })
+            .expect(400, done);
+    });
+    test('2번유저로 로그인 200 (성공)', (done) => {
+        agent
+            .post('/api/auth/login')
+            .send({
+                email: 'Rph2@gmail.com',
+                password: 'Rph1543'
+            })
+            .expect(200)
+            .end((err, res) => {
+                token = res.body.url.split('=')[2];
+                done();
+            });
+    });
+    test('대댓글의 작성자가 nickname,imgUrl이 없을 때 400 (실패)', (done) => {
+        agent
+            .post(`/api/recomments?commentId=${2}`)
+            .set('authorization', `Bearer ` + token)
+            .send({
+                content: 'Rph re content'
+            })
+            .expect(400, done);
+    });
 });
-// 댓글을 만들어 줘야함
-// 대댓글 작성
-// 대댓글 수정
-// 대댓글 삭제
-// describe('회원 탈퇴', () => {
-//     test('회원탈퇴 200 (성공)', (done) => {
-//         agent
-//             .delete('/api/user/signout')
-//             .set('authorization', `Bearer ` + token)
-//             .expect(200, done);
-//     });
-// });
+
+describe('대댓글 수정', () => {
+    test('1번 유저 로그인 200 (성공)', (done) => {
+        agent
+            .post('/api/auth/login')
+            .send({
+                email: 'Rph1@gmail.com',
+                password: 'Rph1543'
+            })
+            .expect(200)
+            .end((err, res) => {
+                token = res.body.url.split('=')[2];
+                done();
+            });
+    });
+    test('1번 유저 대댓글 수정 200 (성공)', (done) => {
+        agent
+            .put('/api/recomments/1')
+            .set('authorization', `Bearer ` + token)
+            .send({
+                content: 'Rph content update'
+            })
+            .expect(200, done);
+    });
+    test('대댓글을 수정하려는 내용이 빈칸일때 400 (실패)', (done) => {
+        agent
+            .put('/api/recomments/1')
+            .set('authorization', `Bearer ` + token)
+            .send({
+                content: ''
+            })
+            .expect(400, done);
+    });
+    test('대댓글을 수정하려는 대댓글이 없을때 400 (실패)', (done) => {
+        agent
+            .put('/api/recomments/2')
+            .set('authorization', `Bearer ` + token)
+            .send({
+                content: 'Rph content update'
+            })
+            .expect(400, done);
+    });
+    test('2번유저로 로그인 200 (성공)', (done) => {
+        agent
+            .post('/api/auth/login')
+            .send({
+                email: 'Rph2@gmail.com',
+                password: 'Rph1543'
+            })
+            .expect(200)
+            .end((err, res) => {
+                token = res.body.url.split('=')[2];
+                done();
+            });
+    });
+    test('자신이 쓴 대댓글이 아닌것을 수정하려고 할 때 400 (실패)', (done) => {
+        agent
+            .put('/api/recomments/1')
+            .set('authorization', `Bearer ` + token)
+            .send({
+                content: 'Rph content update'
+            })
+            .expect(400, done);
+    });
+});
+
+describe('대댓글 삭제', () => {
+    test('자신이 쓴 대댓글이 아닌것을 삭제하려고 할 때 400 (실패)', (done) => {
+        agent
+            .delete('/api/recomments/1')
+            .set('authorization', `Bearer ` + token)
+            .expect(400, done);
+    });
+    test('1번 유저 로그인 200 (성공)', (done) => {
+        agent
+            .post('/api/auth/login')
+            .send({
+                email: 'Rph1@gmail.com',
+                password: 'Rph1543'
+            })
+            .expect(200)
+            .end((err, res) => {
+                token = res.body.url.split('=')[2];
+                done();
+            });
+    });
+    test('1번 유저 대댓글 삭제 200 (성공)', (done) => {
+        agent
+            .delete('/api/recomments/1')
+            .set('authorization', `Bearer ` + token)
+            .expect(200, done);
+    });
+    test('대댓글을 삭제하려는 대댓글이 없을때 400 (실패)', (done) => {
+        agent
+            .delete('/api/recomments/1')
+            .set('authorization', `Bearer ` + token)
+            .expect(400, done);
+    });
+});
+
+describe('회원 탈퇴', () => {
+    test('회원탈퇴 200 (성공)', (done) => {
+        agent
+            .delete('/api/users/signout')
+            .set('authorization', `Bearer ` + token)
+            .expect(200, done);
+    });
+    test('2번유저로 로그인 200 (성공)', (done) => {
+        agent
+            .post('/api/auth/login')
+            .send({
+                email: 'Rph2@gmail.com',
+                password: 'Rph1543'
+            })
+            .expect(200)
+            .end((err, res) => {
+                token = res.body.url.split('=')[2];
+                done();
+            });
+    });
+    test('회원탈퇴 200 (성공)', (done) => {
+        agent
+            .delete('/api/users/signout')
+            .set('authorization', `Bearer ` + token)
+            .expect(200, done);
+    });
+});

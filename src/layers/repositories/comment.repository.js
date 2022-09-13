@@ -100,11 +100,21 @@ const deleteComment = async (commentId) => {
     return deleteComment;
 };
 
+const findPostIdByCommentId = async (commentId) => {
+    const postIdData = await Comment.findOne({
+        where: { commentId },
+        raw: true,
+        attributes: ['postId']
+    });
+    return postIdData.postId;
+};
 module.exports = {
     findComment,
     findUser,
     createComment,
     getComments,
     updateComment,
-    deleteComment
+    deleteComment,
+
+    findPostIdByCommentId
 };

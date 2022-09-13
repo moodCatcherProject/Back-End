@@ -15,13 +15,6 @@ userRouter.put('/', isLoggedIn, upload.upload.single('userValue'), userControlle
 // 프로필 아이콘 변경(/api/users)
 userRouter.patch('/', isLoggedIn, userController.updateProfileIcon);
 
-// 로그아웃(/api/users/logout)
-userRouter.get('/logout', isLoggedIn, (req, res) => {
-    req.logout();
-    req.session.destroy();
-    res.status(200).json(new exception.FormDto('로그아웃 성공'));
-});
-
 // 회원탈퇴 (/api/users/signout)
 userRouter.delete('/signout', isLoggedIn, userController.deleteUser);
 

@@ -19,8 +19,27 @@ const createReComment = async (commentId, content, userId) => {
         throw new exception.BadRequestException('댓글 없음.');
     }
 
-    const createdReComment = await reCommentRepository.createReComment(commentId, content, userId);
+    const findUser = await commentRepository.findUser(userId);
+    const userNickname = findUser.nickname;
+    const userGrade = findUser.grade;
 
+    if (userNickname === null) {
+        throw new exception.BadRequestException('nickname 없음.');
+    }
+
+    if (userGrade === null) {
+        throw new exception.BadRequestException('grade 없음.');
+    }
+
+    const createdReComment = await reCommentRepository.createReComment(commentId, content, userId);
+    exception.MoodPoint.whenLeaveComment(
+        userId,
+        await commentRepository.findPostIdByCommentId(commentId)
+    );
+    exception.MoodPoint.whenLeaveMyPostComment(
+        userId,
+        await commentRepository.findPostIdByCommentId(commentId)
+    );
     return createdReComment;
 };
 
