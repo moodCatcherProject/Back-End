@@ -256,34 +256,10 @@ exports.whenLeaveLike = async (userId, postId) => {
 exports.whenLeaveComment = async (userId, postId) => {
     const userIdOfPost = await findUserIdForPost(postId);
     if (!isExistCheckEqualUser(userId, userIdOfPost)) {
-        notice.createMessage(userIdOfPost, '다른 캐쳐님이 내 게시물에 댓글을 남겨주셔', postId);
-        console.log('자신의 게시물에 댓글');
         return { msg: '자신의 게시물에 댓글.' };
     }
 
     const getPointNumber = 6;
-    const point = 30;
-    const maxPoint = 600;
-    const pointData = await findPointColumn(userIdOfPost);
-    const pointArr = JSON.parse(pointData.pointArray);
-    notice.createMessage(userIdOfPost, '다른 캐쳐님이 내 게시물에 댓글을 남겨주셔', postId);
-    return await checkPoint(
-        userIdOfPost,
-        getPointNumber,
-        pointArr,
-        point,
-        maxPoint,
-        '타인의 게시물에 댓글 남기기, 30무드 증가'
-    );
-};
-/**
- * @desc 나의 게시물에 댓글이 달렸을 때, 30무드 증가
- * @param {*} userId
- * @returns 포인트를 올렸으면 현재 포인트 배열, 포인트, 최대치 실패시 '최대치에 도달' 메시지
- */
-exports.whenLeaveMyPostComment = async (userId, postId, commentId) => {
-    isExistCheckEqualUser(userId, findUserIdForComment(commentId));
-    const getPointNumber = 7;
     const point = 30;
     const maxPoint = 600;
     const pointData = await findPointColumn(userId);
@@ -291,6 +267,33 @@ exports.whenLeaveMyPostComment = async (userId, postId, commentId) => {
 
     return await checkPoint(
         userId,
+        getPointNumber,
+        pointArr,
+        point,
+        maxPoint,
+        '타인의 게시물에 댓글 남기기, 30무드 증가',
+        '다른 캐쳐님께 댓글을 남겨',
+        postId
+    );
+};
+/**
+ * @desc 나의 게시물에 댓글이 달렸을 때, 30무드 증가
+ * @param {*} userId
+ * @returns 포인트를 올렸으면 현재 포인트 배열, 포인트, 최대치 실패시 '최대치에 도달' 메시지
+ */
+exports.whenLeaveMyPostComment = async (userId, postId) => {
+    const userIdOfPost = await findUserIdForPost(postId);
+    if (!isExistCheckEqualUser(userId, userIdOfPost)) {
+        return { msg: '자신의 게시물에 댓글.' };
+    }
+    const getPointNumber = 7;
+    const point = 30;
+    const maxPoint = 600;
+    const pointData = await findPointColumn(userIdOfPost);
+    const pointArr = JSON.parse(pointData.pointArray);
+
+    return await checkPoint(
+        userIdOfPost,
         getPointNumber,
         pointArr,
         point,

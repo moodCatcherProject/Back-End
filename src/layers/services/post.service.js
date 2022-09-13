@@ -176,20 +176,19 @@ const findOnePost = async (postId, userId) => {
     };
 };
 
-const createHotPosts = async () => {
-    return await postRepository.createHotPost();
-};
-
 /**
- * 인기 게시물 조회
- * @returns
+ * 인기 게시물 조회(1,2,3위)
+ * @returns { Promise<[{ postId:number, imgUrl:string }, { postId:number, imgUrl:string }, { postId:number, imgUrl:string }] | null>}
  */
 const findHotPosts = async () => {
     const hotPosts = await postRepository.findHotPosts();
 
-    console.log(hotPosts);
-
-    return hotPosts;
+    return hotPosts.map((post) => {
+        return {
+            postId: post.postId,
+            imgUrl: process.env.S3_STORAGE_URL + post.imgUrl
+        };
+    });
 };
 
 /**
@@ -338,7 +337,6 @@ module.exports = {
     createPost,
     findAllPosts,
     findOnePost,
-    createHotPosts,
     findHotPosts,
     updatePost,
     deletePost,

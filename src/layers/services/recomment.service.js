@@ -24,6 +24,10 @@ const createReComment = async (commentId, content, userId) => {
         userId,
         await commentRepository.findPostIdByCommentId(commentId)
     );
+    exception.MoodPoint.whenLeaveMyPostComment(
+        userId,
+        await commentRepository.findPostIdByCommentId(commentId)
+    );
     return createdReComment;
 };
 

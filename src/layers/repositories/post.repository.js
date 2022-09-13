@@ -412,29 +412,10 @@ const updateLikeCount = async (postId, variation, todayVariation) => {
     return data;
 };
 
-const createHotPost = async () => {
-    const hotPosts = await Post.findAll({
-        order: [['todayLikeCount', 'DESC']],
-        attributes: ['postId', 'imgUrl'],
-        limit: 3,
-        where: { delete: false },
-        raw: true
-    });
-
-    async function createHotPosts() {
-        await Promise.all(
-            hotPosts.map((post) => {
-                HotPost.create({
-                    postId: post.postId,
-                    imgUrl: post.imgUrl
-                });
-            })
-        );
-    }
-    createHotPosts();
-    return;
-};
-
+/**
+ * HotPost 테이블에서 모든 data 반환
+ * @returns { Promise<[{ postId:number, imgUrl:string }, { postId:number, imgUrl:string }, { postId:number, imgUrl:string }] | null>}
+ */
 const findHotPosts = async () => {
     return await HotPost.findAll();
 };
@@ -469,6 +450,5 @@ module.exports = {
     isExistNotice,
 
     updateLikeCount,
-    createHotPost,
     findHotPosts
 };
