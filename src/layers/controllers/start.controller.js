@@ -3,7 +3,7 @@ const exception = require('../exceptModels/_.models.loader');
 
 const findRandomStartMessage = async (req, res, next) => {
     try {
-        const random = Math.floor(Math.random() * 100);
+        const random = Math.floor(Math.random() * 110);
         const msgData = await StartMessage.findByPk(random);
 
         res.status(200).json(
