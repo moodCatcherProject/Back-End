@@ -77,6 +77,7 @@ describe('게시물 작성하기', () => {
             })
             .expect(201, done);
     });
+
     test('1번, 2번 게시물을 생성', (done) => {
         agent
             .post('/api/posts')
@@ -167,8 +168,8 @@ describe(`로그인, 게시물 작성 알림이 있어야 함.`, () => {
                 done();
             });
     });
-    test('agent 에 로그인 ', (done) => {
-        agent
+    test('2번 유저에 로그인 ', (done) => {
+        request(app)
             .post('/api/auth/login')
 
             .send({
@@ -182,10 +183,21 @@ describe(`로그인, 게시물 작성 알림이 있어야 함.`, () => {
                 done();
             });
     });
+    test('2번 유저에 닉네임, 성별, 나이 추가', (done) => {
+        request(app)
+            .post('/api/auth/detail')
+            .set('authorization', `Bearer ` + token2)
+            .send({
+                nickname: '권영2',
+                gender: '남자',
+                age: '20대'
+            })
+            .expect(201, done);
+    });
     test('3번, 4번 게시물을 생성(작성자 2번 유저)', (done) => {
-        agent
+        request(app)
             .post('/api/posts')
-            .set('authorization', `Bearer ` + token)
+            .set('authorization', `Bearer ` + token2)
             .send({
                 post: {
                     title: '2번 유저가 작성한 테스트용 제목입니다.',
@@ -226,7 +238,7 @@ describe(`로그인, 게시물 작성 알림이 있어야 함.`, () => {
             });
         agent
             .post('/api/posts')
-            .set('authorization', `Bearer ` + token)
+            .set('authorization', `Bearer ` + token2)
             .send({
                 post: {
                     title: '이건 두번 째 글이고 삭제될 거에요!.',
@@ -253,5 +265,34 @@ describe(`로그인, 게시물 작성 알림이 있어야 함.`, () => {
                 console.log(res.body.data.items);
                 done();
             });
+    });
+    test('3번 게시물에 댓글 달기', (done) => {
+        agent
+            .post('/api/comments?postId=3 ')
+            .set('authorization', `Bearer ` + token)
+            .send({
+                content: '1번 유저의 댓글 입니다.'
+            })
+            .expect(201)
+            .end((err, res) => {
+                console.log(res.body);
+
+                done();
+            });
+    });
+    test('알림 불러오기', (done) => {
+        agent
+            .get('/api/notice')
+            .set('authorization', `Bearer ` + token)
+            .expect(200)
+            .end((err, res) => {
+                console.log(res.body.data);
+                noticeCount = res.body.data.notices.length;
+                done();
+            });
+    });
+    test('현재 까지 알림은 총 1개여야 함.', (done) => {
+        expect(noticeCount).toBe(1);
+        done();
     });
 });
