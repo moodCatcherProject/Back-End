@@ -78,9 +78,9 @@ const createHotPost = async () => {
 
     try {
         // 랭킹 등재 moodPoints 적립
-        exception.MoodPoint.whenInRankingMyPost(hotPosts[0].userId, hotPosts[0].postId);
-        exception.MoodPoint.whenInRankingMyPost(hotPosts[1].userId, hotPosts[1].postId);
-        exception.MoodPoint.whenInRankingMyPost(hotPosts[2].userId, hotPosts[2].postId);
+        exception.MoodPoint.whenInRankingMyPost(hotPosts[0].userId, hotPosts[0].postId, 3000);
+        exception.MoodPoint.whenInRankingMyPost(hotPosts[1].userId, hotPosts[1].postId, 2000);
+        exception.MoodPoint.whenInRankingMyPost(hotPosts[2].userId, hotPosts[2].postId, 1000);
     } catch (err) {
         console.log(err);
     }

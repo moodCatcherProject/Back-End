@@ -1,4 +1,4 @@
-const { Post } = require('./src/sequelize/models');
+const { Post, StartMessage } = require('./src/sequelize/models');
 const sequelize = require('sequelize');
 const scheduller = require('./src/layers/exceptModels/form/scheduller');
 // scheduller.totalLikeCount;
@@ -7,9 +7,13 @@ const scheduller = require('./src/layers/exceptModels/form/scheduller');
 // scheduller.deleteNotice;
 // scheduller.createHotPost;
 const Op = sequelize.Op;
-// const fs = require('fs');
+const fs = require('fs');
 
-// const startMsg = fs.readFileSync('startMsg.txt', 'utf8').split(`\n`);
+const startMsg = fs.readFileSync('startMsg.txt', 'utf8').split(`\n`);
+console.log(startMsg.length);
+for (let i = 0; i < startMsg.length; i++) {
+    StartMessage.create({ message: startMsg[i] });
+}
 
 // for (let i = 0; i < 10; i++) {
 //     const random = Math.random() * 100;

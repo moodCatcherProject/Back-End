@@ -306,16 +306,16 @@ exports.whenLeaveMyPostComment = async (userId, postId) => {
     );
 };
 /**
- * @version 1.0 한 사람이 두 자리를 차지해도 3000 무드 포인트 지급,
- * @desc 게시물이 hot posts에 등재되면 3000무드
+ * @version 1.1 한 사람이 여러 자리에 오르면 그만큼 무드포인트 지급
+ * @desc 1등 3000, 2등 2000, 3등 1000 무드포인트 지급
  * @param {number} userId hot posts에 선정된 게시물의 작성자
  * @param {number} postId hot posts에 선정된 게시물
  * @returns 포인트를 올렸으면 현재 포인트 배열, 포인트, 최대치 실패시 '최대치에 도달' 메시지
  */
-exports.whenInRankingMyPost = async (userId, postId) => {
+exports.whenInRankingMyPost = async (userId, postId, moodpoint) => {
     const getPointNumber = 8;
-    const point = 3000;
-    const maxPoint = 3000;
+    const point = moodpoint;
+    const maxPoint = 6000;
     const pointData = await findPointColumn(userId);
     const pointArr = JSON.parse(pointData.pointArray);
 
