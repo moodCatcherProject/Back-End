@@ -19,7 +19,7 @@
  *
  */
 
-const { UserDetail, Post, Notice } = require('../../../sequelize/models');
+const { UserDetail, Notice } = require('../../../sequelize/models');
 
 const updateIsExistsNotice = (userId) => {
     UserDetail.update(
@@ -34,7 +34,7 @@ const updateIsExistsNotice = (userId) => {
 const createNotice = async (userId, message, postId) => {
     Notice.create({
         userId,
-        notice: message + ' 무드 포인트를 획득했습니다.',
+        notice: message + ' \n무드 포인트를 획득했습니다.',
         postId
     });
 };

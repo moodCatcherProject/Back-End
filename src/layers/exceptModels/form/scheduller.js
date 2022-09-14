@@ -183,8 +183,30 @@ const deleteNotice = () => {
         }
     });
 };
-
-const deletePost = () => {
+const multerS3 = require('multer-s3');
+const s3 = require('../../routes/middlewares/config/s3');
+const deletePost = async () => {
+    const deletePostData = await Post.findAll({
+        where: { delete: true }
+    });
+    for (let post of deletePostData) {
+        let params = {
+            Bucket: 'gwonyeong',
+            Key: `${post.imgUrl}`
+        };
+        try {
+            s3.deleteObject(params, function (error, data) {
+                if (error) {
+                    console.log('err: ', error, error.stack);
+                } else {
+                    console.log(data, ' 정상 삭제 되었습니다.');
+                }
+            });
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
+    }
     Post.destroy({
         where: {
             delete: true
