@@ -54,18 +54,17 @@ const createHotPost = async () => {
     });
 
     //HotPosts 테이블에 조회한 3개의 data 저장
-    async function createHotPosts() {
-        await Promise.all(
-            hotPosts.map((post) => {
-                HotPost.create({
-                    postId: post.postId,
-                    imgUrl: post.imgUrl,
-                    userId: post.userId
-                });
-            })
-        );
+    for (let hotPost of hotPosts) {
+        try {
+            await HotPost.create({
+                postId: hotPost.postId,
+                imgUrl: hotPost.imgUrl,
+                userId: hotPost.userId
+            });
+        } catch (err) {
+            continue;
+        }
     }
-    createHotPosts();
 
     // Posts 테이블의 todayLikeCount 0으로 리셋
     await Post.update(
