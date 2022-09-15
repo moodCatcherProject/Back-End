@@ -179,8 +179,7 @@ const findSearchWriterKeyword = async (keyword, page, count) => {
         where: {
             nickname: {
                 [Op.like]: '%' + keyword + '%'
-            },
-            delete: false
+            }
         }
     });
 
