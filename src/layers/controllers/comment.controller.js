@@ -12,7 +12,7 @@ const createComment = async (req, res, next) => {
         const createComment = await commentService.createComment(postId, content, userId);
         createComment.dataValues.nickname = nickname;
         createComment.dataValues.grade = grade;
-        createComment.dataValues.imgUrl = imgUrl;
+        createComment.dataValues.imgUrl = process.env.S3_STORAGE_URL + imgUrl;
         return res
             .status(201)
             .json(new exception.FormDto('댓글 생성 성공', { comment: { createComment } }));
