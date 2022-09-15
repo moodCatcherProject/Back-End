@@ -59,7 +59,8 @@ const createHotPost = async () => {
             hotPosts.map((post) => {
                 HotPost.create({
                     postId: post.postId,
-                    imgUrl: post.imgUrl
+                    imgUrl: post.imgUrl,
+                    userId: post.userId
                 });
             })
         );
