@@ -70,7 +70,6 @@ const localLogin = async (req, res, next) => {
 
         // done(err)가 처리된 경우
         if (authError) {
-            console.error(authError);
             return next(authError); // 에러처리 미들웨어로 보낸다.
         }
 
@@ -85,7 +84,6 @@ const localLogin = async (req, res, next) => {
                 //? loginError => 미들웨어는 passport/index.js의 passport.deserializeUser((id, done) => 가 done()이 되면 실행하게 된다.
                 // 만일 done(err) 가 됐다면,
                 if (loginError) {
-                    console.error(loginError);
                     return next(loginError);
                 }
 
