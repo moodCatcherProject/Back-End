@@ -74,7 +74,7 @@ exports.createMessage = (userId, message, postId) => {
     updateIsExistsNotice(userId);
 };
 
-exports.createMessage = (userId, message, postId, lastMessage) => {
+exports.createFullMessage = (userId, message, postId, lastMessage) => {
     createFullNotice(userId, message, postId, lastMessage);
     updateIsExistsNotice(userId);
 };
