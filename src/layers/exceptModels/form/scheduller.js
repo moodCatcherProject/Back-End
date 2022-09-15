@@ -91,21 +91,26 @@ const totalLikeCount = async () => {
         attributes: ['detailId', 'moodPoint', 'pointArray'],
         raw: true
     });
-    console.log(pointArrays);
+
     for (let pointArray of pointArrays) {
         const point = JSON.parse(pointArray.pointArray);
         try {
+            const totalPoint = point.reduce(function add(sum, currValue) {
+                return sum + currValue;
+            });
             UserDetail.update(
                 {
-                    moodPoint:
-                        pointArray.moodPoint +
-                        point.reduce(function add(sum, currValue) {
-                            return sum + currValue;
-                        })
+                    moodPoint: pointArray.moodPoint + totalPoint
                 },
                 {
                     where: { detailId: pointArray.detailId }
                 }
+            );
+            exception.notice.createMessage(
+                pointArray.detailId,
+                `어제 하루동안 무드캐처에서 활동하신 결과`,
+                -1,
+                `\n${totalPoint}무드 포인트를 획득했습니다.`
             );
         } catch (err) {
             continue;
