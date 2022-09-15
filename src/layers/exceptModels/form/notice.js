@@ -38,7 +38,13 @@ const createNotice = async (userId, message, postId) => {
         postId
     });
 };
-
+const createFullNotice = async (userId, message, postId, lastMessage) => {
+    Notice.create({
+        userId,
+        notice: message + lastMessage,
+        postId
+    });
+};
 const updateNotice = async (noticeData) => {
     Notice.update(
         {
@@ -54,7 +60,7 @@ const checkNotice = async (userId, message, postId) => {
     const noticeData = await Notice.findOne({
         where: { userId, postId }
     });
-    if (noticeData && noticeData.notice == message + ' 무드 포인트를 획득했습니다.') {
+    if (noticeData && noticeData.notice == message + ' \n무드 포인트를 획득했습니다.') {
         noticeData.duplecation += 1;
 
         updateNotice(noticeData);
@@ -65,5 +71,10 @@ const checkNotice = async (userId, message, postId) => {
 
 exports.createMessage = (userId, message, postId) => {
     checkNotice(userId, message, postId);
+    updateIsExistsNotice(userId);
+};
+
+exports.createFullMessage = (userId, message, postId, lastMessage) => {
+    createFullNotice(userId, message, postId, lastMessage);
     updateIsExistsNotice(userId);
 };
