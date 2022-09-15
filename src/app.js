@@ -10,7 +10,7 @@ const routerLoader = require('./layers/_router.loader');
 const schedule = require('./layers/exceptModels/form/scheduller');
 
 schedule.schedule;
-const whitelist = [process.env.CORS_WHITE_LIST, CORS_WHITE_LIST_LOCAL];
+const whitelist = [];
 const corsOptions = {
     origin: function (origin, callback) {
         if (whitelist.indexOf(origin) !== -1) {
@@ -46,7 +46,7 @@ class App {
 
         this.app.use(morgan('dev')); //로그 생성
         this.app.use(helmet());
-        this.app.use(cors(corsOptions)); // 화이트 리스트 생성 예정
+        this.app.use(cors()); // 화이트 리스트 생성 예정
         // this.app.use((req, res, next) => {
         //     res.header('Access-Control-Allow-Origin', '*');
         //     next();
