@@ -10,11 +10,17 @@ const routerLoader = require('./layers/_router.loader');
 const schedule = require('./layers/exceptModels/form/scheduller');
 
 schedule.schedule;
-// const whitelist = ['http://localhost:3000/'];
-// const corsOptions = {
-//     origin: '*',
-//     credential: true
-// };
+const whitelist = [process.env.CORS_WHITE_LIST, CORS_WHITE_LIST_LOCAL];
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            console.log(origin);
+            callback(new Error('NOT_ALLOWED_ORIGIN'));
+        }
+    }
+};
 class App {
     constructor() {
         this.app = express();
@@ -40,11 +46,11 @@ class App {
 
         this.app.use(morgan('dev')); //로그 생성
         this.app.use(helmet());
-        this.app.use(cors()); // 화이트 리스트 생성 예정
-        this.app.use((req, res, next) => {
-            res.header('Access-Control-Allow-Origin', '*');
-            next();
-        }); // 모든 도메인
+        this.app.use(cors(corsOptions)); // 화이트 리스트 생성 예정
+        // this.app.use((req, res, next) => {
+        //     res.header('Access-Control-Allow-Origin', '*');
+        //     next();
+        // }); // 모든 도메인
 
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: false }));
