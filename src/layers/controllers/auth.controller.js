@@ -101,6 +101,7 @@ const localLogin = async (req, res, next) => {
                     res.status(200).json({
                         url: `http://localhost:3000/login/detail?exist=${exist}&token=${token}`
                     });
+                    res.json();
                 });
             } catch (err) {
                 console.log(err);
