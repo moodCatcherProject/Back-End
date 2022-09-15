@@ -59,7 +59,8 @@ const createHotPost = async () => {
             hotPosts.map((post) => {
                 HotPost.create({
                     postId: post.postId,
-                    imgUrl: post.imgUrl
+                    imgUrl: post.imgUrl,
+                    userId: post.userId
                 });
             })
         );
@@ -135,33 +136,37 @@ const updateGrade = async () => {
 
         // for of 문을 돌며 유저의 moodPoint에 맞는 grade로 data update
         for (let pointArray of pointArrays) {
-            const moodPoint = pointArray['UserDetail.moodPoint'];
-            const detailId = pointArray['UserDetail.detailId'];
-            const gradeStr = pointArray['grade'].split(' ')[0];
+            try {
+                const moodPoint = pointArray['UserDetail.moodPoint'];
+                const detailId = pointArray['UserDetail.detailId'];
+                const gradeStr = pointArray['grade'].split(' ')[0];
 
-            //switch 조건문의 case에는 상수값만 올 수 있어 변수, 비교식 등에는 사용할 수 없어서 else if 조건문 선택
-            let gradeNum;
-            if (moodPoint < 1000) {
-                gradeNum = ' 1';
-            } else if (moodPoint < 3000) {
-                //else if(1000<=moodPoint<3000)으로 하면 1000보다 큰지만 확인하고 조건문 참으로 인정,,,
-                gradeNum = ' 2';
-            } else if (moodPoint < 6000) {
-                gradeNum = ' 3';
-            } else if (moodPoint < 10000) {
-                gradeNum = ' 4';
-            } else if (moodPoint >= 10000) {
-                gradeNum = ' 5';
-            }
-
-            await User.update(
-                {
-                    grade: gradeStr + gradeNum
-                },
-                {
-                    where: { userId: detailId }
+                //switch 조건문의 case에는 상수값만 올 수 있어 변수, 비교식 등에는 사용할 수 없어서 else if 조건문 선택
+                let gradeNum;
+                if (moodPoint < 1000) {
+                    gradeNum = ' 1';
+                } else if (moodPoint < 3000) {
+                    //else if(1000<=moodPoint<3000)으로 하면 1000보다 큰지만 확인하고 조건문 참으로 인정,,,
+                    gradeNum = ' 2';
+                } else if (moodPoint < 6000) {
+                    gradeNum = ' 3';
+                } else if (moodPoint < 10000) {
+                    gradeNum = ' 4';
+                } else if (moodPoint >= 10000) {
+                    gradeNum = ' 5';
                 }
-            );
+
+                await User.update(
+                    {
+                        grade: gradeStr + gradeNum
+                    },
+                    {
+                        where: { userId: detailId }
+                    }
+                );
+            } catch (err) {
+                continue;
+            }
         }
     } catch (err) {
         console.log(err);
