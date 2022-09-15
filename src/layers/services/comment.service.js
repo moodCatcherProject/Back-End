@@ -33,7 +33,7 @@ const createComment = async (postId, content, userId) => {
     exception.MoodPoint.whenLeaveComment(userId, postId);
     exception.MoodPoint.whenLeaveMyPostComment(userId, postId);
     const createdComment = await commentRepository.createComment(postId, content, userId);
-
+    createdComment.dataValues.createdAt = '방금 전';
     return createdComment;
 };
 
@@ -53,7 +53,6 @@ const getComments = async (postId, page, count, userId) => {
     if (post === null) {
         throw new exception.BadRequestException('게시물 없음.');
     }
-    console.log(data);
 
     const displayedAt = (createdAt) => {
         const seconds = (Date.now() - Date.parse(createdAt)) / 1000;
