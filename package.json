@@ -20,6 +20,7 @@
         "multer-s3": "^2.10.0",
         "mysql2": "^2.3.3",
         "node-schedule": "^2.1.0",
+        "nodemailer": "^6.7.8",
         "nodemon": "^2.0.19",
         "passport": "^0.5.3",
         "passport-kakao": "^1.0.1",
