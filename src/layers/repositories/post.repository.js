@@ -126,7 +126,7 @@ const findMyPage = async (userId, page, count, orderKey, order) => {
  */
 const findLikePage = async (userId, page, count, orderKey, order, gender) => {
     const likeIdData = await Like.findAll({
-        where: { userId, likeStatus: true, delete: false },
+        where: { userId, likeStatus: true },
         order: [['createdAt', 'DESC']]
     });
     const likeIdArr = likeIdData.map((p) => {
