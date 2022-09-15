@@ -98,7 +98,7 @@ const localLogin = async (req, res, next) => {
                     exception.MoodPoint.whenLogin(req.user.authId);
 
                     res.status(200).json({
-                        url: `https://moodcatch.link/login/detail?exist=${exist}&token=${token}`
+                        url: `http://localhost:3000/login/detail?exist=${exist}&token=${token}`
                     });
                     res.json();
                 });
