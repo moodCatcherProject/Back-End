@@ -270,7 +270,7 @@ const deletePost = async (postId) => {
  */
 const findRepPost = async (userId) => {
     const repPostIdAttr = await UserDetail.findOne({
-        where: { detailId: userId, delete: false },
+        where: { detailId: userId },
         attributes: ['repPostId']
     });
 
