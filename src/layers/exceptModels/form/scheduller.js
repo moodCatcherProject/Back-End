@@ -34,7 +34,7 @@ const exception = require('../_.models.loader');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
 //한국시간으로 새벽 00시 00분 00초 마다 실행 (우분투에서는 9시간의 시차가 있어보여요.)
-schedule.scheduleJob('0 5 17 * * *', () => {
+schedule.scheduleJob('0 0 15 * * *', () => {
     scheduleHandller();
 });
 
@@ -54,18 +54,17 @@ const createHotPost = async () => {
     });
 
     //HotPosts 테이블에 조회한 3개의 data 저장
-    async function createHotPosts() {
-        await Promise.all(
-            hotPosts.map((post) => {
-                HotPost.create({
-                    postId: post.postId,
-                    imgUrl: post.imgUrl,
-                    userId: post.userId
-                });
-            })
-        );
+    for (let hotPost of hotPosts) {
+        try {
+            await HotPost.create({
+                postId: hotPost.postId,
+                imgUrl: hotPost.imgUrl,
+                userId: hotPost.userId
+            });
+        } catch (err) {
+            continue;
+        }
     }
-    createHotPosts();
 
     // Posts 테이블의 todayLikeCount 0으로 리셋
     await Post.update(
