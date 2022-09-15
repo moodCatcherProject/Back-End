@@ -186,7 +186,8 @@ const findHotPosts = async () => {
     return hotPosts.map((post) => {
         return {
             postId: post.postId,
-            imgUrl: process.env.S3_STORAGE_URL + post.imgUrl
+            imgUrl: process.env.S3_STORAGE_URL + post.imgUrl,
+            userId: post.userId
         };
     });
 };
