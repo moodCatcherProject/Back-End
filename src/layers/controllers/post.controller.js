@@ -1,5 +1,5 @@
 const postService = require('../services/post.service');
-
+const userService = require('../services/user.service');
 const exception = require('../exceptModels/_.models.loader');
 
 // CRUD
@@ -60,6 +60,8 @@ const findAllPosts = async (req, res, next) => {
         for (let post of postData) {
             post.likeStatus = await postService.findLikeStatus(res.locals.user.userId, post.postId);
             post.imgUrl = process.env.S3_STORAGE_URL + post.imgUrl;
+            const userData = await userService.getUser(post.userId);
+            post.nickname = userData.nickname;
         }
 
         res.status(200).send(postData);
