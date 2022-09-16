@@ -3,17 +3,17 @@ const likeRepository = require('../../repositories/like.repository');
 const notice = require('../form/notice');
 
 const noticeMessageArray = {
-    whenSignUp: `새로운 무드 캐쳐가 되어`,
+    whenSignUp: `새로운 무드 캐처가 되어`,
 
-    whenLogin: `무드 캐쳐에 방문하여`,
+    whenLogin: `무드 캐처에 방문하여`,
 
-    whenCreatePost: `캐쳐님의 게시물이 성공적으로 무드의 바다에 떠올라`,
+    whenCreatePost: `게시물이 성공적으로 무드의 바다에 떠올라`,
 
-    whenLeaveMyPostComment: `다른 캐쳐님이 게시물에 댓글을 달아주셔서`,
+    whenLeaveMyPostComment: `다른 캐처님이 게시물에 댓글을 달아주셔서`,
 
-    whenLeaveComment: `다른 캐쳐님께 댓글을 남겨`,
+    whenLeaveComment: `다른 캐처님께 댓글을 남겨`,
 
-    whenInRankingMyPost: `캐쳐님의 무드가 인정받아 랭킹에 등재되어`
+    whenInRankingMyPost: `캐처님의 무드가 인정받아 랭킹에 등재되어`
 };
 const findPointColumn = async (userId) => {
     return await UserDetail.findOne({
