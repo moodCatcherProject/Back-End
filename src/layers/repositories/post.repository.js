@@ -182,7 +182,7 @@ const findSearchWriterKeyword = async (keyword, page, count) => {
             }
         }
     });
-    console.log(userData);
+
     const result = [];
 
     for (let user of userData) {

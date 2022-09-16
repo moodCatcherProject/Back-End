@@ -135,6 +135,7 @@ const findAllPosts = async (
     try {
         data = data.map((e) => e.get({ plain: true }));
     } catch (err) {
+        console.log(err);
         throw new exception.NotFoundException('검색내용 없음');
     }
 
