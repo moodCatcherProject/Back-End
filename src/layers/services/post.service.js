@@ -126,7 +126,7 @@ const findAllPosts = async (
             data = await postRepository.findAlgorithmPost(page, count);
             break;
         }
-        default: {
+        case 'all': {
             data = await postRepository.findAllPosts(page, count, orderKey, order, gender);
 
             break;
