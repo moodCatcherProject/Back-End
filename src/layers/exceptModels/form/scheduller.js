@@ -98,7 +98,7 @@ const totalLikeCount = async () => {
             const totalPoint = point.reduce(function add(sum, currValue) {
                 return sum + currValue;
             });
-            UserDetail.update(
+            await UserDetail.update(
                 {
                     moodPoint: pointArray.moodPoint + totalPoint
                 },
