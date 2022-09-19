@@ -187,6 +187,7 @@ const findSearchWriterKeyword = async (keyword, page, count) => {
 
     for (let user of userData) {
         const rep = await findRepPost(user.userId);
+
         result.push(await findPost(rep.postId));
     }
     return result;

@@ -126,7 +126,7 @@ const findAllPosts = async (
             data = await postRepository.findAlgorithmPost(page, count);
             break;
         }
-        default: {
+        case 'all': {
             data = await postRepository.findAllPosts(page, count, orderKey, order, gender);
 
             break;
@@ -135,6 +135,7 @@ const findAllPosts = async (
     try {
         data = data.map((e) => e.get({ plain: true }));
     } catch (err) {
+        console.log(err);
         throw new exception.NotFoundException('검색내용 없음');
     }
 
