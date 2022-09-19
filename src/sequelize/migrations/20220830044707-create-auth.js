@@ -20,6 +20,9 @@ module.exports = {
             },
             password: {
                 type: Sequelize.STRING
+            },
+            refreshToken: {
+                type: Sequelize.STRING
             }
         });
     },
