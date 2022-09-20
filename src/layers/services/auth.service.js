@@ -1,6 +1,8 @@
 const authRepository = require('../repositories/auth.repository');
 const userRepository = require('../repositories/user.repository');
 const exception = require('../exceptModels/_.models.loader');
+const nodemailer = require('nodemailer');
+const bcrypt = require('bcrypt');
 
 // EM : 8자~ 30자 이메일형식
 // PW : 영소 대문자 + 숫자 + 특수문자 8자 ~ 20자
@@ -105,6 +107,147 @@ const checkEmail = async (email) => {
 };
 
 /**
+ * 인증번호 발송
+ * @param { string } email
+ * @returns { Promise<{ email: string }> | null }
+ */
+const sendEmail = async (email) => {
+    new exception.isString({ email }).value;
+
+    const checkEmail =
+        /^[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/;
+    if (checkEmail.test(email) === false) {
+        throw new exception.BadRequestException('이메일 유효성 에러');
+    }
+
+    const ExisEmail = await authRepository.findByEmail(email);
+    if (ExisEmail) {
+        throw new exception.BadRequestException('이미 가입된 이메일');
+    } // 회원가입을 하려고 하는데, 이 이메일로 이미 가입 되어 있을 때 에러
+
+    // 관리자 계정 정보
+    const managerEmail = {
+        host: 'smtp.gmail.com', // Gmail 서비스 사용 / (SMTP는 이메일 클라이언트와 메일 서버 간의 데이터 교환 프로세스)
+        port: 587, // Gmail port 번호
+        secure: false, // 다른 포트를 사용할 경우 false를 사용하고 465를 사용할때는 true로 사용
+        auth: {
+            user: process.env.NODEMAILER_USER, // 관리자 이메일
+            pass: process.env.NODEMAILER_PASS // Gmail에서 설정해주는 관리자 비밀번호
+        }
+    };
+
+    // 인증번호 발송을 위한 랜덤한 숫자 6글자를 생성
+    const authNum = Math.random().toString().substr(2, 6);
+
+    const mailOptions = {
+        from: process.env.NODEMAILER_USER, // 보내는 사람의 메일 (관리자 이메일)
+        to: email, // 받는 사람 메일 (req.body값에 들어가는 email)
+        subject: 'MoodCatcher 회원가입에 성공하셨습니다.', // 메일 제목
+        html: `<h1>MoodCatcher 회원가입을 축하드립니다.</h1>
+            <p>회원가입을 위한 인증번호 입니다.<p>
+            <p>아래의 인증 번호를 입력하여 인증을 완료해주세요.</p>
+            <h2>${authNum}</h2>` // 메일내용 (html으로 잘 꾸며서 할 수 있음)
+    };
+
+    // (메일 전송을 위한 SMTP 필요, 관리자급의 계정정보 필요)
+    const send = async (data) => {
+        nodemailer.createTransport(managerEmail).sendMail(data, (error, info) => {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log(info);
+                res.send(authNum);
+                transporter.close();
+            }
+        });
+    };
+    send(mailOptions);
+    return authNum;
+};
+
+/**
+ * 비밀번호 찾기
+ * @param { string } email
+ * @returns { Promise<{ email: string }> | null }
+ */
+const forgetPw = async (email) => {
+    new exception.isString({ email }).value;
+
+    const checkEmail =
+        /^[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/;
+    if (checkEmail.test(email) === false) {
+        throw new exception.BadRequestException('이메일 유효성 에러');
+    }
+
+    const ExisEmail = await authRepository.findByEmail(email);
+    if (!ExisEmail) {
+        throw new exception.BadRequestException('존재하지 않는 이메일');
+    } // 비밀번호 찾기를 하는데 이 이메일로 가입된 회원이 없을 때 에러
+
+    const managerEmail = {
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+            user: process.env.NODEMAILER_USER,
+            pass: process.env.NODEMAILER_PASS
+        }
+    };
+
+    const authNum = Math.random().toString().substr(2, 6);
+    const hashAuthNum = await bcrypt.hash(authNum, 12);
+
+    const mailOptions = {
+        from: process.env.NODEMAILER_USER,
+        to: email,
+        subject: 'MoodCatcher 회원가입에 성공하셨습니다.',
+        html: `<h1>MoodCatcher 회원가입을 축하드립니다.</h1>
+                <p>회원가입을 위한 인증번호 입니다.<p>
+                <p>아래의 인증 번호를 입력하여 인증을 완료해주세요.</p>
+                <h2>${authNum}</h2>`
+    };
+
+    const send = async (data) => {
+        nodemailer.createTransport(managerEmail).sendMail(data, (error, info) => {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log(info);
+                return info.response;
+            }
+        });
+    };
+    send(mailOptions);
+    return hashAuthNum;
+};
+
+/**
+ * 비밀번호 변경
+ * @param { string } email
+ * @param { string } password
+ * @param { string } confirmPw
+ * @param { string } hashAuthNum
+ * @returns { Promise<{ email: string, password: string, confirmPw: string, hashAuthNum: string }> | null }
+ */
+const updatePw = async (email, password, confirmPw, hashAuthNum) => {
+    new exception.isString({ email }).value;
+    new exception.isString({ password }).value;
+    new exception.isString({ confirmPw }).value;
+
+    if (password !== confirmPw) {
+        throw new exception.BadRequestException('비밀번호 에러');
+    }
+
+    if (!hashAuthNum) {
+        throw new exception.UnauthorizedException('잘못된 접근 입니다');
+    } // 비밀번호 변경을 하려면 비밀번호 변경 인증 절차 후 변경을 할 수 있어야 하는데, URL으로 강제로 접근했을때 에러
+
+    const updatePw = await authRepository.updatePw(email, password);
+
+    return updatePw;
+};
+
+/**
  * 닉네임 중복확인
  * @param { string } nickname
  * @returns { Promise<{ nickname: string }> | null }
@@ -129,5 +272,8 @@ module.exports = {
     localSignUp,
     updateNicknameAgeGender,
     checkEmail,
+    sendEmail,
+    forgetPw,
+    updatePw,
     checkNickname
 };

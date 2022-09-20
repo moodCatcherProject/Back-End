@@ -12,7 +12,7 @@ const findByEmail = async (email) => {
 };
 
 /**
- * Auth 테이블에 email, 해쉬password 생성.
+ * Auth 테이블에 email, 해시password 생성.
  * @param { string } email
  * @param { string } password
  * @returns { Promise<{ email: string, password: string }> | null> }
@@ -50,10 +50,22 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId, grade) => 
     await UserDetail.update({ age, gender }, { where: { detailId } });
     return;
 };
-// 디테일에 나이 성별 유저에 닉네임
+
+/**
+ * Auth 테이블에 해당 email인 password를 해시화하고 업데이트.
+ * @param { string } email
+ * @param { string } password
+ * @returns { Promise<{ email: string, password: string }> }
+ */
+const updatePw = async (email, password) => {
+    const hash = await bcrypt.hash(password, 12);
+    await Auth.update({ password: hash }, { where: { email } });
+    return;
+};
 
 module.exports = {
     findByEmail,
     createSignUp,
-    updateNicknameAgeGender
+    updateNicknameAgeGender,
+    updatePw
 };
