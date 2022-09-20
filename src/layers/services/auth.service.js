@@ -234,6 +234,17 @@ const updatePw = async (email, password, confirmPw, hashAuthNum) => {
     new exception.isString({ password }).value;
     new exception.isString({ confirmPw }).value;
 
+    const checkEmail =
+        /^[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/;
+    if (checkEmail.test(email) === false) {
+        throw new exception.BadRequestException('이메일 유효성 에러');
+    }
+
+    const ExisEmail = await authRepository.findByEmail(email);
+    if (!ExisEmail) {
+        throw new exception.BadRequestException('존재하지 않는 이메일');
+    } // 비밀번호 찾기를 하는데 이 이메일로 가입된 회원이 없을 때 에러
+
     if (password !== confirmPw) {
         throw new exception.BadRequestException('비밀번호 에러');
     }
