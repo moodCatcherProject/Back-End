@@ -34,7 +34,7 @@ class App {
 
         if (process.env.MODE !== 'dev') {
             sequelize
-                .sync({ force: true })
+                .sync({ force: false })
                 .then(() => {
                     console.log('데이터베이스 연결 성공');
                 })
@@ -48,7 +48,7 @@ class App {
         this.app.use(morgan('dev')); //로그 생성
         this.app.use(helmet());
         this.app.use(cookieParser());
-        this.app.use(cors()); // 화이트 리스트 생성 예정
+        this.app.use(cors({ origin: true, credentials: true })); // 화이트 리스트 생성 예정
         this.app.use((req, res, next) => {
             res.header('Access-Control-Allow-Origin', '*');
             next();
