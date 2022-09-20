@@ -1,6 +1,8 @@
 const app = require('../src/app');
 const { sequelize } = require('../src/sequelize/models');
 const request = require('supertest');
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
 
 beforeAll(async () => {
     await sequelize.sync({ force: true });
@@ -684,6 +686,204 @@ describe('대댓글 삭제', () => {
             .delete('/api/recomments/1')
             .set('authorization', `Bearer ` + token)
             .expect(400, done);
+    });
+});
+
+describe('인증번호 발송', () => {
+    test('인증번호 발송 200 (성공)', (done) => {
+        request(app)
+            .post('/api/auth/sendEmail')
+            .send({
+                email: 'Rph3@gmail.com'
+            })
+            .expect(200, done);
+    });
+    test('이메일이 빈값일때 400 (실패)', (done) => {
+        request(app)
+            .post('/api/auth/sendEmail')
+            .send({
+                email: ''
+            })
+            .expect(400, done);
+    });
+    test('이메일이 문자열이 아닐때 400 (실패)', (done) => {
+        request(app)
+            .post('/api/auth/sendEmail')
+            .send({
+                email: 123
+            })
+            .expect(400, done);
+    });
+    test('이메일이 유효성이 맞지 않을때 400 (실패)', (done) => {
+        request(app)
+            .post('/api/auth/sendEmail')
+            .send({
+                email: 'Rph3gmail.com'
+            })
+            .expect(400, done);
+    });
+    test('이메일이 증복될때 400 (실패)', (done) => {
+        request(app)
+            .post('/api/auth/sendEmail')
+            .send({
+                email: 'Rph1@gmail.com'
+            })
+            .expect(400, done);
+    });
+});
+
+describe('비밀번호 찾기', () => {
+    test('비밀번호 찾기 200 (성공)', (done) => {
+        request(app)
+            .post('/api/auth/forgetPw')
+            .send({
+                email: 'Rph1@gmail.com'
+            })
+            .expect(200, done);
+    });
+    test('이메일이 빈값일때 400 (실패)', (done) => {
+        request(app)
+            .post('/api/auth/forgetPw')
+            .send({
+                email: ''
+            })
+            .expect(400, done);
+    });
+    test('이메일이 문자열이 아닐때 400 (실패)', (done) => {
+        request(app)
+            .post('/api/auth/forgetPw')
+            .send({
+                email: 123
+            })
+            .expect(400, done);
+    });
+    test('이메일이 유효성이 맞지 않을때 400 (실패)', (done) => {
+        request(app)
+            .post('/api/auth/forgetPw')
+            .send({
+                email: 'Rph1gmail.com'
+            })
+            .expect(400, done);
+    });
+    test('이메일로 가입된 회원이 없을 때 400 (실패)', (done) => {
+        request(app)
+            .post('/api/auth/forgetPw')
+            .send({
+                email: 'Rph4@gmail.com'
+            })
+            .expect(400, done);
+    });
+});
+
+describe('비밀번호 변경', () => {
+    test('비밀번호 변경 201 (성공)', (done) => {
+        request(app)
+            .put(`/api/auth/updatePw?email=${'Rph1@gmail.com'}`)
+            .set('Cookie', ['hashAuthNum=hashAuthNum'])
+            .send({
+                password: 'Rph1234!',
+                confirmPw: 'Rph1234!'
+            })
+            .expect(201, done);
+    });
+    test('이메일이 빈값일때 400 (실패)', (done) => {
+        request(app)
+            .put(`/api/auth/updatePw?email=${''}`)
+            .set('Cookie', ['hashAuthNum=hashAuthNum'])
+            .send({
+                password: 'Rph1234!',
+                confirmPw: 'Rph1234!'
+            })
+            .expect(400, done);
+    });
+    test('이메일이 문자열이 아닐때 400 (실패)', (done) => {
+        request(app)
+            .put(`/api/auth/updatePw?email=${123}`)
+            .set('Cookie', ['hashAuthNum=hashAuthNum'])
+            .send({
+                password: 'Rph1234!',
+                confirmPw: 'Rph1234!'
+            })
+            .expect(400, done);
+    });
+    test('비밀번호가 빈값일때 400 (실패)', (done) => {
+        request(app)
+            .put(`/api/auth/updatePw?email=${'Rph1@gmail.com'}`)
+            .set('Cookie', ['hashAuthNum=hashAuthNum'])
+            .send({
+                password: '',
+                confirmPw: 'Rph1234!'
+            })
+            .expect(400, done);
+    });
+    test('비밀번호가 문자열이 아닐때 400 (실패)', (done) => {
+        request(app)
+            .put(`/api/auth/updatePw?email=${'Rph1@gmail.com'}`)
+            .set('Cookie', ['hashAuthNum=hashAuthNum'])
+            .send({
+                password: 123,
+                confirmPw: 'Rph1234'
+            })
+            .expect(400, done);
+    });
+    test('비밀번호확인이 빈값일때 400 (실패)', (done) => {
+        request(app)
+            .put(`/api/auth/updatePw?email=${'Rph1@gmail.com'}`)
+            .set('Cookie', ['hashAuthNum=hashAuthNum'])
+            .send({
+                password: 'Rph1234!',
+                confirmPw: ''
+            })
+            .expect(400, done);
+    });
+    test('비밀번호확인이 문자열이 아닐때 400 (실패)', (done) => {
+        request(app)
+            .put(`/api/auth/updatePw?email=${'Rph1@gmail.com'}`)
+            .set('Cookie', ['hashAuthNum=hashAuthNum'])
+            .send({
+                password: 'Rph1234',
+                confirmPw: 123
+            })
+            .expect(400, done);
+    });
+    test('이메일이 유효성이 맞지 않을때 400 (실패)', (done) => {
+        request(app)
+            .put(`/api/auth/updatePw?email=${'Rph1gmail.com'}`)
+            .set('Cookie', ['hashAuthNum=hashAuthNum'])
+            .send({
+                password: 'Rph1234!',
+                confirmPw: 'Rph1234!'
+            })
+            .expect(400, done);
+    });
+    test('이메일로 가입된 회원이 없을 때 400 (실패)', (done) => {
+        request(app)
+            .put(`/api/auth/updatePw?email=${'Rph3@gmail.com'}`)
+            .set('Cookie', ['hashAuthNum=hashAuthNum'])
+            .send({
+                password: 'Rph1234!',
+                confirmPw: 'Rph1234!'
+            })
+            .expect(400, done);
+    });
+    test('비밀번호와 비밀번호 확인란이 일치하지 않을때 400 (실패)', (done) => {
+        request(app)
+            .put(`/api/auth/updatePw?email=${'Rph1@gmail.com'}`)
+            .set('Cookie', ['hashAuthNum=hashAuthNum'])
+            .send({
+                password: 'Rph1234!',
+                confirmPw: 'Rph1234'
+            })
+            .expect(400, done);
+    });
+    test('인증 절차를 하지않고 URL으로 강제로 접근했을때 에러 401 (실패)', (done) => {
+        request(app)
+            .put(`/api/auth/updatePw?email=${'Rph1@gmail.com'}`)
+            .send({
+                password: 'Rph1234!',
+                confirmPw: 'Rph1234!'
+            })
+            .expect(401, done);
     });
 });
 
