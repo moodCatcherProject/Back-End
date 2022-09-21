@@ -776,15 +776,15 @@ describe('비밀번호 찾기', () => {
 });
 
 describe('비밀번호 변경', () => {
-    test('비밀번호 변경 201 (성공)', (done) => {
+    test('자신의 계정이 아닌 비밀번호를 변경할때 400 (실패)', (done) => {
         request(app)
-            .put(`/api/auth/updatePw?email=${'Rph1@gmail.com'}`)
+            .put(`/api/auth/updatePw?email=${'Rph2@gmail.com'}`)
             .set('Cookie', ['hashAuthNum=hashAuthNum'])
             .send({
                 password: 'Rph1234!',
                 confirmPw: 'Rph1234!'
             })
-            .expect(201, done);
+            .expect(400, done);
     });
     test('이메일이 빈값일때 400 (실패)', (done) => {
         request(app)
