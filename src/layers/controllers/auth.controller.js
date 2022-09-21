@@ -139,7 +139,9 @@ const localLogin = async (req, res, next) => {
                     exception.MoodPoint.whenLogin(req.user.authId);
 
                     res.status(200).json({
-                        url: `https://moodcatch.link/login/detail?exist=${exist}&token=${token}`
+                        url:
+                            process.env.CORS_WHITE_LIST +
+                            `/login/detail?exist=${exist}&token=${token}`
                     });
                     res.json();
                 });
@@ -176,7 +178,7 @@ const kakaoCallback = async (req, res, next) => {
             exception.MoodPoint.whenLogin(req.user.authId);
             //카카오 Strategy에서 성공한다면 콜백 실행
             res.status(200).redirect(
-                `https://moodcatch.link/login/detail?exist=${exist}&token=${token}`
+                process.env.CORS_WHITE_LIST + `/login/detail?exist=${exist}&token=${token}`
             );
         });
     } catch (err) {
