@@ -120,10 +120,10 @@ const sendEmail = async (email) => {
         throw new exception.BadRequestException('이메일 유효성 에러');
     }
 
-    const ExisEmail = await authRepository.findByEmail(email);
-    if (ExisEmail) {
-        throw new exception.BadRequestException('이미 가입된 이메일');
-    } // 회원가입을 하려고 하는데, 이 이메일로 이미 가입 되어 있을 때 에러
+    // const ExisEmail = await authRepository.findByEmail(email);
+    // if (ExisEmail) {
+    //     throw new exception.BadRequestException('이미 가입된 이메일');
+    // } // 회원가입을 하려고 하는데, 이 이메일로 이미 가입 되어 있을 때 에러
 
     // 관리자 계정 정보
     const managerEmail = {
@@ -140,13 +140,14 @@ const sendEmail = async (email) => {
     const authNum = Math.random().toString().substr(2, 6);
 
     const mailOptions = {
-        from: process.env.NODEMAILER_USER, // 보내는 사람의 메일 (관리자 이메일)
+        from: '"MoodCatcher" <process.env.NODEMAILER_USER>', // 보내는 사람의 메일 (관리자 이메일)
         to: email, // 받는 사람 메일 (req.body값에 들어가는 email)
-        subject: 'MoodCatcher 회원가입에 성공하셨습니다.', // 메일 제목
-        html: `<h1>MoodCatcher 회원가입을 축하드립니다.</h1>
-            <p>회원가입을 위한 인증번호 입니다.<p>
-            <p>아래의 인증 번호를 입력하여 인증을 완료해주세요.</p>
-            <h2>${authNum}</h2>` // 메일내용 (html으로 잘 꾸며서 할 수 있음)
+        subject: 'MoodCatcher 회원가입을 축하드립니다.', // 메일 제목
+        html: `
+          <h1>MoodCatcher 회원가입을 축하드립니다.</h1>
+          <p>아래의 인증 번호를 입력하여 인증을 완료해주세요.</p>
+          <h2>${authNum}</h2>
+      `
     };
 
     // (메일 전송을 위한 SMTP 필요, 관리자급의 계정정보 필요)
@@ -198,16 +199,15 @@ const forgetPw = async (email) => {
     const hashAuthNum = await bcrypt.hash(authNum, 12);
 
     const mailOptions = {
-        from: process.env.NODEMAILER_USER,
+        from: '"MoodCatcher" <process.env.NODEMAILER_USER>',
         to: email,
         subject: 'MoodCatcher 회원가입에 성공하셨습니다.',
-        html: `<h1>MoodCatcher 회원가입을 축하드립니다.</h1>
-                <p>회원가입을 위한 인증번호 입니다.<p>
+        html: `<h1>MoodCatcher 인증번호가 도착했습니다.</h1>
+                <p>비밀번호 찾기를위한 인증번호 입니다.<p>
                 <p>아래의 인증 번호를 입력하여 인증을 완료해주세요.</p>
+                <p>개인정보 보호를 위해 인증번호는 10분 동안만 유효합니다.</p>
                 <h2>${authNum}</h2>`
     };
-    // 메일에 비밀번호 변경 페이지 하이퍼링크 달까요?
-    // <a href= 'http://localhost:3000/api/auth/updatePw?email=${email}'> 비밀번호 변경 페이지로 연결됩니다. </a>
 
     const send = async (data) => {
         nodemailer.createTransport(managerEmail).sendMail(data, (error, info) => {
