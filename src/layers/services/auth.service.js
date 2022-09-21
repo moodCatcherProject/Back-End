@@ -206,6 +206,8 @@ const forgetPw = async (email) => {
                 <p>아래의 인증 번호를 입력하여 인증을 완료해주세요.</p>
                 <h2>${authNum}</h2>`
     };
+    // 메일에 비밀번호 변경 페이지 하이퍼링크 달까요?
+    // <a href= 'http://localhost:3000/api/auth/updatePw?email=${email}'> 비밀번호 변경 페이지로 연결됩니다. </a>
 
     const send = async (data) => {
         nodemailer.createTransport(managerEmail).sendMail(data, (error, info) => {
@@ -217,6 +219,9 @@ const forgetPw = async (email) => {
             }
         });
     };
+
+    await authRepository.createAuthNum(email, hashAuthNum);
+
     send(mailOptions);
     return hashAuthNum;
 };
@@ -252,6 +257,12 @@ const updatePw = async (email, password, confirmPw, hashAuthNum) => {
     if (!hashAuthNum) {
         throw new exception.UnauthorizedException('잘못된 접근 입니다');
     } // 비밀번호 변경을 하려면 비밀번호 변경 인증 절차 후 변경을 할 수 있어야 하는데, URL으로 강제로 접근했을때 에러
+
+    // DB에있는 hashAuthNum값과 쿠키에있는 hashAuthNum값을 비교.
+    const findAuthNum = await authRepository.findAuthNum(email, hashAuthNum);
+    if (findAuthNum !== hashAuthNum) {
+        throw new exception.BadRequestException('자신의 계정이 아닙니다');
+    }
 
     const updatePw = await authRepository.updatePw(email, password);
 
