@@ -120,10 +120,10 @@ const sendEmail = async (email) => {
         throw new exception.BadRequestException('이메일 유효성 에러');
     }
 
-    // const ExisEmail = await authRepository.findByEmail(email);
-    // if (ExisEmail) {
-    //     throw new exception.BadRequestException('이미 가입된 이메일');
-    // } // 회원가입을 하려고 하는데, 이 이메일로 이미 가입 되어 있을 때 에러
+    const ExisEmail = await authRepository.findByEmail(email);
+    if (ExisEmail) {
+        throw new exception.BadRequestException('이미 가입된 이메일');
+    } // 회원가입을 하려고 하는데, 이 이메일로 이미 가입 되어 있을 때 에러
 
     // 관리자 계정 정보
     const managerEmail = {
