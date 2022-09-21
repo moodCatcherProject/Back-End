@@ -8,8 +8,8 @@ const passportConfig = require('./layers/passport');
 const { sequelize } = require('./sequelize/models');
 const routerLoader = require('./layers/_router.loader');
 const schedule = require('./layers/exceptModels/form/scheduller');
-const path = require('path');
-const csp = require('helmet-csp');
+
+const cookieParser = require('cookie-parser');
 
 schedule.schedule;
 const whitelist = [];
@@ -48,15 +48,9 @@ class App {
 
         this.app.use(morgan('dev')); //로그 생성
         this.app.use(helmet());
-        this.app.use(
-            csp({
-                directives: {
-                    defaultSrc: ["'self'"],
-                    styleSrc: ["'self'"],
-                    scriptSrc: ["'self'"]
-                }
-            })
-        );
+
+        this.app.use(cookieParser());
+
         this.app.use(cors({ origin: true, credentials: true })); // 화이트 리스트 생성 예정
         this.app.use((req, res, next) => {
             res.header('Access-Control-Allow-Origin', '*');

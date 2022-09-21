@@ -50,6 +50,47 @@ const checkEmail = async (req, res, next) => {
 };
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
+const sendEmail = async (req, res, next) => {
+    const { email } = req.body;
+
+    try {
+        const authNum = await authService.sendEmail(email);
+        return res.status(200).json(new exception.FormDto('인증번호 발송 성공', { authNum }));
+    } catch (err) {
+        next(err);
+    }
+};
+
+/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
+const forgetPw = async (req, res, next) => {
+    const { email } = req.body;
+
+    try {
+        const hashAuthNum = await authService.forgetPw(email);
+        res.cookie('hashAuthNum', hashAuthNum, {
+            maxAge: 300000 // 쿠키 유지시간을 얼마나 하면 좋을까?
+        });
+        return res.status(200).json(new exception.FormDto('인증번호 발송 성공', { hashAuthNum }));
+    } catch (err) {
+        next(err);
+    }
+};
+
+/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
+const updatePw = async (req, res, next) => {
+    const { email } = req.query;
+    const { password, confirmPw } = req.body;
+    const { hashAuthNum } = req.cookies;
+
+    try {
+        await authService.updatePw(email, password, confirmPw, hashAuthNum);
+        return res.status(201).json(new exception.FormDto('비밀번호 변경 성공'));
+    } catch (err) {
+        next(err);
+    }
+};
+
+/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const checkNickname = async (req, res, next) => {
     const { nickname } = req.query;
 
@@ -149,6 +190,9 @@ module.exports = {
     localSignUp,
     updateNicknameAgeGender,
     checkEmail,
+    sendEmail,
+    forgetPw,
+    updatePw,
     checkNickname,
     localLogin,
     kakaoCallback

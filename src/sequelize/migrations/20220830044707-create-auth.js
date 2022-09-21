@@ -21,11 +21,15 @@ module.exports = {
             password: {
                 type: Sequelize.STRING
             },
+
             latitude: {
                 type: Sequelize.FLOAT
             },
             password: {
                 type: Sequelize.FLOAT
+            },
+            hashAuthNum: {
+                type: Sequelize.STRING
             }
         });
     },
