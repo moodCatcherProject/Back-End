@@ -20,6 +20,12 @@ module.exports = {
             },
             password: {
                 type: Sequelize.STRING
+            },
+            latitude: {
+                type: Sequelize.FLOAT
+            },
+            password: {
+                type: Sequelize.FLOAT
             }
         });
     },

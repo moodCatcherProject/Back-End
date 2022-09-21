@@ -14,13 +14,17 @@ const Op = sequelize.Op;
  * @returns 게시물 정보를 만들고 나서 그 게시물의 데이터 반환
  */
 const createPost = async (userId, title, content, gender) => {
-    return await Post.create({
-        userId,
-        title,
-        content,
-        gender,
-        imgUrl: 'default'
-    });
+    try {
+        return await Post.create({
+            userId,
+            title,
+            content,
+            gender,
+            imgUrl: 'default'
+        });
+    } catch (err) {
+        throw new exception.BadRequestException('게시물 생성 실패');
+    }
 };
 
 /**
@@ -30,19 +34,23 @@ const createPost = async (userId, title, content, gender) => {
  * @returns { Promise<{ postId:number, title:string, content:string, userId:number, imgUrl:string, likeCount:number, createdAt:date, Likes.likeStatus:boolean } | null>}
  */
 const findPostDetailWithLikeStatus = async (postId, userId) => {
-    const post = await Post.findOne({
-        where: { postId, delete: false },
-        attributes: { exclude: ['gender'] },
-        include: [
-            {
-                model: Like,
-                where: { postId, userId },
-                attributes: ['likeStatus']
-            }
-        ]
-    });
+    try {
+        const post = await Post.findOne({
+            where: { postId, delete: false },
+            attributes: { exclude: ['gender'] },
+            include: [
+                {
+                    model: Like,
+                    where: { postId, userId },
+                    attributes: ['likeStatus']
+                }
+            ]
+        });
 
-    return post;
+        return post;
+    } catch (err) {
+        throw new exception.BadRequestException('좋아요를 누른 적 있는 게시물 조회 실패');
+    }
 };
 
 /**
@@ -52,19 +60,23 @@ const findPostDetailWithLikeStatus = async (postId, userId) => {
  * @returns { Promise<{ postId:number, title:string, content:string, userId:number, imgUrl:string, likeCount:number, createdAt:date, Likes.likeStatus:boolean } | null>}
  */
 const findPostDetail = async (postId) => {
-    const post = await Post.findOne({
-        where: { postId, delete: false },
-        attributes: { exclude: ['gender'] },
-        include: [
-            {
-                model: Like
-            }
-        ]
-    });
+    try {
+        const post = await Post.findOne({
+            where: { postId, delete: false },
+            attributes: { exclude: ['gender'] },
+            include: [
+                {
+                    model: Like
+                }
+            ]
+        });
 
-    post.dataValues.Likes.push({ dataValues: { likeStatus: false } });
+        post.dataValues.Likes.push({ dataValues: { likeStatus: false } });
 
-    return post;
+        return post;
+    } catch (err) {
+        throw new exception.BadRequestException('좋아요를 누르지 않은 게시물 조회 실패');
+    }
 };
 
 /**
@@ -73,9 +85,13 @@ const findPostDetail = async (postId) => {
  * @returns 해당 postId의 게시물 데이터
  */
 const findPost = async (postId) => {
-    return await Post.findOne({
-        where: { postId, delete: false }
-    });
+    try {
+        return await Post.findOne({
+            where: { postId, delete: false }
+        });
+    } catch (err) {
+        throw new exception.BadRequestException('게시물 데이터 조회 실패');
+    }
 };
 /**
  *
@@ -88,12 +104,16 @@ const findPost = async (postId) => {
  * @returns
  */
 const findAllPosts = async (page, count, orderKey, order, gender) => {
-    return await Post.findAll({
-        offset: count * (page - 1),
-        limit: count,
-        order: [[orderKey, order]],
-        where: { gender, delete: false }
-    });
+    try {
+        return await Post.findAll({
+            offset: count * (page - 1),
+            limit: count,
+            order: [[orderKey, order]],
+            where: { gender, delete: false }
+        });
+    } catch (err) {
+        throw new exception.BadRequestException('모든 게시물 조회 실패');
+    }
 };
 
 /**
@@ -107,12 +127,16 @@ const findAllPosts = async (page, count, orderKey, order, gender) => {
  * @returns userId의 유저가 작성한 게시물
  */
 const findMyPage = async (userId, page, count, orderKey, order) => {
-    return await Post.findAll({
-        where: { userId, delete: false },
-        offset: count * (page - 1),
-        limit: count,
-        order: [[orderKey, order]]
-    });
+    try {
+        return await Post.findAll({
+            where: { userId, delete: false },
+            offset: count * (page - 1),
+            limit: count,
+            order: [[orderKey, order]]
+        });
+    } catch (err) {
+        throw new exception.BadRequestException('마이페이지 조회 실패');
+    }
 };
 /**
  *
@@ -125,20 +149,24 @@ const findMyPage = async (userId, page, count, orderKey, order) => {
  * @returns userId의 유저가 좋아요를 한 게시물 데이터
  */
 const findLikePage = async (userId, page, count, orderKey, order, gender) => {
-    const likeIdData = await Like.findAll({
-        where: { userId, likeStatus: true },
-        order: [['createdAt', 'DESC']]
-    });
-    const likeIdArr = likeIdData.map((p) => {
-        return p.postId;
-    });
+    try {
+        const likeIdData = await Like.findAll({
+            where: { userId, likeStatus: true },
+            order: [['createdAt', 'DESC']]
+        });
+        const likeIdArr = likeIdData.map((p) => {
+            return p.postId;
+        });
 
-    return await Post.findAll({
-        where: { postId: { [Op.in]: likeIdArr } },
-        offset: count * (page - 1),
-        limit: count,
-        order: [[orderKey, order]]
-    });
+        return await Post.findAll({
+            where: { postId: { [Op.in]: likeIdArr } },
+            offset: count * (page - 1),
+            limit: count,
+            order: [[orderKey, order]]
+        });
+    } catch (err) {
+        throw new exception.BadRequestException('좋아요 페이지 조회 실패');
+    }
 };
 
 /**
@@ -152,18 +180,22 @@ const findLikePage = async (userId, page, count, orderKey, order, gender) => {
  * @returns 키워드로 제목에서 검색해 게시물 데이터
  */
 const findSearchTitleKeyword = async (keyword, page, count, orderKey, order, gender) => {
-    return await Post.findAll({
-        offset: count * (page - 1),
-        limit: count,
-        where: {
-            gender,
-            title: {
-                [Op.like]: '%' + keyword + '%'
+    try {
+        return await Post.findAll({
+            offset: count * (page - 1),
+            limit: count,
+            where: {
+                gender,
+                title: {
+                    [Op.like]: '%' + keyword + '%'
+                },
+                delete: false
             },
-            delete: false
-        },
-        order: [[orderKey, order]]
-    });
+            order: [[orderKey, order]]
+        });
+    } catch (err) {
+        throw new exception.BadRequestException('제목으로 검색하기 실패');
+    }
 };
 /**
  *
@@ -173,39 +205,47 @@ const findSearchTitleKeyword = async (keyword, page, count, orderKey, order, gen
  * @returns 키워드로 작성자를 검색해 그 작성자의 대표게시물 데이터
  */
 const findSearchWriterKeyword = async (keyword, page, count) => {
-    const userData = await User.findAll({
-        offset: count * (page - 1),
-        limit: count,
-        where: {
-            nickname: {
-                [Op.like]: '%' + keyword + '%'
+    try {
+        const userData = await User.findAll({
+            offset: count * (page - 1),
+            limit: count,
+            where: {
+                nickname: {
+                    [Op.like]: '%' + keyword + '%'
+                }
             }
+        });
+
+        const result = [];
+
+        for (let user of userData) {
+            const rep = await findRepPost(user.userId);
+
+            result.push(await findPost(rep.postId));
         }
-    });
-
-    const result = [];
-
-    for (let user of userData) {
-        const rep = await findRepPost(user.userId);
-
-        result.push(await findPost(rep.postId));
+        return result;
+    } catch (err) {
+        throw new exception.BadRequestException('작성자로 검색 실패');
     }
-    return result;
 };
 
 const findAlgorithmPost = async (page, count) => {
-    return await Post.findAll({
-        offset: count * (page - 1),
-        limit: count,
-        order: [['likeCount', 'DESC']],
-        where: {
-            createdAt: {
-                [Op.lt]: new Date(),
-                [Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)
-            },
-            delete: false
-        }
-    });
+    try {
+        return await Post.findAll({
+            offset: count * (page - 1),
+            limit: count,
+            order: [['likeCount', 'DESC']],
+            where: {
+                createdAt: {
+                    [Op.lt]: new Date(),
+                    [Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)
+                },
+                delete: false
+            }
+        });
+    } catch (err) {
+        throw new exception.BadRequestException('검색페이지 알고리즘 게시물 출력 실패');
+    }
 };
 
 /**
@@ -214,9 +254,13 @@ const findAlgorithmPost = async (page, count) => {
  * @returns postId의 게시물의 좋아요 숫자
  */
 const findLikeNumByPostId = async (postId) => {
-    return await Like.findAndCountAll({
-        where: { postId }
-    });
+    try {
+        return await Like.findAndCountAll({
+            where: { postId }
+        });
+    } catch (err) {
+        throw new exception.BadRequestException('게시물의 좋아요 숫자 조회 실패');
+    }
 };
 /**
  *
@@ -270,12 +314,16 @@ const deletePost = async (postId) => {
  * @returns userId의 유저의 대표게시물의 데이터
  */
 const findRepPost = async (userId) => {
-    const repPostIdAttr = await UserDetail.findOne({
-        where: { detailId: userId },
-        attributes: ['repPostId']
-    });
+    try {
+        const repPostIdAttr = await UserDetail.findOne({
+            where: { detailId: userId },
+            attributes: ['repPostId']
+        });
 
-    return await Post.findByPk(repPostIdAttr.repPostId);
+        return await Post.findByPk(repPostIdAttr.repPostId);
+    } catch (err) {
+        throw new exception.BadRequestException('대표 게시물 조회 실패');
+    }
 };
 
 /**
@@ -312,14 +360,18 @@ const updateRepPost = async (userId, repPostId) => {
  * @returns item데이터
  */
 const createItem = async (postId, item) => {
-    const { brand, name, imgUrl, price } = item;
-    return await Item.create({
-        postId,
-        brand,
-        name,
-        imgUrl,
-        price
-    });
+    try {
+        const { brand, name, imgUrl, price } = item;
+        return await Item.create({
+            postId,
+            brand,
+            name,
+            imgUrl,
+            price
+        });
+    } catch (err) {
+        throw new exception.BadRequestException('무신사 아이템 등록 실패');
+    }
 };
 
 /**
@@ -328,11 +380,15 @@ const createItem = async (postId, item) => {
  * @returns { Promise<{ brand:string, name:string, price:string, imgUrl:string } | null>}
  */
 const findItems = async (postId) => {
-    return await Item.findAll({
-        where: { postId },
-        attributes: { exclude: ['itemId', 'postId'] },
-        raw: true
-    });
+    try {
+        return await Item.findAll({
+            where: { postId },
+            attributes: { exclude: ['itemId', 'postId'] },
+            raw: true
+        });
+    } catch (err) {
+        throw new exception.BadRequestException('아이템 찾기 실패');
+    }
 };
 
 /**
@@ -370,24 +426,32 @@ const updateItem = async (postId, item) => {
  * @returns 이미지를 업데이트 한 게시물의 데이터
  */
 const updateImage = async (postId, imgUrl) => {
-    await Post.update(
-        {
-            imgUrl
-        },
-        {
-            where: { postId }
-        }
-    );
-    //update를 하면 게시물의 정보가 아닌 postId를 return 해주는 것 같아 추가.
+    try {
+        await Post.update(
+            {
+                imgUrl
+            },
+            {
+                where: { postId }
+            }
+        );
+        //update를 하면 게시물의 정보가 아닌 postId를 return 해주는 것 같아 추가.
 
-    return await findPost(postId);
+        return await findPost(postId);
+    } catch (err) {
+        throw new exception.BadRequestException('이미지 등록 실패');
+    }
 };
 // // NOTICE
 const isExistNotice = async (userId) => {
-    return await UserDetail.findOne({
-        where: { detailId: userId },
-        attributes: ['isExistsNotice']
-    });
+    try {
+        return await UserDetail.findOne({
+            where: { detailId: userId },
+            attributes: ['isExistsNotice']
+        });
+    } catch (err) {
+        throw new exception.BadRequestException('알림 갱신 기록 조회 실패');
+    }
 };
 
 /**
@@ -417,7 +481,11 @@ const updateLikeCount = async (postId, variation, todayVariation) => {
  * @returns { Promise<[{ postId:number, imgUrl:string }, { postId:number, imgUrl:string }, { postId:number, imgUrl:string }] | null>}
  */
 const findHotPosts = async () => {
-    return await HotPost.findAll();
+    try {
+        return await HotPost.findAll();
+    } catch (err) {
+        throw new exception.BadRequestException('hot post 조회 실패');
+    }
 };
 
 //FUNCTION

@@ -30,6 +30,14 @@ module.exports = (sequelize, DataTypes) => {
             },
             password: {
                 type: DataTypes.STRING
+            },
+            latitude: {
+                type: DataTypes.FLOAT,
+                defaultValue: null
+            },
+            longitude: {
+                type: DataTypes.FLOAT,
+                defaultValue: null
             }
         },
         {
