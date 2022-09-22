@@ -43,7 +43,7 @@ exports.isLoggedIn = async (req, res, next) => {
                     throw new exception.UnauthorizedException('로그인 필요');
                 } else {
                     const myNewToken = jwt.sign({ userId: data.authId }, process.env.SECRET_KEY, {
-                        expiresIn: '7d'
+                        expiresIn: '2h'
                     });
                     res.send({ message: 'new token', myNewToken });
                 }

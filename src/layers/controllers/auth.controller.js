@@ -91,7 +91,7 @@ const localLogin = async (req, res, next) => {
                 isExistUserNickname(req.user.authId).then(async (data) => {
                     const exist = data.nickname ? true : false;
                     const token = jwt.sign({ userId: req.user.authId }, process.env.SECRET_KEY, {
-                        expiresIn: '1m'
+                        expiresIn: '2h'
                     });
                     const refreshToken = jwt.sign({}, process.env.SECRET_KEY, { expiresIn: '7d' });
                     await Auth.update({ refreshToken }, { where: { authId: req.user.authId } });
@@ -130,10 +130,10 @@ const kakaoCallback = async (req, res, next) => {
         isExistUserNickname(req.user.authId).then(async (data) => {
             const exist = data.nickname ? true : false;
             const token = jwt.sign({ userId: req.user.authId }, process.env.SECRET_KEY, {
-                expiresIn: '1h'
+                expiresIn: '2h'
             });
 
-            const refreshToken = jwt.sign({}, process.env.SECRET_KEY, { expiresIn: '1y' });
+            const refreshToken = jwt.sign({}, process.env.SECRET_KEY, { expiresIn: '7d' });
             await Auth.update({ refreshToken }, { where: { authId: req.user.authId } });
             // const refreshToken = jwt.sign({}, process.env.SECRET_KEY , {
             //     expiresIn : '1w'

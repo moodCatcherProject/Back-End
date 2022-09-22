@@ -33,6 +33,13 @@ module.exports = (sequelize, DataTypes) => {
             },
             refreshToken: {
                 type: DataTypes.STRING
+            },
+            loginFailCount: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0
+            },
+            lastLoginTriedAt: {
+                type: DataTypes.DATE
             }
         },
         {

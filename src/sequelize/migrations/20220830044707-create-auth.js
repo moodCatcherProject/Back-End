@@ -23,6 +23,13 @@ module.exports = {
             },
             refreshToken: {
                 type: Sequelize.STRING
+            },
+            loginFailCount: {
+                type: Sequelize.INTEGER,
+                defaultValue: 0
+            },
+            lastLoginTriedAt: {
+                type: Sequelize.DATE
             }
         });
     },
