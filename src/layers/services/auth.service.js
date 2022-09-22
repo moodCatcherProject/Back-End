@@ -140,13 +140,14 @@ const sendEmail = async (email) => {
     const authNum = Math.random().toString().substr(2, 6);
 
     const mailOptions = {
-        from: process.env.NODEMAILER_USER, // 보내는 사람의 메일 (관리자 이메일)
+        from: '"MoodCatcher" <process.env.NODEMAILER_USER>', // 보내는 사람의 메일 (관리자 이메일)
         to: email, // 받는 사람 메일 (req.body값에 들어가는 email)
-        subject: 'MoodCatcher 회원가입에 성공하셨습니다.', // 메일 제목
-        html: `<h1>MoodCatcher 회원가입을 축하드립니다.</h1>
-            <p>회원가입을 위한 인증번호 입니다.<p>
-            <p>아래의 인증 번호를 입력하여 인증을 완료해주세요.</p>
-            <h2>${authNum}</h2>` // 메일내용 (html으로 잘 꾸며서 할 수 있음)
+        subject: 'MoodCatcher 회원가입을 축하드립니다.', // 메일 제목
+        html: `
+          <h1>MoodCatcher 회원가입을 축하드립니다.</h1>
+          <p>아래의 인증 번호를 입력하여 인증을 완료해주세요.</p>
+          <h2>${authNum}</h2>
+      `
     };
 
     // (메일 전송을 위한 SMTP 필요, 관리자급의 계정정보 필요)
@@ -198,12 +199,13 @@ const forgetPw = async (email) => {
     const hashAuthNum = await bcrypt.hash(authNum, 12);
 
     const mailOptions = {
-        from: process.env.NODEMAILER_USER,
+        from: '"MoodCatcher" <process.env.NODEMAILER_USER>',
         to: email,
         subject: 'MoodCatcher 회원가입에 성공하셨습니다.',
-        html: `<h1>MoodCatcher 회원가입을 축하드립니다.</h1>
-                <p>회원가입을 위한 인증번호 입니다.<p>
+        html: `<h1>MoodCatcher 인증번호가 도착했습니다.</h1>
+                <p>비밀번호 찾기를위한 인증번호 입니다.<p>
                 <p>아래의 인증 번호를 입력하여 인증을 완료해주세요.</p>
+                <p>개인정보 보호를 위해 인증번호는 10분 동안만 유효합니다.</p>
                 <h2>${authNum}</h2>`
     };
 
@@ -217,6 +219,9 @@ const forgetPw = async (email) => {
             }
         });
     };
+
+    await authRepository.createAuthNum(email, hashAuthNum);
+
     send(mailOptions);
     return hashAuthNum;
 };
@@ -234,6 +239,17 @@ const updatePw = async (email, password, confirmPw, hashAuthNum) => {
     new exception.isString({ password }).value;
     new exception.isString({ confirmPw }).value;
 
+    const checkEmail =
+        /^[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/;
+    if (checkEmail.test(email) === false) {
+        throw new exception.BadRequestException('이메일 유효성 에러');
+    }
+
+    const ExisEmail = await authRepository.findByEmail(email);
+    if (!ExisEmail) {
+        throw new exception.BadRequestException('존재하지 않는 이메일');
+    } // 비밀번호 찾기를 하는데 이 이메일로 가입된 회원이 없을 때 에러
+
     if (password !== confirmPw) {
         throw new exception.BadRequestException('비밀번호 에러');
     }
@@ -241,6 +257,12 @@ const updatePw = async (email, password, confirmPw, hashAuthNum) => {
     if (!hashAuthNum) {
         throw new exception.UnauthorizedException('잘못된 접근 입니다');
     } // 비밀번호 변경을 하려면 비밀번호 변경 인증 절차 후 변경을 할 수 있어야 하는데, URL으로 강제로 접근했을때 에러
+
+    // DB에있는 hashAuthNum값과 쿠키에있는 hashAuthNum값을 비교.
+    const findAuthNum = await authRepository.findAuthNum(email, hashAuthNum);
+    if (findAuthNum !== hashAuthNum) {
+        throw new exception.BadRequestException('자신의 계정이 아닙니다');
+    }
 
     const updatePw = await authRepository.updatePw(email, password);
 

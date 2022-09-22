@@ -68,7 +68,7 @@ const forgetPw = async (req, res, next) => {
     try {
         const hashAuthNum = await authService.forgetPw(email);
         res.cookie('hashAuthNum', hashAuthNum, {
-            maxAge: 300000 // 쿠키 유지시간을 얼마나 하면 좋을까?
+            maxAge: 1000 * 60 * 10
         });
         return res.status(200).json(new exception.FormDto('인증번호 발송 성공', { hashAuthNum }));
     } catch (err) {
@@ -139,7 +139,9 @@ const localLogin = async (req, res, next) => {
                     exception.MoodPoint.whenLogin(req.user.authId);
 
                     res.status(200).json({
-                        url: `https://moodcatch.link/login/detail?exist=${exist}&token=${token}`
+                        url:
+                            process.env.CORS_WHITE_LIST +
+                            `/login/detail?exist=${exist}&token=${token}`
                     });
                     res.json();
                 });
@@ -176,7 +178,7 @@ const kakaoCallback = async (req, res, next) => {
             exception.MoodPoint.whenLogin(req.user.authId);
             //카카오 Strategy에서 성공한다면 콜백 실행
             res.status(200).redirect(
-                `https://moodcatch.link/login/detail?exist=${exist}&token=${token}`
+                process.env.CORS_WHITE_LIST + `/login/detail?exist=${exist}&token=${token}`
             );
         });
     } catch (err) {

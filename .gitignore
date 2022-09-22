@@ -3,3 +3,4 @@ node_modules
 dbMockData.js
 mailer.js
 lambda
+public

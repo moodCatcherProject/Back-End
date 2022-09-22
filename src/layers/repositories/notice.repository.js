@@ -6,18 +6,26 @@ const { Notice, UserDetail } = require('../../sequelize/models');
  * @returns userId 유저의 모든 알림
  */
 const findAllNotice = async (userId) => {
-    return await Notice.findAll({
-        where: { userId }
-    });
+    try {
+        return await Notice.findAll({
+            where: { userId }
+        });
+    } catch (err) {
+        throw new exception.BadRequestException('유저의 알림 가져오기 실패');
+    }
 };
 /**
  * @desc userId 유저의 모든 알림 삭제
  * @param {number} userId
  */
 const deleteAllNotice = async (userId) => {
-    Notice.destroy({
-        where: { userId }
-    });
+    try {
+        Notice.destroy({
+            where: { userId }
+        });
+    } catch (err) {
+        throw new exception.BadRequestException('유저 알림 삭제 실패');
+    }
 };
 
 /**
@@ -26,14 +34,18 @@ const deleteAllNotice = async (userId) => {
  *
  */
 const updateIsExsitsNotice = async (userId) => {
-    UserDetail.update(
-        {
-            isExistsNotice: false
-        },
-        {
-            where: { detailId: userId }
-        }
-    );
+    try {
+        UserDetail.update(
+            {
+                isExistsNotice: false
+            },
+            {
+                where: { detailId: userId }
+            }
+        );
+    } catch (err) {
+        throw new exception.BadRequestException('유저 알림 갱신 실패');
+    }
 };
 
 module.exports = {

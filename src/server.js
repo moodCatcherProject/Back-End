@@ -1,5 +1,5 @@
 const app = require('./app');
 
-app.listen(3000, () => {
-    console.log('서버 가동');
+app.listen(process.env.PORT, () => {
+    console.log('서버 가동', process.env.PORT);
 });

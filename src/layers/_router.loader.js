@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { isLoggedIn, isNotLoggedIn } = require('./routes/middlewares/authMiddle');
 const startRouter = require('./routes/start.router');
+const kakaoMapRouter = require('./routes/kakaoMap.router');
 const itemRouter = require('./routes/item.router');
 const authRouter = require('./routes/auth.router');
 const commentRouter = require('./routes/comment.router');
@@ -11,6 +12,7 @@ const likeRouter = require('./routes/like.router');
 const noticeRouter = require('./routes/notice.router');
 
 router.use('/start', startRouter);
+router.use('/map', isLoggedIn, kakaoMapRouter);
 router.use('/musinsa', itemRouter);
 router.use('/auth', authRouter);
 router.use('/comments', commentRouter);
