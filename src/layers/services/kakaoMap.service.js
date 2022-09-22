@@ -6,14 +6,22 @@ const updatePosition = async (userId, latitude, longitude) => {
     return positionData;
 };
 
-const findAroundCatcher = async (userId, latitude, longitude, maxDist) => {
+const findAroundCatcher = async (userId, maxDist) => {
+    const userPosition = await kakaoMapRepository.findUserPosition(userId);
+    const latitude = userPosition.latitude;
+    const longitude = userPosition.longitude;
     const authData = await kakaoMapRepository.findAroundCatcher();
+    console.log(latitude, longitude);
     //오래 걸릴 수 있으니 고민이 필요함.
     let positionArr = [];
     for (let data of authData) {
-        if (authData.latitude == null) continue;
+        if (data.latitude == null) continue;
+
         if (distance(latitude, longitude, data.latitude, data.longitude) < maxDist) {
-            const userData = await userRepository.getUserStatusByUserId(userId);
+            const userData = await userRepository.getUserStatusByUserId(data.authId);
+            const authData = await kakaoMapRepository.findUserPosition(data.authId);
+            userData.latitude = authData.latitude;
+            userData.longitude = authData.longitude;
             positionArr.push(userData);
         }
     }
