@@ -21,11 +21,20 @@ module.exports = {
             password: {
                 type: Sequelize.STRING
             },
-
+            refreshToken: {
+                type: Sequelize.STRING
+            },
+            loginFailCount: {
+                type: Sequelize.INTEGER,
+                defaultValue: 0
+            },
+            lastLoginTriedAt: {
+                type: Sequelize.DATE
+            },
             latitude: {
                 type: Sequelize.FLOAT
             },
-            password: {
+            longitude: {
                 type: Sequelize.FLOAT
             },
             hashAuthNum: {

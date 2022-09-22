@@ -1,6 +1,6 @@
 const exception = require('../../exceptModels/_.models.loader');
 const jwt = require('jsonwebtoken');
-const { User, UserDetail } = require('../../../sequelize/models');
+const { User, UserDetail, Auth } = require('../../../sequelize/models');
 /**
  * 로그인에 해당하는 전략을 짜야하는데,
 로그인한 사용자는 회원가입과 로그인 라우터에 접근하면 안되며,
@@ -28,18 +28,39 @@ exports.isLoggedIn = async (req, res, next) => {
         if (tokenType !== 'Bearer') {
             throw new exception.UnauthorizedException('로그인 필요');
         }
+        const myToken = verifyToken(tokenValue);
 
-        const { userId } = jwt.verify(tokenValue, process.env.SECRET_KEY);
+        if (myToken === 'jwt expired') {
+            console.log('access token 만료');
 
-        const userData = await User.findOne({ where: userId });
-        const detailUserData = await UserDetail.findOne({ where: { detailId: userId } });
-        res.locals.user = userData.dataValues;
-        res.locals.detailUser = detailUserData.dataValues;
+            const userInfo = jwt.decode(tokenValue, process.env.SECRET_KEY);
+            const userId = userInfo.userId;
+            let refreshToken;
+            Auth.findOne({ where: { authId: userId } }).then((data) => {
+                refreshToken = data.refreshToken;
+                const myRefreshToken = verifyToken(refreshToken);
+                if (myRefreshToken === 'jwt expired') {
+                    throw new exception.UnauthorizedException('로그인 필요');
+                } else {
+                    const myNewToken = jwt.sign({ userId: data.authId }, process.env.SECRET_KEY, {
+                        expiresIn: '2h'
+                    });
+                    res.send({ message: 'new token', myNewToken });
+                }
+            });
+        } else {
+            const { userId } = jwt.verify(tokenValue, process.env.SECRET_KEY);
 
-        // UserDetail.findOne({ where: { detailId: userId } }).then((detail) => {
-        //     res.locals.detailUser = detail;
-        // });
-        next();
+            const userData = await User.findOne({ where: userId });
+            const detailUserData = await UserDetail.findOne({ where: { detailId: userId } });
+            res.locals.user = userData.dataValues;
+            res.locals.detailUser = detailUserData.dataValues;
+
+            // UserDetail.findOne({ where: { detailId: userId } }).then((detail) => {
+            //     res.locals.detailUser = detail;
+            // });
+            next();
+        }
     } catch (err) {
         next(err);
     }
@@ -61,3 +82,11 @@ exports.isNotLoggedIn = (req, res, next) => {
         next();
     }
 };
+
+function verifyToken(token) {
+    try {
+        return jwt.verify(token, process.env.SECRET_KEY);
+    } catch (err) {
+        return err.message;
+    }
+}
