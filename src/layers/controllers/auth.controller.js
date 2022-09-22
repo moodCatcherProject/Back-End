@@ -68,7 +68,7 @@ const forgetPw = async (req, res, next) => {
     try {
         const hashAuthNum = await authService.forgetPw(email);
         res.cookie('hashAuthNum', hashAuthNum, {
-            maxAge: 300000 // 쿠키 유지시간을 얼마나 하면 좋을까?
+            maxAge: 1000 * 60 * 10
         });
         return res.status(200).json(new exception.FormDto('인증번호 발송 성공', { hashAuthNum }));
     } catch (err) {
