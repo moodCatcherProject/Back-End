@@ -11,6 +11,15 @@ authRouter.post('/signup', isNotLoggedIn, authController.localSignUp);
 // 이메일 확인(/api/auth/checkEmail?email)
 authRouter.get('/checkEmail', isNotLoggedIn, authController.checkEmail);
 
+// 인증번호 발송(/api/auth/sendEmail)
+authRouter.post('/sendEmail', isNotLoggedIn, authController.sendEmail);
+
+// 비밀번호 찾기(/api/auth/forgetPw)
+authRouter.post('/forgetPw', isNotLoggedIn, authController.forgetPw);
+
+// 비밀번호 변경(/api/auth/updatePw?email)
+authRouter.put('/updatePw', isNotLoggedIn, authController.updatePw);
+
 // 닉네임 확인(/api/auth/checkNickname?nickname)
 authRouter.get('/checkNickname', isLoggedIn, authController.checkNickname);
 

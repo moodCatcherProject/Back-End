@@ -12,7 +12,7 @@ const findByEmail = async (email) => {
 };
 
 /**
- * Auth 테이블에 email, 해쉬password 생성.
+ * Auth 테이블에 email, 해시password 생성.
  * @param { string } email
  * @param { string } password
  * @returns { Promise<{ email: string, password: string }> | null> }
@@ -50,10 +50,45 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId, grade) => 
     await UserDetail.update({ age, gender }, { where: { detailId } });
     return;
 };
-// 디테일에 나이 성별 유저에 닉네임
+
+/**
+ * Auth 테이블에 해당 email인 password를 해시화하고 업데이트.
+ * @param { string } email
+ * @param { string } password
+ * @returns { Promise<{ email: string, password: string }> | null> }
+ */
+const updatePw = async (email, password) => {
+    const hash = await bcrypt.hash(password, 12);
+    await Auth.update({ password: hash }, { where: { email } });
+    return;
+};
+
+/**
+ * Auth 테이블에 해당 email에 null이였던 hashAuthNum을 업데이트.
+ * @param { string } email
+ * @param { string } hashAuthNum
+ * @returns { Promise<{ email: string, hashAuthNum: string }> | null> }
+ */
+const createAuthNum = async (email, hashAuthNum) => {
+    await Auth.update({ hashAuthNum }, { where: { email } });
+    return;
+};
+
+/**
+ * Auth 테이블에 해당 email의 hashAuthNum을 반환.
+ * @param { string } email
+ * @returns { Promise<{ email: string }> | null> }
+ */
+const findAuthNum = async (email) => {
+    const findAuthNum = await Auth.findOne({ where: { email } });
+    return findAuthNum.dataValues.hashAuthNum;
+};
 
 module.exports = {
     findByEmail,
     createSignUp,
-    updateNicknameAgeGender
+    updateNicknameAgeGender,
+    updatePw,
+    createAuthNum,
+    findAuthNum
 };

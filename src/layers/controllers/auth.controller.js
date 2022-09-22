@@ -50,6 +50,47 @@ const checkEmail = async (req, res, next) => {
 };
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
+const sendEmail = async (req, res, next) => {
+    const { email } = req.body;
+
+    try {
+        const authNum = await authService.sendEmail(email);
+        return res.status(200).json(new exception.FormDto('인증번호 발송 성공', { authNum }));
+    } catch (err) {
+        next(err);
+    }
+};
+
+/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
+const forgetPw = async (req, res, next) => {
+    const { email } = req.body;
+
+    try {
+        const hashAuthNum = await authService.forgetPw(email);
+        res.cookie('hashAuthNum', hashAuthNum, {
+            maxAge: 1000 * 60 * 10
+        });
+        return res.status(200).json(new exception.FormDto('인증번호 발송 성공', { hashAuthNum }));
+    } catch (err) {
+        next(err);
+    }
+};
+
+/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
+const updatePw = async (req, res, next) => {
+    const { email } = req.query;
+    const { password, confirmPw } = req.body;
+    const { hashAuthNum } = req.cookies;
+
+    try {
+        await authService.updatePw(email, password, confirmPw, hashAuthNum);
+        return res.status(201).json(new exception.FormDto('비밀번호 변경 성공'));
+    } catch (err) {
+        next(err);
+    }
+};
+
+/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const checkNickname = async (req, res, next) => {
     const { nickname } = req.query;
 
@@ -101,7 +142,9 @@ const localLogin = async (req, res, next) => {
                     exception.MoodPoint.whenLogin(req.user.authId);
 
                     res.status(200).json({
-                        url: `https://moodcatch.link/login/detail?exist=${exist}&token=${token}`
+                        url:
+                            process.env.CORS_WHITE_LIST +
+                            `/login/detail?exist=${exist}&token=${token}`
                     });
                     res.json();
                 });
@@ -141,7 +184,7 @@ const kakaoCallback = async (req, res, next) => {
             exception.MoodPoint.whenLogin(req.user.authId);
             //카카오 Strategy에서 성공한다면 콜백 실행
             res.status(200).redirect(
-                `https://moodcatch.link/login/detail?exist=${exist}&token=${token}`
+                process.env.CORS_WHITE_LIST + `/login/detail?exist=${exist}&token=${token}`
             );
         });
     } catch (err) {
@@ -153,6 +196,9 @@ module.exports = {
     localSignUp,
     updateNicknameAgeGender,
     checkEmail,
+    sendEmail,
+    forgetPw,
+    updatePw,
     checkNickname,
     localLogin,
     kakaoCallback

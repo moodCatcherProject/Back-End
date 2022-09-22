@@ -30,6 +30,15 @@ module.exports = {
             },
             lastLoginTriedAt: {
                 type: Sequelize.DATE
+            },
+            latitude: {
+                type: Sequelize.FLOAT
+            },
+            longitude: {
+                type: Sequelize.FLOAT
+            },
+            hashAuthNum: {
+                type: Sequelize.STRING
             }
         });
     },

@@ -132,12 +132,10 @@ const findAllPosts = async (
             break;
         }
     }
-    try {
-        data = data.map((e) => e.get({ plain: true }));
-    } catch (err) {
-        console.log(err);
-        throw new exception.NotFoundException('검색내용 없음');
+    if (data.length < 1) {
+        throw new exception.BadRequestException('게시물 없음');
     }
+    data = data.map((e) => e.get({ plain: true }));
 
     return data;
 };
