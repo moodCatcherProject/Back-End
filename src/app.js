@@ -30,6 +30,7 @@ class App {
         this.setRouter();
         this.setErrorHandler();
     }
+
     setMiddleWare() {
         passportConfig();
 
