@@ -2,7 +2,7 @@ const e = require('express');
 const authService = require('../services/auth.service');
 const exception = require('../exceptModels/_.models.loader');
 const passport = require('passport');
-const { User } = require('../../sequelize/models');
+const { User, Auth } = require('../../sequelize/models');
 const jwt = require('jsonwebtoken');
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
@@ -129,11 +129,14 @@ const localLogin = async (req, res, next) => {
                 }
 
                 // done(null, user)로 로직이 성공적이라면, 세션에 사용자 정보를 저장해놔서 로그인 상태가 된다.
-                isExistUserNickname(req.user.authId).then((data) => {
+                isExistUserNickname(req.user.authId).then(async (data) => {
                     const exist = data.nickname ? true : false;
                     const token = jwt.sign({ userId: req.user.authId }, process.env.SECRET_KEY, {
-                        expiresIn: '1y'
+                        expiresIn: '2h'
                     });
+                    const refreshToken = jwt.sign({}, process.env.SECRET_KEY, { expiresIn: '7d' });
+                    await Auth.update({ refreshToken }, { where: { authId: req.user.authId } });
+
                     res.header({ authorization: `Bearer ${token}` });
                     //main
                     exception.MoodPoint.whenLogin(req.user.authId);
@@ -167,11 +170,14 @@ const isExistUserNickname = async (userId) => {
 const kakaoCallback = async (req, res, next) => {
     try {
         //카카오 Strategy에서 성공한다면 콜백 실행
-        isExistUserNickname(req.user.authId).then((data) => {
+        isExistUserNickname(req.user.authId).then(async (data) => {
             const exist = data.nickname ? true : false;
             const token = jwt.sign({ userId: req.user.authId }, process.env.SECRET_KEY, {
-                expiresIn: '1h'
+                expiresIn: '2h'
             });
+
+            const refreshToken = jwt.sign({}, process.env.SECRET_KEY, { expiresIn: '7d' });
+            await Auth.update({ refreshToken }, { where: { authId: req.user.authId } });
             // const refreshToken = jwt.sign({}, process.env.SECRET_KEY , {
             //     expiresIn : '1w'
             // }) 리프레시 토큰을 사용할 지 팀원과 논의하기
