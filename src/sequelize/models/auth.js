@@ -22,7 +22,6 @@ module.exports = (sequelize, DataTypes) => {
             },
             provider: {
                 type: DataTypes.STRING,
-
                 allowNull: false
             },
             email: {
@@ -31,7 +30,16 @@ module.exports = (sequelize, DataTypes) => {
             password: {
                 type: DataTypes.STRING
             },
-
+            refreshToken: {
+                type: DataTypes.STRING
+            },
+            loginFailCount: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0
+            },
+            lastLoginTriedAt: {
+                type: DataTypes.DATE
+            },
             latitude: {
                 type: DataTypes.FLOAT,
                 defaultValue: null
