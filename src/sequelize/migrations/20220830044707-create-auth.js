@@ -25,7 +25,7 @@ module.exports = {
             latitude: {
                 type: Sequelize.FLOAT
             },
-            password: {
+            longitude: {
                 type: Sequelize.FLOAT
             },
             hashAuthNum: {

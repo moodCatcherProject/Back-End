@@ -2,6 +2,14 @@ const { Auth } = require('../../sequelize/models');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
 
+const findUserPosition = async (userId) => {
+    return await Auth.findOne({
+        where: { authId: userId },
+        attributes: ['latitude', 'longitude'],
+        raw: true
+    });
+};
+
 const updatePosition = async (userId, latitude, longitude) => {
     return await Auth.update(
         {
@@ -14,11 +22,12 @@ const updatePosition = async (userId, latitude, longitude) => {
     );
 };
 
-const findAroundCatcher = async (userId, latitude, longitude, distance) => {
+const findAroundCatcher = async () => {
     return await Auth.findAll({ raw: true });
 };
 
 module.exports = {
+    findUserPosition,
     updatePosition,
     findAroundCatcher
 };
