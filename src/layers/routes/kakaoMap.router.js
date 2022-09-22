@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const kakaoController = require('../controllers/kakaoMap.controller');
 
-router.post('/', kakaoController.updatePosition);
+router.patch('/', kakaoController.updatePosition);
 
+router.get('/', kakaoController.findAroundCatcher);
 module.exports = router;
