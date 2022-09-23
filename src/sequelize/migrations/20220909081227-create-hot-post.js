@@ -20,6 +20,10 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.STRING
             },
+            rank: {
+                allowNull: false,
+                type: DataTypes.INTEGER
+            },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE,

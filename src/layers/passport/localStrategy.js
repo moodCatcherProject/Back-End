@@ -38,10 +38,12 @@ module.exports = () => {
 
                     // 만일 가입된 회원이면
                     if (exUser) {
-                        // 로그인 3회 실패 시 10분간 로그인 제한
+                        // 로그인 5회 실패 시 10분간 로그인 제한
                         if (
-                            exUser.loginFailCount === 3 &&
-                            new Date(exUser.lastLoginTriedAt) - new Date() >= 0
+                            exUser.loginFailCount === 5 &&
+                            new Date(exUser.lastLoginTriedAt) -
+                                new Date().setHours(new Date().getHours() + 9) >=
+                                0
                         ) {
                             done(null, false, {
                                 message: `로그인 시도 횟수를 초과하였습니다. 보안을 위해 지금은 로그인 할 수 없습니다. 잠시 뒤에 로그인 해주세요. 로그인 가능 시각 : ${exUser.lastLoginTriedAt}`
@@ -57,8 +59,8 @@ module.exports = () => {
                             );
                             done(null, exUser); //? 성공이면 done()의 2번째 인수에 선언
                         } else {
-                            // 로그인 시도 3회 도달 시 다시 0으로 리셋
-                            if (exUser.loginFailCount === 3) {
+                            // 로그인 시도 5회 도달 시 다시 0으로 리셋
+                            if (exUser.loginFailCount === 5) {
                                 await Auth.update(
                                     { loginFailCount: 0, lastLoginTriedAt: null },
                                     { where: { email } }

@@ -177,7 +177,7 @@ const findOnePost = async (postId, userId) => {
 
 /**
  * 인기 게시물 조회(1,2,3위)
- * @returns { Promise<[{ postId:number, imgUrl:string }, { postId:number, imgUrl:string }, { postId:number, imgUrl:string }] | null>}
+ * @returns { Promise<[{ postId:number, userId:number, imgUrl:string }, { postId:number, userId:number, imgUrl:string }] | null>}
  */
 const findHotPosts = async () => {
     const hotPosts = await postRepository.findHotPosts();
@@ -187,6 +187,29 @@ const findHotPosts = async () => {
             postId: post.postId,
             imgUrl: process.env.S3_STORAGE_URL + post.imgUrl,
             userId: post.userId
+        };
+    });
+};
+
+/**
+ * 명예의 전당 게시물 조회
+ * @param {number} page
+ * @param {number} count
+ * @returns { Promise<[{ postId:number, userId:number, rank:number, createdAt:date, title:string, content:string, imgUrl:string, likeCount:boolean }] | null>}
+ */
+const findHonorPosts = async (page, count) => {
+    const honorPosts = await postRepository.findHonorPosts(page, count);
+
+    return honorPosts.map((post) => {
+        return {
+            postId: post['postId'],
+            userId: post['userId'],
+            rank: post['rank'],
+            createdAt: post['createdAt'],
+            title: post['Post.title'],
+            content: post['Post.content'],
+            likeCount: post['Post.likeCount'],
+            imgUrl: process.env.S3_STORAGE_URL + `w280/` + post['Post.imgUrl'].split('/')[1]
         };
     });
 };
@@ -342,6 +365,7 @@ module.exports = {
     findAllPosts,
     findOnePost,
     findHotPosts,
+    findHonorPosts,
     updatePost,
     deletePost,
 

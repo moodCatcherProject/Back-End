@@ -12,7 +12,7 @@ const findReComment = async (recommentId) => {
         });
         return findReComment;
     } catch (err) {
-        next(err);
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -32,7 +32,7 @@ const createReComment = async (commentId, content, userId) => {
         });
         return createdComment;
     } catch (err) {
-        next(err);
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -47,7 +47,7 @@ const updateReComment = async (recommentId, content) => {
         await Recomment.update({ content }, { where: { recommentId } });
         return await Recomment.findOne({ where: { recommentId } });
     } catch (err) {
-        next(err);
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -61,7 +61,7 @@ const deleteReComment = async (recommentId) => {
         const deleteComment = await Recomment.destroy({ where: { recommentId } });
         return deleteComment;
     } catch (err) {
-        next(err);
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
