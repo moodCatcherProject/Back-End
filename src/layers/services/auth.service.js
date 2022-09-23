@@ -138,14 +138,8 @@ const sendEmail = async (email) => {
 
     // 인증번호 발송을 위한 랜덤한 숫자 6글자를 생성
     const authNum = Math.random().toString().substr(2, 6);
-
     const secretKey = '12345678901234567890123456789012';
-    const iv = 'abcdefghijklmnop';
-    const cipher = crypto.AES.encrypt(authNum, crypto.enc.Utf8.parse(secretKey), {
-        iv: crypto.enc.Utf8.parse(iv),
-        padding: crypto.pad.Pkcs7,
-        mode: crypto.mode.CBC
-    });
+    const hashAuthNum = crypto.AES.encrypt(authNum, secretKey).toString();
 
     const mailOptions = {
         from: '"MoodCatcher" <process.env.NODEMAILER_USER>', // 보내는 사람의 메일 (관리자 이메일)
@@ -171,7 +165,7 @@ const sendEmail = async (email) => {
         });
     };
     send(mailOptions);
-    return authNum;
+    return hashAuthNum;
 };
 
 /**
@@ -205,14 +199,7 @@ const forgetPw = async (email) => {
 
     const authNum = Math.random().toString().substr(2, 6);
     const secretKey = '12345678901234567890123456789012';
-    const iv = 'abcdefghijklmnop';
-    const cipher = crypto.AES.encrypt(authNum, crypto.enc.Utf8.parse(secretKey), {
-        iv: crypto.enc.Utf8.parse(iv),
-        padding: crypto.pad.Pkcs7,
-        mode: crypto.mode.CBC
-    });
-
-    const hashAuthNum = cipher.key.words[0];
+    const hashAuthNum = crypto.AES.encrypt(authNum, secretKey).toString();
 
     const mailOptions = {
         from: '"MoodCatcher" <process.env.NODEMAILER_USER>',
