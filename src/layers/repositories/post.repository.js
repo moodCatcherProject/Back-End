@@ -1,4 +1,12 @@
-const { User, UserDetail, Post, Item, Like, HotPost } = require('../../sequelize/models');
+const {
+    User,
+    UserDetail,
+    Post,
+    Item,
+    Like,
+    HotPost,
+    HonorPost
+} = require('../../sequelize/models');
 const exception = require('../exceptModels/_.models.loader');
 
 const sequelize = require('sequelize');
@@ -23,7 +31,7 @@ const createPost = async (userId, title, content, gender) => {
             imgUrl: 'default'
         });
     } catch (err) {
-        throw new exception.BadRequestException('게시물 생성 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -49,7 +57,7 @@ const findPostDetailWithLikeStatus = async (postId, userId) => {
 
         return post;
     } catch (err) {
-        throw new exception.BadRequestException('좋아요를 누른 적 있는 게시물 조회 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -75,7 +83,7 @@ const findPostDetail = async (postId) => {
 
         return post;
     } catch (err) {
-        throw new exception.BadRequestException('좋아요를 누르지 않은 게시물 조회 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -90,7 +98,7 @@ const findPost = async (postId) => {
             where: { postId, delete: false }
         });
     } catch (err) {
-        throw new exception.BadRequestException('게시물 데이터 조회 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 /**
@@ -112,7 +120,7 @@ const findAllPosts = async (page, count, orderKey, order, gender) => {
             where: { gender, delete: false }
         });
     } catch (err) {
-        throw new exception.BadRequestException('모든 게시물 조회 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -135,7 +143,7 @@ const findMyPage = async (userId, page, count, orderKey, order) => {
             order: [[orderKey, order]]
         });
     } catch (err) {
-        throw new exception.BadRequestException('마이페이지 조회 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 /**
@@ -165,7 +173,7 @@ const findLikePage = async (userId, page, count, orderKey, order, gender) => {
             order: [[orderKey, order]]
         });
     } catch (err) {
-        throw new exception.BadRequestException('좋아요 페이지 조회 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -194,7 +202,7 @@ const findSearchTitleKeyword = async (keyword, page, count, orderKey, order, gen
             order: [[orderKey, order]]
         });
     } catch (err) {
-        throw new exception.BadRequestException('제목으로 검색하기 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 /**
@@ -225,7 +233,7 @@ const findSearchWriterKeyword = async (keyword, page, count) => {
         }
         return result;
     } catch (err) {
-        throw new exception.BadRequestException('작성자로 검색 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -244,7 +252,7 @@ const findAlgorithmPost = async (page, count) => {
             }
         });
     } catch (err) {
-        throw new exception.BadRequestException('검색페이지 알고리즘 게시물 출력 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -259,7 +267,7 @@ const findLikeNumByPostId = async (postId) => {
             where: { postId }
         });
     } catch (err) {
-        throw new exception.BadRequestException('게시물의 좋아요 숫자 조회 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 /**
@@ -282,7 +290,7 @@ const updatePost = async (postId, title, content, gender) => {
             }
         );
     } catch (err) {
-        throw new exception.NotFoundException('해당 게시물이 없음.');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
     return await findPost(postId);
 };
@@ -303,7 +311,7 @@ const deletePost = async (postId) => {
             }
         );
     } catch (err) {
-        throw new exception.NotFoundException('해당 게시물이 없음.');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 // // POST ADD
@@ -322,7 +330,7 @@ const findRepPost = async (userId) => {
 
         return await Post.findByPk(repPostIdAttr.repPostId);
     } catch (err) {
-        throw new exception.BadRequestException('대표 게시물 조회 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -347,7 +355,7 @@ const updateRepPost = async (userId, repPostId) => {
         });
         return repPostIdData.repPostId;
     } catch (err) {
-        throw new exception.NotFoundException('게시물이 없음.');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -370,7 +378,7 @@ const createItem = async (postId, item) => {
             price
         });
     } catch (err) {
-        throw new exception.BadRequestException('무신사 아이템 등록 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -387,7 +395,7 @@ const findItems = async (postId) => {
             raw: true
         });
     } catch (err) {
-        throw new exception.BadRequestException('아이템 찾기 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -413,7 +421,7 @@ const updateItem = async (postId, item) => {
         );
         return await Item.findOne({ where: { postId } });
     } catch (err) {
-        throw new exception.NotFoundException('해당 게시물이 없음.');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -439,7 +447,7 @@ const updateImage = async (postId, imgUrl) => {
 
         return await findPost(postId);
     } catch (err) {
-        throw new exception.BadRequestException('이미지 등록 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 // // NOTICE
@@ -450,7 +458,7 @@ const isExistNotice = async (userId) => {
             attributes: ['isExistsNotice']
         });
     } catch (err) {
-        throw new exception.BadRequestException('알림 갱신 기록 조회 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -458,33 +466,67 @@ const isExistNotice = async (userId) => {
  * postId가 일치하는 게시글의 likeCount를 variation(1 또는 -1)만큼 증감
  * todayLikeCount를 todayVariation(1 또는 -1)만큼 증감 후 exLikeCount, likeCount 배열 반환
  * @param {number} postId
+ * @param {number} variation
+ * @param {number} todayVariation
  * @returns 해당 게시글의 plusLikeCount 함수 실행 전과 실행 후 likeCount의 배열
  */
 const updateLikeCount = async (postId, variation, todayVariation) => {
-    const post = await findPost(postId);
+    try {
+        const post = await findPost(postId);
 
-    const exLikeCount = post.likeCount;
-    const exTodayLikeCount = post.todayLikeCount;
+        const exLikeCount = post.likeCount;
+        const exTodayLikeCount = post.todayLikeCount;
 
-    const likeCount = exLikeCount + variation;
-    const todayLikeCount = exTodayLikeCount + todayVariation;
+        const likeCount = exLikeCount + variation;
+        const todayLikeCount = exTodayLikeCount + todayVariation;
 
-    await Post.update({ likeCount, todayLikeCount }, { where: { postId } });
+        await Post.update({ likeCount, todayLikeCount }, { where: { postId } });
 
-    const data = [exLikeCount, likeCount];
+        const data = [exLikeCount, likeCount];
 
-    return data;
+        return data;
+    } catch (err) {
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
+    }
 };
 
 /**
  * HotPost 테이블에서 모든 data 반환
- * @returns { Promise<[{ postId:number, imgUrl:string }, { postId:number, imgUrl:string }, { postId:number, imgUrl:string }] | null>}
+ * @returns { Promise<[{ postId:number, userId:number, imgUrl:string }, { postId:number, userId:number, imgUrl:string }] | null>}
  */
 const findHotPosts = async () => {
     try {
         return await HotPost.findAll();
     } catch (err) {
-        throw new exception.BadRequestException('hot post 조회 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
+    }
+};
+
+/**
+ * HonorPost 테이블에서 Post 테이블을 참조하여 모든 data 반환
+ * @param {number} page
+ * @param {number} count
+ * @returns { Promise<[{ postId:number, userId:number, rank:number, createdAt:date, title:string, content:string, imgUrl:string, likeCount:boolean }] | null>}
+ */
+const findHonorPosts = async (page, count) => {
+    try {
+        return await HonorPost.findAll({
+            raw: true,
+            offset: count * (page - 1),
+            limit: count,
+            distinct: true,
+            attributes: { exclude: ['honorId'] },
+            order: [['honorId', 'DESC']],
+            include: [
+                {
+                    model: Post,
+                    where: { delete: false },
+                    attributes: ['title', 'content', 'imgUrl', 'likeCount']
+                }
+            ]
+        });
+    } catch (err) {
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -518,5 +560,6 @@ module.exports = {
     isExistNotice,
 
     updateLikeCount,
-    findHotPosts
+    findHotPosts,
+    findHonorPosts
 };

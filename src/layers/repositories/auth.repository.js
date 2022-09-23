@@ -11,7 +11,7 @@ const findByEmail = async (email) => {
         const findByEmail = await Auth.findOne({ where: { email } });
         return findByEmail;
     } catch (err) {
-        next(err);
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -34,7 +34,7 @@ const createSignUp = async (email, password) => {
         });
         return auth;
     } catch (err) {
-        next(err);
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -59,7 +59,7 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId, grade) => 
         await UserDetail.update({ age, gender }, { where: { detailId } });
         return;
     } catch (err) {
-        next(err);
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -75,7 +75,7 @@ const updatePw = async (email, password) => {
         await Auth.update({ password: hash }, { where: { email } });
         return;
     } catch (err) {
-        next(err);
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -90,7 +90,7 @@ const createAuthNum = async (email, hashAuthNum) => {
         await Auth.update({ hashAuthNum }, { where: { email } });
         return;
     } catch (err) {
-        next(err);
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -104,7 +104,7 @@ const findAuthNum = async (email) => {
         const findAuthNum = await Auth.findOne({ where: { email } });
         return findAuthNum.dataValues.hashAuthNum;
     } catch (err) {
-        next(err);
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 

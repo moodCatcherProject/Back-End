@@ -41,6 +41,11 @@ module.exports = {
                 type: Sequelize.BOOLEAN,
                 defaultValue: false,
                 allowNull: false
+            },
+            isExistsHotPosts: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: false,
+                allowNull: false
             }
         });
     },

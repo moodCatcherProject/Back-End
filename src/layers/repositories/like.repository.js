@@ -7,9 +7,13 @@ const { Like } = require('../../sequelize/models');
  * @returns { Promise<{ likeId:number, postId:number, userId:number, likeStatus:boolean, createdAt:date, updatedAt:date } | null>}
  */
 const findLikeByUserIdAndPostId = async (userId, postId) => {
-    return await Like.findOne({
-        where: { userId, postId }
-    });
+    try {
+        return await Like.findOne({
+            where: { userId, postId }
+        });
+    } catch (err) {
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
+    }
 };
 
 /**
@@ -19,11 +23,15 @@ const findLikeByUserIdAndPostId = async (userId, postId) => {
  * @returns { Promise<{ likeId:number, postId:number, userId:number, likeStatus:boolean, createdAt:date, updatedAt:date } | null>}
  */
 const registerLike = async (userId, postId) => {
-    return await Like.create({
-        userId,
-        postId,
-        likeStatus: true
-    });
+    try {
+        return await Like.create({
+            userId,
+            postId,
+            likeStatus: true
+        });
+    } catch (err) {
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
+    }
 };
 
 /**
@@ -34,9 +42,13 @@ const registerLike = async (userId, postId) => {
  * @returns { Promise<{ likeId:number, postId:number, userId:number, likeStatus:boolean, createdAt:date, updatedAt:date } | null>}
  */
 const updateLike = async (userId, postId, likeStatus) => {
-    await Like.update({ likeStatus }, { where: { userId, postId } });
+    try {
+        await Like.update({ likeStatus }, { where: { userId, postId } });
 
-    return await findLikeByUserIdAndPostId(userId, postId);
+        return await findLikeByUserIdAndPostId(userId, postId);
+    } catch (err) {
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
+    }
 };
 
 module.exports = { findLikeByUserIdAndPostId, registerLike, updateLike };
