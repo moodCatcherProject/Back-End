@@ -31,7 +31,7 @@ const createPost = async (userId, title, content, gender) => {
             imgUrl: 'default'
         });
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -57,7 +57,7 @@ const findPostDetailWithLikeStatus = async (postId, userId) => {
 
         return post;
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -83,7 +83,7 @@ const findPostDetail = async (postId) => {
 
         return post;
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -98,7 +98,7 @@ const findPost = async (postId) => {
             where: { postId, delete: false }
         });
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 /**
@@ -120,7 +120,7 @@ const findAllPosts = async (page, count, orderKey, order, gender) => {
             where: { gender, delete: false }
         });
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -143,7 +143,7 @@ const findMyPage = async (userId, page, count, orderKey, order) => {
             order: [[orderKey, order]]
         });
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 /**
@@ -173,7 +173,7 @@ const findLikePage = async (userId, page, count, orderKey, order, gender) => {
             order: [[orderKey, order]]
         });
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -202,7 +202,7 @@ const findSearchTitleKeyword = async (keyword, page, count, orderKey, order, gen
             order: [[orderKey, order]]
         });
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 /**
@@ -233,7 +233,7 @@ const findSearchWriterKeyword = async (keyword, page, count) => {
         }
         return result;
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -252,7 +252,7 @@ const findAlgorithmPost = async (page, count) => {
             }
         });
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -267,7 +267,7 @@ const findLikeNumByPostId = async (postId) => {
             where: { postId }
         });
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 /**
@@ -290,7 +290,7 @@ const updatePost = async (postId, title, content, gender) => {
             }
         );
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
     return await findPost(postId);
 };
@@ -311,7 +311,7 @@ const deletePost = async (postId) => {
             }
         );
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 // // POST ADD
@@ -330,7 +330,7 @@ const findRepPost = async (userId) => {
 
         return await Post.findByPk(repPostIdAttr.repPostId);
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -355,7 +355,7 @@ const updateRepPost = async (userId, repPostId) => {
         });
         return repPostIdData.repPostId;
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -378,7 +378,7 @@ const createItem = async (postId, item) => {
             price
         });
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -395,7 +395,7 @@ const findItems = async (postId) => {
             raw: true
         });
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -421,7 +421,7 @@ const updateItem = async (postId, item) => {
         );
         return await Item.findOne({ where: { postId } });
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -447,7 +447,7 @@ const updateImage = async (postId, imgUrl) => {
 
         return await findPost(postId);
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 // // NOTICE
@@ -458,7 +458,7 @@ const isExistNotice = async (userId) => {
             attributes: ['isExistsNotice']
         });
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -486,7 +486,7 @@ const updateLikeCount = async (postId, variation, todayVariation) => {
 
         return data;
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -498,7 +498,7 @@ const findHotPosts = async () => {
     try {
         return await HotPost.findAll();
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
