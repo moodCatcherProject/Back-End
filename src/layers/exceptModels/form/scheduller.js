@@ -44,7 +44,7 @@ const createHotPost = async () => {
         order: [['todayLikeCount', 'DESC']],
         attributes: ['postId', 'imgUrl', 'userId'],
         limit: 3,
-        where: { delete: false },
+        where: { delete: false, isExistsHotPosts: false },
         raw: true
     });
 
@@ -54,13 +54,26 @@ const createHotPost = async () => {
     });
 
     //HotPosts 테이블에 조회한 3개의 data 저장
-    for (let hotPost of hotPosts) {
+    for (let i = 0; i < hotPosts.length; i++) {
         try {
             await HotPost.create({
-                postId: hotPost.postId,
-                imgUrl: hotPost.imgUrl,
-                userId: hotPost.userId
+                postId: hotPosts[i].postId,
+                imgUrl: hotPosts[i].imgUrl,
+                userId: hotPosts[i].userId,
+                rank: i + 1
             });
+        } catch (err) {
+            continue;
+        }
+    }
+
+    //Posts 테이블에서 hotpost 지정된 post는 isExistsHotPosts 값 true로 변경
+    for (let i = 0; i < hotPosts.length; i++) {
+        try {
+            await Post.update(
+                { isExistsHotPosts: true },
+                { where: { postId: hotPosts[i].postId } }
+            );
         } catch (err) {
             continue;
         }
