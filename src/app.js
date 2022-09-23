@@ -47,7 +47,13 @@ class App {
 
         this.app.use(passport.initialize()); // 요청 객체에 passport 설정을 심음
 
-        this.app.use(morgan('dev')); //로그 생성
+        if (process.env.NODE_ENV === 'production') {
+            //로그 생성
+            this.app.use(morgan('combined')); // 배포환경이면
+        } else {
+            this.app.use(morgan('dev')); // 개발환경이면
+        }
+
         this.app.use(helmet());
 
         this.app.use(cookieParser());

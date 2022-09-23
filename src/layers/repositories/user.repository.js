@@ -6,29 +6,33 @@ const { User, UserDetail, Auth } = require('../../sequelize/models');
  * @returns { Promise<{userId:number, nickname:string, imgUrl:string, grade:string, gender:string, age:string, moodPoint:number, repPostId:number, isExistsNotice:boolean } | null>}
  */
 const getUserStatusByUserId = async (userId) => {
-    const userStatus = await User.findOne({
-        where: { userId },
-        raw: true,
-        include: [
-            {
-                model: UserDetail,
-                attributes: { exclude: ['detailId'] },
-                raw: true
-            }
-        ]
-    });
+    try {
+        const userStatus = await User.findOne({
+            where: { userId },
+            raw: true,
+            include: [
+                {
+                    model: UserDetail,
+                    attributes: { exclude: ['detailId'] },
+                    raw: true
+                }
+            ]
+        });
 
-    return {
-        userId: userStatus['userId'],
-        nickname: userStatus['nickname'],
-        imgUrl: userStatus['imgUrl'],
-        grade: userStatus['grade'],
-        gender: userStatus['UserDetail.gender'],
-        age: userStatus['UserDetail.age'],
-        moodPoint: userStatus['UserDetail.moodPoint'],
-        repPostId: userStatus['UserDetail.repPostId'],
-        isExistsNotice: userStatus['UserDetail.isExistsNotice']
-    };
+        return {
+            userId: userStatus['userId'],
+            nickname: userStatus['nickname'],
+            imgUrl: userStatus['imgUrl'],
+            grade: userStatus['grade'],
+            gender: userStatus['UserDetail.gender'],
+            age: userStatus['UserDetail.age'],
+            moodPoint: userStatus['UserDetail.moodPoint'],
+            repPostId: userStatus['UserDetail.repPostId'],
+            isExistsNotice: userStatus['UserDetail.isExistsNotice']
+        };
+    } catch (err) {
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
+    }
 };
 
 /**
@@ -36,8 +40,12 @@ const getUserStatusByUserId = async (userId) => {
  * @returns User 테이블에서 nickname 한개를 찾음
  */
 const findByNickname = async (nickname) => {
-    const findByNickname = await User.findOne({ where: { nickname } });
-    return findByNickname;
+    try {
+        const findByNickname = await User.findOne({ where: { nickname } });
+        return findByNickname;
+    } catch (err) {
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
+    }
 };
 
 /**
@@ -47,9 +55,13 @@ const findByNickname = async (nickname) => {
  * @returns { Promise<{userId:number, nickname:string, imgUrl:string, grade:string, gender:string, age:string, moodPoint:number, repPostId:number, isExistsNotice:boolean } | null>}
  */
 const updateUserImage = async (userId, imageFileName) => {
-    await User.update({ imgUrl: imageFileName }, { where: { userId } });
+    try {
+        await User.update({ imgUrl: imageFileName }, { where: { userId } });
 
-    return await getUserStatusByUserId(userId);
+        return await getUserStatusByUserId(userId);
+    } catch (err) {
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
+    }
 };
 
 /**
@@ -59,9 +71,13 @@ const updateUserImage = async (userId, imageFileName) => {
  * @returns { Promise<{userId:number, nickname:string, imgUrl:string, grade:string, gender:string, age:string, moodPoint:number, repPostId:number, isExistsNotice:boolean } | null>}
  */
 const updateGrade = async (userId, grade) => {
-    await User.update({ grade }, { where: { userId } });
+    try {
+        await User.update({ grade }, { where: { userId } });
 
-    return await getUserStatusByUserId(userId);
+        return await getUserStatusByUserId(userId);
+    } catch (err) {
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
+    }
 };
 
 /**
@@ -69,14 +85,23 @@ const updateGrade = async (userId, grade) => {
  * @param {number} userId
  */
 const deleteUser = async (userId) => {
-    await User.destroy({ where: { userId } });
+    try {
+        await User.destroy({ where: { userId } });
+    } catch (err) {
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
+    }
 };
 
 //FUNCTION(권영)
 const findAuth = async (userId) => {
-    const authData = await Auth.findByPk(userId);
-    return authData;
+    try {
+        const authData = await Auth.findByPk(userId);
+        return authData;
+    } catch (err) {
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
+    }
 };
+
 module.exports = {
     getUserStatusByUserId,
     findByNickname,

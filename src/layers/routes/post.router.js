@@ -16,6 +16,9 @@ router.get('/detail/:postId', postController.findOnePost);
 // 인기 게시물 조회(/api/posts/popular)
 router.get('/popular', postController.findHotPosts);
 
+// 명예의 전당 게시물 조회(/api/posts/honor)
+router.get('/honor', postController.findHonorPosts);
+
 // 게시물 수정(/api/posts/:postId)
 router.put('/:postId', postController.updatePost);
 

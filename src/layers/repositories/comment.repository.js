@@ -12,7 +12,7 @@ const findComment = async (commentId) => {
         });
         return findComment;
     } catch (err) {
-        next(err);
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -28,7 +28,7 @@ const findUser = async (userId) => {
         });
         return findUser;
     } catch (err) {
-        next(err);
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -48,7 +48,7 @@ const createComment = async (postId, content, userId) => {
         });
         return createdComment;
     } catch (err) {
-        next(err);
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -91,7 +91,7 @@ const getComments = async (postId, page, count) => {
         });
         return getComments;
     } catch (err) {
-        next(err);
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -106,7 +106,7 @@ const updateComment = async (commentId, content) => {
         await Comment.update({ content }, { where: { commentId } });
         return await Comment.findOne({ where: { commentId } });
     } catch (err) {
-        next(err);
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -120,7 +120,7 @@ const deleteComment = async (commentId) => {
         const deleteComment = await Comment.destroy({ where: { commentId } });
         return deleteComment;
     } catch (err) {
-        next(err);
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -133,7 +133,7 @@ const findPostIdByCommentId = async (commentId) => {
         });
         return postIdData.postId;
     } catch (err) {
-        next(err);
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 module.exports = {

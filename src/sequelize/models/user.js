@@ -37,6 +37,11 @@ module.exports = (sequelize, DataTypes) => {
                 onDelete: 'cascade',
                 onUpdate: 'cascade'
             });
+            models.User.hasMany(models.HonorPost, {
+                foreignKey: 'userId',
+                onDelete: 'cascade',
+                onUpdate: 'cascade'
+            });
             // define association here
         }
     }

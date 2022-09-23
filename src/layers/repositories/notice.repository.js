@@ -11,7 +11,7 @@ const findAllNotice = async (userId) => {
             where: { userId }
         });
     } catch (err) {
-        throw new exception.BadRequestException('유저의 알림 가져오기 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 /**
@@ -24,7 +24,7 @@ const deleteAllNotice = async (userId) => {
             where: { userId }
         });
     } catch (err) {
-        throw new exception.BadRequestException('유저 알림 삭제 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
@@ -44,7 +44,7 @@ const updateIsExsitsNotice = async (userId) => {
             }
         );
     } catch (err) {
-        throw new exception.BadRequestException('유저 알림 갱신 실패');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
