@@ -2,7 +2,7 @@ const authRepository = require('../repositories/auth.repository');
 const userRepository = require('../repositories/user.repository');
 const exception = require('../exceptModels/_.models.loader');
 const nodemailer = require('nodemailer');
-const bcrypt = require('bcrypt');
+const crypto = require('crypto-js');
 
 // EM : 8자~ 30자 이메일형식
 // PW : 영소 대문자 + 숫자 + 특수문자 8자 ~ 20자
@@ -138,6 +138,8 @@ const sendEmail = async (email) => {
 
     // 인증번호 발송을 위한 랜덤한 숫자 6글자를 생성
     const authNum = Math.random().toString().substr(2, 6);
+    const secretKey = '12345678901234567890123456789012';
+    const hashAuthNum = crypto.AES.encrypt(authNum, secretKey).toString();
 
     const mailOptions = {
         from: '"MoodCatcher" <process.env.NODEMAILER_USER>', // 보내는 사람의 메일 (관리자 이메일)
@@ -163,7 +165,7 @@ const sendEmail = async (email) => {
         });
     };
     send(mailOptions);
-    return authNum;
+    return hashAuthNum;
 };
 
 /**
@@ -196,7 +198,8 @@ const forgetPw = async (email) => {
     };
 
     const authNum = Math.random().toString().substr(2, 6);
-    const hashAuthNum = await bcrypt.hash(authNum, 12);
+    const secretKey = '12345678901234567890123456789012';
+    const hashAuthNum = crypto.AES.encrypt(authNum, secretKey).toString();
 
     const mailOptions = {
         from: '"MoodCatcher" <process.env.NODEMAILER_USER>',
