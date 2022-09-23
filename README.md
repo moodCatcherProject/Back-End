@@ -17,8 +17,8 @@
 | Back-end | 조권영 | https://github.com/kwanyung|
 | Back-end | 황수민 | https://github.com/sumin-dev|
 | Back-end | 이수범 | https://github.com/subeom-lee|
-| front-end | 박준수 | https://github.com/junsu1220|
-| front-end | 신수정 | https://github.com/crystal025| 
+| Front-end | 박준수 | https://github.com/junsu1220|
+| Front-end | 신수정 | https://github.com/crystal025| 
 | UI & UX | 김유나 |  [무드캐처 FIGMA 디자인](https://www.figma.com/file/jtjWzOYOVgJ5I4dtneHYwG/%EB%AC%B4%EB%93%9C%EC%BA%90%EC%B3%90?node-id=117%3A290)|
 | PM | 김승빈 | [무드캐처 FIGMA 기획](https://www.figma.com/file/jtjWzOYOVgJ5I4dtneHYwG/%EB%AC%B4%EB%93%9C%EC%BA%90%EC%B3%90?node-id=0%3A1)|   
 
