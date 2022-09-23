@@ -29,6 +29,11 @@ module.exports = (sequelize, DataTypes) => {
                 onDelete: 'cascade',
                 onUpdate: 'cascade'
             });
+            models.Post.hasOne(models.HonorPost, {
+                foreignKey: 'postId',
+                onDelete: 'cascade',
+                onUpdate: 'cascade'
+            });
         }
     }
     Post.init(
@@ -69,6 +74,10 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
             },
             delete: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false
+            },
+            isExistsHotPosts: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false
             }

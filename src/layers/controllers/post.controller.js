@@ -86,9 +86,34 @@ const findOnePost = async (req, res, next) => {
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const findHotPosts = async (req, res, next) => {
-    const hotPosts = await postService.findHotPosts();
+    try {
+        const hotPosts = await postService.findHotPosts();
 
-    return res.status(200).json(new exception.FormDto('인기 게시물 조회 성공', { hotPosts }));
+        return res.status(200).json(new exception.FormDto('인기 게시물 조회 성공', { hotPosts }));
+    } catch (err) {
+        next(err);
+    }
+};
+
+/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
+const findHonorPosts = async (req, res, next) => {
+    try {
+        let { page, count } = req.query;
+        page = page ? page : 1;
+        count = count ? count : 8;
+
+        const honorPosts = await postService.findHonorPosts(page, count);
+
+        for (let post of honorPosts) {
+            post.likeStatus = await postService.findLikeStatus(res.locals.user.userId, post.postId);
+        }
+
+        return res
+            .status(200)
+            .json(new exception.FormDto('명예의 전당 게시물 조회 성공', { honorPosts }));
+    } catch (err) {
+        next(err);
+    }
 };
 
 /**
@@ -186,6 +211,7 @@ module.exports = {
     findAllPosts,
     findOnePost,
     findHotPosts,
+    findHonorPosts,
     updatePost,
     deletePost,
 

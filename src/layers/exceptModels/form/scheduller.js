@@ -8,7 +8,7 @@
  * 2. 사용자 등급 정산 : 사용자의 등급이 상승할 조건을 충족 시켰다면
  * 상승 시키고 알림을 넣어주기. 유저의 등급 아이콘도 바꿔줘야함.
  *
- * 3. hot posts : 전날 가장 좋아요를 많이 받은 게시물을 HotPosts 테이블에 저장 후
+ * 3. hot posts : 전날 가장 좋아요를 많이 받은 게시물을 HotPosts 테이블에 저장, HonorPosts 테이블에 저장 후
  * 전체 Post 테이블의 todayLikeCount를 0으로 리셋시키기
  * => 만약 게시물이 삭제 되었을때는??
  * ==> form/moodPint.js 의 whenInRankingMyPost 실행 시켜주셔야 해요!
@@ -29,7 +29,7 @@
 // │    └──────────────────── minute (0 - 59)
 // └───────────────────────── second (0 - 59, OPTIONAL)
 const schedule = require('node-schedule');
-const { User, UserDetail, Post, HotPost, Notice } = require('../../../sequelize/models');
+const { User, UserDetail, Post, HotPost, Notice, HonorPost } = require('../../../sequelize/models');
 const exception = require('../_.models.loader');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
@@ -96,6 +96,25 @@ const createHotPost = async () => {
         exception.MoodPoint.whenInRankingMyPost(hotPosts[2].userId, hotPosts[2].postId, 1000);
     } catch (err) {
         console.log(err);
+    }
+};
+
+const createHonorPosts = async () => {
+    const hotPosts = await HotPost.findAll({
+        raw: true
+    });
+
+    for (let i = 0; i < hotPosts.length; i++) {
+        try {
+            await HonorPost.create({
+                postId: hotPosts[i].postId,
+                userId: hotPosts[i].userId,
+                rank: hotPosts[i].rank,
+                createdAt: hotPosts[i].createdAt
+            });
+        } catch (err) {
+            continue;
+        }
     }
 };
 
@@ -243,7 +262,8 @@ const scheduleHandller = async () => {
         deletePost(); // delete 가 true인 게시물들 삭제
         updateGrade(); // moodPoint에 따라 grade update.
         deleteNotice(); // 2일 이상 지난 알림을 모두 삭제
-        createHotPost(); // hot posts 산출
+        await createHotPost(); // hot posts 생성
+        createHonorPosts(); // honor posts 생성
     } catch (err) {
         console.log(err);
     }

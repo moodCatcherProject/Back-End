@@ -466,6 +466,8 @@ const isExistNotice = async (userId) => {
  * postId가 일치하는 게시글의 likeCount를 variation(1 또는 -1)만큼 증감
  * todayLikeCount를 todayVariation(1 또는 -1)만큼 증감 후 exLikeCount, likeCount 배열 반환
  * @param {number} postId
+ * @param {number} variation
+ * @param {number} todayVariation
  * @returns 해당 게시글의 plusLikeCount 함수 실행 전과 실행 후 likeCount의 배열
  */
 const updateLikeCount = async (postId, variation, todayVariation) => {
@@ -490,7 +492,7 @@ const updateLikeCount = async (postId, variation, todayVariation) => {
 
 /**
  * HotPost 테이블에서 모든 data 반환
- * @returns { Promise<[{ postId:number, imgUrl:string }, { postId:number, imgUrl:string }, { postId:number, imgUrl:string }] | null>}
+ * @returns { Promise<[{ postId:number, userId:number, imgUrl:string }, { postId:number, userId:number, imgUrl:string }] | null>}
  */
 const findHotPosts = async () => {
     try {
@@ -500,11 +502,31 @@ const findHotPosts = async () => {
     }
 };
 
-const findHonorPosts = async () => {
+/**
+ * HonorPost 테이블에서 Post 테이블을 참조하여 모든 data 반환
+ * @param {number} page
+ * @param {number} count
+ * @returns { Promise<[{ postId:number, userId:number, rank:number, createdAt:date, title:string, content:string, imgUrl:string, likeCount:boolean }] | null>}
+ */
+const findHonorPosts = async (page, count) => {
     try {
-        return await findHonorPosts.findAll();
+        return await HonorPost.findAll({
+            raw: true,
+            offset: count * (page - 1),
+            limit: count,
+            distinct: true,
+            attributes: { exclude: ['honorId'] },
+            order: [['honorId', 'DESC']],
+            include: [
+                {
+                    model: Post,
+                    where: { delete: false },
+                    attributes: ['title', 'content', 'imgUrl', 'likeCount']
+                }
+            ]
+        });
     } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError('UnhandleMysqlSequelizeError');
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
 
