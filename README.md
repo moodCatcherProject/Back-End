@@ -19,16 +19,20 @@
 | Back-end | 이수범 | https://github.com/subeom-lee|
 | front-end | 박준수 | https://github.com/junsu1220|
 | front-end | 신수정 | https://github.com/crystal025| 
-| UI & UX | 김유나 |  
-| PM | 김승빈 |    
+| UI & UX | 김유나 |  [무드캐처 FIGMA 디자인](https://www.figma.com/file/jtjWzOYOVgJ5I4dtneHYwG/%EB%AC%B4%EB%93%9C%EC%BA%90%EC%B3%90?node-id=117%3A290)|
+| PM | 김승빈 | [무드캐처 FIGMA 기획](https://www.figma.com/file/jtjWzOYOVgJ5I4dtneHYwG/%EB%AC%B4%EB%93%9C%EC%BA%90%EC%B3%90?node-id=0%3A1)|   
 
-# 2. Project Architecture
+# 👔 Project Architecture
 
 ![기술라이브러리](https://user-images.githubusercontent.com/71562311/191900453-d9de5da2-ed37-4a2b-baa1-2e558a176da8.PNG)
 
+# 🩳 API 명세서
+
+# 🧦 DB 설계도(ERD)
+![진짜정말로세상에서마지막으로최종](https://user-images.githubusercontent.com/109029407/191969352-be2d455a-bedc-4af2-94ff-c8471c204b5f.png)
 
 
-# 3. 사용한 라이브러리(패키지)
+# 👟 사용한 라이브러리(패키지)
 
 
 
@@ -56,7 +60,7 @@
 - **세션 방식**은 서버의 메모리 내부에 유저의 정보를 저장함. 유저의 수가 증가할수록 세션의 양이 많아지는 만큼 메모리에 부하가 걸릴 수 있음. 실제 서비스 배포를 위한 프로젝트에서는 유저의 수가 적지 않을 거라 예상하여 **JWT 토큰 인증방식** 선택. JWT는 서버의 메모리에 저장 공간을 확보하지 않고 토큰 발급 및 확인 절차만 거치므로 서버 자원과 비용을 절감할 수 있음.
 - 하지만 현재 무드캐처의 ****jwt 방식은 토큰의 유효기간이 만료되지 않으면 소멸하지 않기 때문에 토큰 탈취, 해킹 등 보안에 취약점을 가지고 있음. access token/refresh token으로 변경하여 보안 강화 필요.
 
-# 4. 기술 소개
+# 💍 기술 소개
 
 ```json
 
