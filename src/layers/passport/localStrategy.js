@@ -41,7 +41,9 @@ module.exports = () => {
                         // 로그인 3회 실패 시 10분간 로그인 제한
                         if (
                             exUser.loginFailCount === 3 &&
-                            new Date(exUser.lastLoginTriedAt) - new Date() >= 0
+                            new Date(exUser.lastLoginTriedAt) -
+                                new Date().setHours(new Date().getHours() + 9) >=
+                                0
                         ) {
                             done(null, false, {
                                 message: `로그인 시도 횟수를 초과하였습니다. 보안을 위해 지금은 로그인 할 수 없습니다. 잠시 뒤에 로그인 해주세요. 로그인 가능 시각 : ${exUser.lastLoginTriedAt}`
