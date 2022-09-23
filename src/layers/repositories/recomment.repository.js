@@ -6,10 +6,14 @@ const { Recomment } = require('../../sequelize/models');
  * @returns { Promise<{ recommentId: number }> | null }
  */
 const findReComment = async (recommentId) => {
-    const findReComment = await Recomment.findOne({
-        where: { recommentId }
-    });
-    return findReComment;
+    try {
+        const findReComment = await Recomment.findOne({
+            where: { recommentId }
+        });
+        return findReComment;
+    } catch (err) {
+        next(err);
+    }
 };
 
 /**
@@ -20,12 +24,16 @@ const findReComment = async (recommentId) => {
  * @returns { Promise<{ commentId: number, content: string, userId: number }> | null }
  */
 const createReComment = async (commentId, content, userId) => {
-    const createdComment = await Recomment.create({
-        commentId,
-        content,
-        userId
-    });
-    return createdComment;
+    try {
+        const createdComment = await Recomment.create({
+            commentId,
+            content,
+            userId
+        });
+        return createdComment;
+    } catch (err) {
+        next(err);
+    }
 };
 
 /**
@@ -35,8 +43,12 @@ const createReComment = async (commentId, content, userId) => {
  * @returns { Promise<{ recommentId: number, content: string }> | null }
  */
 const updateReComment = async (recommentId, content) => {
-    await Recomment.update({ content }, { where: { recommentId } });
-    return await Recomment.findOne({ where: { recommentId } });
+    try {
+        await Recomment.update({ content }, { where: { recommentId } });
+        return await Recomment.findOne({ where: { recommentId } });
+    } catch (err) {
+        next(err);
+    }
 };
 
 /**
@@ -45,8 +57,12 @@ const updateReComment = async (recommentId, content) => {
  * @returns { Promise<{ recommentId: number }> | null }
  */
 const deleteReComment = async (recommentId) => {
-    const deleteComment = await Recomment.destroy({ where: { recommentId } });
-    return deleteComment;
+    try {
+        const deleteComment = await Recomment.destroy({ where: { recommentId } });
+        return deleteComment;
+    } catch (err) {
+        next(err);
+    }
 };
 
 module.exports = {
