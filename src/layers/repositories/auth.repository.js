@@ -7,8 +7,12 @@ const bcrypt = require('bcrypt');
  * @returns { Promise<{authId:number, sessionId:number, provider:'local'|'kakao', email:string, password:string} | null>}
  */
 const findByEmail = async (email) => {
-    const findByEmail = await Auth.findOne({ where: { email } });
-    return findByEmail;
+    try {
+        const findByEmail = await Auth.findOne({ where: { email } });
+        return findByEmail;
+    } catch (err) {
+        next(err);
+    }
 };
 
 /**
@@ -18,16 +22,20 @@ const findByEmail = async (email) => {
  * @returns { Promise<{ email: string, password: string }> | null> }
  */
 const createSignUp = async (email, password) => {
-    await User.create({});
-    await UserDetail.create({});
+    try {
+        await User.create({});
+        await UserDetail.create({});
 
-    const hash = await bcrypt.hash(password, 12);
-    const auth = await Auth.create({
-        email,
-        password: hash,
-        provider: 'local'
-    });
-    return auth;
+        const hash = await bcrypt.hash(password, 12);
+        const auth = await Auth.create({
+            email,
+            password: hash,
+            provider: 'local'
+        });
+        return auth;
+    } catch (err) {
+        next(err);
+    }
 };
 
 /**
@@ -40,15 +48,19 @@ const createSignUp = async (email, password) => {
  * @returns { Promise<{ nickname: string, age: string, gender: string, userId: number, grade: string }> | null> }
  */
 const updateNicknameAgeGender = async (nickname, age, gender, userId, grade) => {
-    await User.update({ nickname, grade }, { where: { userId } });
-    const findByDetailId = await User.findOne({
-        include: [{ model: UserDetail, attributes: ['detailId'] }],
-        where: { userId }
-    });
+    try {
+        await User.update({ nickname, grade }, { where: { userId } });
+        const findByDetailId = await User.findOne({
+            include: [{ model: UserDetail, attributes: ['detailId'] }],
+            where: { userId }
+        });
 
-    const detailId = findByDetailId.UserDetail.dataValues.detailId;
-    await UserDetail.update({ age, gender }, { where: { detailId } });
-    return;
+        const detailId = findByDetailId.UserDetail.dataValues.detailId;
+        await UserDetail.update({ age, gender }, { where: { detailId } });
+        return;
+    } catch (err) {
+        next(err);
+    }
 };
 
 /**
@@ -58,9 +70,13 @@ const updateNicknameAgeGender = async (nickname, age, gender, userId, grade) => 
  * @returns { Promise<{ email: string, password: string }> | null> }
  */
 const updatePw = async (email, password) => {
-    const hash = await bcrypt.hash(password, 12);
-    await Auth.update({ password: hash }, { where: { email } });
-    return;
+    try {
+        const hash = await bcrypt.hash(password, 12);
+        await Auth.update({ password: hash }, { where: { email } });
+        return;
+    } catch (err) {
+        next(err);
+    }
 };
 
 /**
@@ -70,8 +86,12 @@ const updatePw = async (email, password) => {
  * @returns { Promise<{ email: string, hashAuthNum: string }> | null> }
  */
 const createAuthNum = async (email, hashAuthNum) => {
-    await Auth.update({ hashAuthNum }, { where: { email } });
-    return;
+    try {
+        await Auth.update({ hashAuthNum }, { where: { email } });
+        return;
+    } catch (err) {
+        next(err);
+    }
 };
 
 /**
@@ -80,8 +100,12 @@ const createAuthNum = async (email, hashAuthNum) => {
  * @returns { Promise<{ email: string }> | null> }
  */
 const findAuthNum = async (email) => {
-    const findAuthNum = await Auth.findOne({ where: { email } });
-    return findAuthNum.dataValues.hashAuthNum;
+    try {
+        const findAuthNum = await Auth.findOne({ where: { email } });
+        return findAuthNum.dataValues.hashAuthNum;
+    } catch (err) {
+        next(err);
+    }
 };
 
 module.exports = {
