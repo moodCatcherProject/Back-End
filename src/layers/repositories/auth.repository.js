@@ -1,6 +1,6 @@
-const { User, Auth, UserDetail, Hashauthnum } = require('../../sequelize/models');
-const exception = require('../exceptModels/_.models.loader');
+const { User, Auth, UserDetail } = require('../../sequelize/models');
 const bcrypt = require('bcrypt');
+const exception = require('../exceptModels/_.models.loader');
 
 /**
  * Auth 테이블에서 email 값이 일치하는 data 반환
@@ -109,24 +109,11 @@ const findAuthNum = async (email) => {
     }
 };
 
-const createDBNum = async (hashAuthNum) => {
-    try {
-        const createDBNum = await Hashauthnum.create({
-            hashAuthNum
-        });
-        console.log(createDBNum, updateDBNum);
-        return;
-    } catch (err) {
-        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
-    }
-};
-
 module.exports = {
     findByEmail,
     createSignUp,
     updateNicknameAgeGender,
     updatePw,
     createAuthNum,
-    findAuthNum,
-    createDBNum
+    findAuthNum
 };
