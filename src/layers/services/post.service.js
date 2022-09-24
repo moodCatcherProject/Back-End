@@ -200,6 +200,10 @@ const findHotPosts = async () => {
 const findHonorPosts = async (page, count) => {
     const honorPosts = await postRepository.findHonorPosts(page, count);
 
+    if (honorPosts.length < 1) {
+        throw new exception.BadRequestException('게시물 없음');
+    }
+
     return honorPosts.map((post) => {
         return {
             postId: post['postId'],
