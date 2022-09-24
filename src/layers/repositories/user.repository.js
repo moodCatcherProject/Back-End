@@ -1,4 +1,5 @@
 const { User, UserDetail, Auth } = require('../../sequelize/models');
+const exception = require('../exceptModels/_.models.loader');
 
 /**
  * User 테이블에서 UserDetail 테이블을 참조하여 userId 값이 일치하는 data 반환

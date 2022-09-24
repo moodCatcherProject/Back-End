@@ -22,7 +22,7 @@ module.exports = {
             },
             rank: {
                 allowNull: false,
-                type: DataTypes.INTEGER
+                type: Sequelize.INTEGER
             },
             createdAt: {
                 allowNull: false,

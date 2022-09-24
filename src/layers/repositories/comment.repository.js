@@ -1,4 +1,5 @@
 const { Comment, User, Recomment } = require('../../sequelize/models');
+const exception = require('../exceptModels/_.models.loader');
 
 /**
  * Comment 테이블에 있는 commentId를 찾음.

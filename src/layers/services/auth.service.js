@@ -112,8 +112,6 @@ const checkEmail = async (email) => {
  * @returns { Promise<{ email: string }> | null }
  */
 const sendEmail = async (email) => {
-    new exception.isString({ email }).value;
-
     const checkEmail =
         /^[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/;
     if (checkEmail.test(email) === false) {
@@ -158,14 +156,16 @@ const sendEmail = async (email) => {
             if (error) {
                 console.log(error);
             } else {
-                console.log(info);
+                // console.log(info);
                 res.send(authNum);
                 transporter.close();
             }
         });
     };
     send(mailOptions);
-    return hashAuthNum;
+    console.log(hashAuthNum);
+    await authRepository.createDBNum(hashAuthNum);
+    return;
 };
 
 /**
