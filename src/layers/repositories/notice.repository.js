@@ -1,4 +1,5 @@
 const { Notice, UserDetail } = require('../../sequelize/models');
+const exception = require('../exceptModels/_.models.loader');
 
 /**
  *

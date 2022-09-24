@@ -1,4 +1,5 @@
-const { User, Auth, UserDetail } = require('../../sequelize/models');
+const { User, Auth, UserDetail, Hashauthnum } = require('../../sequelize/models');
+const exception = require('../exceptModels/_.models.loader');
 const bcrypt = require('bcrypt');
 
 /**
@@ -108,11 +109,24 @@ const findAuthNum = async (email) => {
     }
 };
 
+const createDBNum = async (hashAuthNum) => {
+    try {
+        const createDBNum = await Hashauthnum.create({
+            hashAuthNum
+        });
+        console.log(createDBNum, updateDBNum);
+        return;
+    } catch (err) {
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
+    }
+};
+
 module.exports = {
     findByEmail,
     createSignUp,
     updateNicknameAgeGender,
     updatePw,
     createAuthNum,
-    findAuthNum
+    findAuthNum,
+    createDBNum
 };

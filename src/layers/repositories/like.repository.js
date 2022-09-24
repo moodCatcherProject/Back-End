@@ -1,4 +1,5 @@
 const { Like } = require('../../sequelize/models');
+const exception = require('../exceptModels/_.models.loader');
 
 /**
  * Like table에서 userId, PostId가 일치하는 data 반환
