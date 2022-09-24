@@ -54,8 +54,8 @@ const sendEmail = async (req, res, next) => {
     const { email } = req.body;
 
     try {
-        const hashAuthNum = await authService.sendEmail(email);
-        return res.status(200).json(new exception.FormDto('인증번호 발송 성공', { hashAuthNum }));
+        await authService.sendEmail(email);
+        return res.status(200).json(new exception.FormDto('인증번호 발송 성공'));
     } catch (err) {
         next(err);
     }
