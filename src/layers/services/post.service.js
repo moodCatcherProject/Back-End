@@ -153,6 +153,7 @@ const findOnePost = async (postId, userId) => {
 
     let post;
     const isExistsLike = await likeRepository.findLikeByUserIdAndPostId(userId, postId);
+
     if (isExistsLike) {
         post = await postRepository.findPostDetailWithLikeStatus(postId, userId);
     } else {
@@ -169,7 +170,7 @@ const findOnePost = async (postId, userId) => {
             imgUrl: process.env.S3_STORAGE_URL + post['imgUrl'],
             likeCount: post['likeCount'],
             createdAt: post['createdAt'],
-            likeStatus: post.Likes[0].dataValues.likeStatus
+            likeStatus: post['Likes.likeStatus']
         },
         items
     };
