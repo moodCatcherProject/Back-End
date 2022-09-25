@@ -14,8 +14,8 @@ authRouter.get('/checkEmail', isNotLoggedIn, authController.checkEmail);
 // 인증번호 발송(/api/auth/sendEmail)
 authRouter.post('/sendEmail', isNotLoggedIn, authController.sendEmail);
 
-// 비밀번호 찾기(/api/auth/forgetPw)
-authRouter.post('/forgetPw', isNotLoggedIn, authController.forgetPw);
+// 인증번호 확인(/api/auth/check-authnum?=123456&email=lsb@lsb.com)
+authRouter.get('/check-authnum', isNotLoggedIn, authController.checkAuthNum);
 
 // 비밀번호 변경(/api/auth/updatePw?email)
 authRouter.put('/updatePw', isNotLoggedIn, authController.updatePw);

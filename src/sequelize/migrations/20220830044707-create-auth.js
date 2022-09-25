@@ -36,9 +36,6 @@ module.exports = {
             },
             longitude: {
                 type: Sequelize.FLOAT
-            },
-            hashAuthNum: {
-                type: Sequelize.STRING
             }
         });
     },
