@@ -1,7 +1,7 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    class Hashauthnum extends Model {
+    class HashAuthNum extends Model {
         /**
          * Helper method for defining associations.
          * This method is not a part of Sequelize lifecycle.
@@ -11,17 +11,28 @@ module.exports = (sequelize, DataTypes) => {
             // define association here
         }
     }
-    Hashauthnum.init(
+    HashAuthNum.init(
         {
-            hashauthnum: {
-                type: DataTypes.STRING
+            authNumId: {
+                type: DataTypes.INTEGER,
+                primaryKey: true,
+                autoIncrement: true,
+                allowNull: false
+            },
+            email: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
+            hashAuthNum: {
+                type: DataTypes.STRING,
+                allowNull: false
             }
         },
         {
             sequelize,
-            timestamps: false,
-            modelName: 'Hashauthnum'
+            timestamps: true,
+            modelName: 'HashAuthNum'
         }
     );
-    return Hashauthnum;
+    return HashAuthNum;
 };

@@ -47,9 +47,6 @@ module.exports = (sequelize, DataTypes) => {
             longitude: {
                 type: DataTypes.FLOAT,
                 defaultValue: null
-            },
-            hashAuthNum: {
-                type: DataTypes.STRING
             }
         },
         {
