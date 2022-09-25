@@ -22,6 +22,7 @@ const findAroundCatcher = async (userId, maxDist) => {
             const authData = await kakaoMapRepository.findUserPosition(data.authId);
             userData.latitude = authData.latitude;
             userData.longitude = authData.longitude;
+            userData.imgUrl = process.env.S3_STORAGE_URL + `w280/` + userData.imgUrl.split('/')[1];
             positionArr.push(userData);
         }
     }
