@@ -213,7 +213,8 @@ const findHonorPosts = async (page, count) => {
             title: post['Post.title'],
             content: post['Post.content'],
             likeCount: post['Post.likeCount'],
-            imgUrl: process.env.S3_STORAGE_URL + `w280/` + post['Post.imgUrl'].split('/')[1]
+
+            imgUrl: process.env.S3_STORAGE_URL + `w560/` + post['Post.imgUrl'].split('/')[1]
         };
     });
 };
