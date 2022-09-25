@@ -11,7 +11,7 @@ const findUserPosition = async (userId) => {
 };
 
 const updatePosition = async (userId, latitude, longitude) => {
-    return await Auth.update(
+    await Auth.update(
         {
             latitude,
             longitude

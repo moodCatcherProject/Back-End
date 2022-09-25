@@ -182,7 +182,7 @@ const kakaoCallback = async (req, res, next) => {
             //     expiresIn : '1w'
             // }) 리프레시 토큰을 사용할 지 팀원과 논의하기
             exception.MoodPoint.whenLogin(req.user.authId);
-            //카카오 Strategy에서 성공한다면 콜백 실행
+            res.header('Access-Control-Allow-Origin', '*'); //카카오 Strategy에서 성공한다면 콜백 실행
             res.status(200).redirect(
                 process.env.CORS_WHITE_LIST + `/login/detail?exist=${exist}&token=${token}`
             );
