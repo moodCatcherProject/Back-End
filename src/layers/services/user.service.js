@@ -32,7 +32,6 @@ const updateUser = async (userId, nickname, gender, age, imageFileName) => {
     new exception.isString({ nickname }).value;
     new exception.isString({ gender }).value;
     new exception.isString({ age }).value;
-    if (!imageFileName) throw new exception.BadRequestException('이미지가 빈 값');
 
     const checkNickname = /^(?=.*[a-zA-Z0-9가-힣])[a-zA-Z0-9가-힣]{2,16}$/;
     if (checkNickname.test(nickname) == false) {

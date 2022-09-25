@@ -102,7 +102,7 @@ const findHonorPosts = async (req, res, next) => {
         page = page ? page : 1;
         count = count ? count : 8;
 
-        const honorPosts = await postService.findHonorPosts(page, count);
+        const honorPosts = await postService.findHonorPosts(parseInt(page), parseInt(count));
 
         for (let post of honorPosts) {
             post.likeStatus = await postService.findLikeStatus(res.locals.user.userId, post.postId);
