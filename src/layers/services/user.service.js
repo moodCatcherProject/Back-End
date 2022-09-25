@@ -65,14 +65,9 @@ const updateUser = async (userId, nickname, gender, age, imageFileName) => {
 
     await authRepository.updateNicknameAgeGender(nickname, age, gender, userId, grade);
 
-    const updateUser = await userRepository.updateUserImage(userId, imageFileName);
-    const authData = await userRepository.findAuth(userId);
+    await userRepository.updateUserImage(userId, imageFileName);
 
-    if (authData.provider === 'local') {
-        updateUser.imgUrl = process.env.S3_STORAGE_URL + updateUser.imgUrl;
-    }
-
-    return updateUser;
+    return;
 };
 
 /**
@@ -98,13 +93,8 @@ const updateProfileIcon = async (userId, profileIcon) => {
     if (profileIcon === 'moody') grade = 'moody ' + user.grade.split(' ')[1];
 
     const userStatus = await userRepository.updateGrade(userId, grade);
-    const authData = await userRepository.findAuth(userId);
 
-    if (authData.provider === 'local') {
-        userStatus.imgUrl = process.env.S3_STORAGE_URL + userStatus.imgUrl;
-    }
-
-    return userStatus;
+    return userStatus.grade;
 };
 
 /**
