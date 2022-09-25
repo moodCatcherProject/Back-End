@@ -22,15 +22,9 @@ const updateUser = async (req, res, next) => {
         const { nickname, gender, age } = req.query;
         const imageFileName = req.file ? req.file.key : imgUrl;
 
-        const userStatus = await userService.updateUser(
-            userId,
-            nickname,
-            gender,
-            age,
-            imageFileName
-        );
+        await userService.updateUser(userId, nickname, gender, age, imageFileName);
 
-        return res.status(201).json(new exception.FormDto('유저 정보 변경 성공', { userStatus }));
+        return res.status(201).json(new exception.FormDto('유저 정보 변경 성공'));
     } catch (err) {
         next(err);
     }
@@ -46,7 +40,11 @@ const updateProfileIcon = async (req, res, next) => {
 
         return res
             .status(201)
-            .json(new exception.FormDto('프로필 아이콘 변경 성공', { userStatus }));
+            .json(
+                new exception.FormDto('프로필 아이콘 변경 성공', {
+                    userStatus: { grade: userStatus }
+                })
+            );
     } catch (err) {
         next(err);
     }
