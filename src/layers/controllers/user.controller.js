@@ -19,8 +19,9 @@ const getUser = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
     try {
         const { userId, imgUrl } = res.locals.user;
-        const { nickname, gender, age } = req.query;
-        const imageFileName = req.file ? req.file.key : imgUrl;
+        const { nickname, gender, age, original } = req.query;
+        let imageFileName = req.file ? req.file.key : imgUrl;
+        if (original) imageFileName = 'default.jpg';
 
         await userService.updateUser(userId, nickname, gender, age, imageFileName);
 
@@ -38,13 +39,11 @@ const updateProfileIcon = async (req, res, next) => {
 
         const userStatus = await userService.updateProfileIcon(userId, profileIcon);
 
-        return res
-            .status(201)
-            .json(
-                new exception.FormDto('프로필 아이콘 변경 성공', {
-                    userStatus: { grade: userStatus }
-                })
-            );
+        return res.status(201).json(
+            new exception.FormDto('프로필 아이콘 변경 성공', {
+                userStatus: { grade: userStatus }
+            })
+        );
     } catch (err) {
         next(err);
     }
