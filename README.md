@@ -1,4 +1,5 @@
-패션의 바다에서 무드를 건지다. 
+![6551879df85a26b0](https://user-images.githubusercontent.com/109029407/192130770-c8eda380-621c-4d14-b3d0-bf489260ef65.png)
+
 ---------------------------
 
 # ✨무드캐처 (mood catcher)

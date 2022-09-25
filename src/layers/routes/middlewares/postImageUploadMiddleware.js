@@ -44,7 +44,7 @@ class S3ImageController {
                                 );
                             });
                 }
-
+                console.log(file);
                 cb(null, `post/${Date.now()}.${file.mimetype}`);
             }
         }),

@@ -7,10 +7,10 @@ const jwt = require('jsonwebtoken');
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const localSignUp = async (req, res, next) => {
-    const { email, password, confirmPw } = req.body;
+    const { email, password, confirmPw, authNum } = req.body;
 
     try {
-        await authService.localSignUp(email, password, confirmPw);
+        await authService.localSignUp(email, password, confirmPw, authNum);
         return res.status(201).json(new exception.FormDto('회원가입 성공'));
     } catch (err) {
         next(err);
@@ -23,15 +23,8 @@ const updateNicknameAgeGender = async (req, res, next) => {
     const { nickname, age, gender } = req.body;
 
     try {
-        const updateNicknameAgeGender = await authService.updateNicknameAgeGender(
-            nickname,
-            age,
-            gender,
-            userId
-        );
-        return res
-            .status(201)
-            .json(new exception.FormDto('닉네임, 성별, 나이 추가 성공', updateNicknameAgeGender));
+        await authService.updateNicknameAgeGender(nickname, age, gender, userId);
+        return res.status(201).json(new exception.FormDto('닉네임, 성별, 나이 추가 성공'));
     } catch (err) {
         next(err);
     }
@@ -50,11 +43,28 @@ const checkEmail = async (req, res, next) => {
 };
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
-const sendEmail = async (req, res, next) => {
-    const { email } = req.body;
+const checkAuthNum = async (req, res, next) => {
+    const { authNum, email } = req.query;
 
     try {
-        await authService.sendEmail(email);
+        const result = await authService.checkAuthNum(authNum, email);
+        if (result) {
+            return res.status(200).json(new exception.FormDto('인증번호 확인 성공', { result }));
+        } else {
+            return res.status(400).json(new exception.FormDto('인증번호 확인 실패', { result }));
+        }
+    } catch (err) {
+        next(err);
+    }
+};
+
+/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
+const sendEmail = async (req, res, next) => {
+    const { email } = req.body;
+    const { type } = req.query;
+
+    try {
+        await authService.sendEmail(email, type);
         return res.status(200).json(new exception.FormDto('인증번호 발송 성공'));
     } catch (err) {
         next(err);
@@ -62,28 +72,12 @@ const sendEmail = async (req, res, next) => {
 };
 
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
-const forgetPw = async (req, res, next) => {
-    const { email } = req.body;
-
-    try {
-        const hashAuthNum = await authService.forgetPw(email);
-        res.cookie('hashAuthNum', hashAuthNum, {
-            maxAge: 1000 * 60 * 10
-        });
-        return res.status(200).json(new exception.FormDto('인증번호 발송 성공', { hashAuthNum }));
-    } catch (err) {
-        next(err);
-    }
-};
-
-/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const updatePw = async (req, res, next) => {
-    const { email } = req.query;
+    const { email, authNum } = req.query;
     const { password, confirmPw } = req.body;
-    const { hashAuthNum } = req.cookies;
 
     try {
-        await authService.updatePw(email, password, confirmPw, hashAuthNum);
+        await authService.updatePw(email, password, confirmPw, authNum);
         return res.status(201).json(new exception.FormDto('비밀번호 변경 성공'));
     } catch (err) {
         next(err);
@@ -182,7 +176,7 @@ const kakaoCallback = async (req, res, next) => {
             //     expiresIn : '1w'
             // }) 리프레시 토큰을 사용할 지 팀원과 논의하기
             exception.MoodPoint.whenLogin(req.user.authId);
-            //카카오 Strategy에서 성공한다면 콜백 실행
+            res.header('Access-Control-Allow-Origin', '*'); //카카오 Strategy에서 성공한다면 콜백 실행
             res.status(200).redirect(
                 process.env.CORS_WHITE_LIST + `/login/detail?exist=${exist}&token=${token}`
             );
@@ -196,8 +190,8 @@ module.exports = {
     localSignUp,
     updateNicknameAgeGender,
     checkEmail,
+    checkAuthNum,
     sendEmail,
-    forgetPw,
     updatePw,
     checkNickname,
     localLogin,

@@ -12,10 +12,10 @@ authRouter.post('/signup', isNotLoggedIn, authController.localSignUp);
 authRouter.get('/checkEmail', isNotLoggedIn, authController.checkEmail);
 
 // 인증번호 발송(/api/auth/sendEmail)
-authRouter.post('/sendEmail', isNotLoggedIn, authController.sendEmail);
+authRouter.post('/sendEmail', authController.sendEmail);
 
-// 비밀번호 찾기(/api/auth/forgetPw)
-authRouter.post('/forgetPw', isNotLoggedIn, authController.forgetPw);
+// 인증번호 확인(/api/auth/check-authnum?=123456&email=lsb@lsb.com)
+authRouter.get('/check-authnum', authController.checkAuthNum);
 
 // 비밀번호 변경(/api/auth/updatePw?email)
 authRouter.put('/updatePw', isNotLoggedIn, authController.updatePw);
@@ -31,6 +31,7 @@ authRouter.post('/login', isNotLoggedIn, authController.localLogin);
 
 //카카오 로그인(/api/auth/kakao)
 authRouter.get('/kakao', isNotLoggedIn, passport.authenticate('kakao'));
+
 //카카오 콜백(/api/auth/kakao/callback)
 authRouter.get(
     '/kakao/callback',
