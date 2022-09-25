@@ -1,4 +1,5 @@
 const { Recomment } = require('../../sequelize/models');
+const exception = require('../exceptModels/_.models.loader');
 
 /**
  * Recomment에있는 recommentId를 찾음.
