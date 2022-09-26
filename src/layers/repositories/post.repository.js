@@ -515,7 +515,7 @@ const updateLikeCount = async (postId, variation, todayVariation) => {
  */
 const findHotPosts = async () => {
     try {
-        return await HotPost.findAll();
+        return await HotPost.findAll({ raw: true });
     } catch (err) {
         throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }

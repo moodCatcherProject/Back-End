@@ -47,9 +47,12 @@ schedule.scheduleJob('0 0 15 * * *', () => {
 });
 
 const createHotPost = async () => {
-    //Posts 테이블에서 todayLikeCount가 높은 3개의 data 조회
+    //Posts 테이블에서 todayLikeCount가 높은 3개의 data 조회(todayLikeCount가 동일하면 최신순 정렬)
     const hotPosts = await Post.findAll({
-        order: [['todayLikeCount', 'DESC']],
+        order: [
+            ['todayLikeCount', 'DESC'],
+            ['createdAt', 'DESC']
+        ],
         attributes: ['postId', 'imgUrl', 'userId'],
         limit: 3,
         where: { delete: false, isExistsHotPosts: false },
