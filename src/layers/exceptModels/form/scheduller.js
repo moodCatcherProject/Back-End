@@ -239,6 +239,9 @@ const deletePost = async () => {
         where: { delete: true }
     });
     for (let post of deletePostData) {
+        if (post.imgUrl === 'default') {
+            continue;
+        }
         let params = {
             Bucket: 'gwonyeong',
             Key: `${post.imgUrl}`

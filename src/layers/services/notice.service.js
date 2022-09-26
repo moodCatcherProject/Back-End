@@ -1,5 +1,5 @@
 const noticeRepository = require('../repositories/notice.repository');
-
+const postRepository = require('../repositories/post.repository');
 /**
  *
  * @param {number} userId
@@ -7,17 +7,42 @@ const noticeRepository = require('../repositories/notice.repository');
  */
 const findAllNotice = async (userId) => {
     const noticeData = await noticeRepository.findAllNotice(userId);
+
     noticeRepository.updateIsExsitsNotice(userId);
-    return {
-        notices: noticeData.map((notice) => {
+    return await Promise.all(
+        noticeData.map(async (notice) => {
+            let postData = null,
+                imgUrl;
+            if (notice.postId !== -1) {
+                await postRepository.findPost(notice.postId).then((p) => {
+                    imgUrl = p
+                        ? process.env.S3_STORAGE_URL + p.imgUrl
+                        : process.env.S3_STORAGE_URL + 'default.jpg';
+                });
+            } else {
+                imgUrl = process.env.S3_STORAGE_URL + 'default.jpg';
+            }
+            console.log(imgUrl);
             return {
                 msg: notice.notice,
                 userId: notice.userId,
                 postId: notice.postId,
+                imgUrl,
+                createdAt: displayedAt(notice.createdAt),
                 duplecation: notice.duplecation
             };
         })
-    };
+    );
+};
+
+const displayedAt = (createdAt) => {
+    const seconds = (Date.now() + 9 * 60 * 60 * 1000 - Date.parse(createdAt)) / 1000;
+    if (seconds < 60) return `방금 전`;
+    const minutes = seconds / 60;
+    if (minutes < 60) return `${Math.floor(minutes)}분 전`;
+    const hours = minutes / 60;
+    if (hours < 24) return `${Math.floor(hours)}시간 전`;
+    else return `${substring.createdAt.substring(0, 10)}`;
 };
 
 /**
