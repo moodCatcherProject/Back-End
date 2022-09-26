@@ -47,6 +47,11 @@ const createComment = async (postId, content, userId) => {
  */
 const getComments = async (postId, page, count, userId) => {
     const getComments = await commentRepository.getComments(postId, page, count, userId);
+
+    if (getComments.length < 1) {
+        throw new exception.BadRequestException('댓글 없음.');
+    }
+
     data = getComments.map((e) => e.get({ plain: true }));
 
     const post = await postRepository.findPost(postId);
