@@ -72,7 +72,7 @@ const checkAuthNum = async (authNum, email) => {
 
     if (!hashAuthNum) {
         throw new exception.BadRequestException(
-            '인증번호를 발급받지 않았거나 인증번호가 만료된 이메일'
+            '인증번호를 발급받지 않았거나 인증번호가 만료된 이메일입니다. 인증번호를 발송 해주세요.'
         );
     }
 
@@ -80,7 +80,9 @@ const checkAuthNum = async (authNum, email) => {
         new Date().setMinutes(new Date().getMinutes() - 10) >=
         new Date(hashAuthNum.updatedAt).setHours(new Date(hashAuthNum.updatedAt).getHours() - 9)
     ) {
-        throw new exception.BadRequestException('인증번호 만료');
+        throw new exception.BadRequestException(
+            '만료된 인증번호입니다. 인증번호를 재발송 해주세요.'
+        );
     }
 
     const isExistsAuthNum = await bcrypt.compare(authNum, hashAuthNum.hashAuthNum);

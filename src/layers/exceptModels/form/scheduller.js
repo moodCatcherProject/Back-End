@@ -99,9 +99,9 @@ const createHotPost = async () => {
 
     try {
         // 랭킹 등재 moodPoints 적립
-        exception.MoodPoint.whenInRankingMyPost(hotPosts[0].userId, hotPosts[0].postId, 3000);
-        exception.MoodPoint.whenInRankingMyPost(hotPosts[1].userId, hotPosts[1].postId, 2000);
-        exception.MoodPoint.whenInRankingMyPost(hotPosts[2].userId, hotPosts[2].postId, 1000);
+        await exception.MoodPoint.whenInRankingMyPost(hotPosts[0].userId, hotPosts[0].postId, 3000);
+        await exception.MoodPoint.whenInRankingMyPost(hotPosts[1].userId, hotPosts[1].postId, 2000);
+        await exception.MoodPoint.whenInRankingMyPost(hotPosts[2].userId, hotPosts[2].postId, 1000);
     } catch (err) {
         console.log(err);
     }
@@ -285,14 +285,14 @@ const deleteAuthNum = async () => {
 
 const scheduleHandller = async () => {
     try {
-        await totalLikeCount(); // 오늘 획득한 좋아요를 집계하고
-        likeCountInit(); // pointArray를 모두 0으로 초기화 함.
         deletePost(); // delete 가 true인 게시물들 삭제
         updateGrade(); // moodPoint에 따라 grade update.
         deleteNotice(); // 2일 이상 지난 알림을 모두 삭제
         await createHotPost(); // hot posts 생성
         createHonorPosts(); // honor posts 생성
         deleteAuthNum(); // 만료된 authNum 삭제
+        await totalLikeCount(); // 오늘 획득한 좋아요를 집계하고
+        likeCountInit(); // pointArray를 모두 0으로 초기화 함.
     } catch (err) {
         console.log(err);
     }

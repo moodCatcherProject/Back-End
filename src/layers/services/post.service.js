@@ -153,6 +153,7 @@ const findOnePost = async (postId, userId) => {
 
     let post;
     const isExistsLike = await likeRepository.findLikeByUserIdAndPostId(userId, postId);
+
     if (isExistsLike) {
         post = await postRepository.findPostDetailWithLikeStatus(postId, userId);
     } else {
@@ -166,10 +167,10 @@ const findOnePost = async (postId, userId) => {
             postId: post['postId'],
             title: post['title'],
             content: post['content'],
-            imgUrl: process.env.S3_STORAGE_URL + post['imgUrl'],
+            imgUrl: process.env.S3_STORAGE_URL + 'w560/' + post['imgUrl'].split('/')[1],
             likeCount: post['likeCount'],
             createdAt: post['createdAt'],
-            likeStatus: post.Likes[0].dataValues.likeStatus
+            likeStatus: post['Likes.likeStatus']
         },
         items
     };
@@ -213,7 +214,8 @@ const findHonorPosts = async (page, count) => {
             title: post['Post.title'],
             content: post['Post.content'],
             likeCount: post['Post.likeCount'],
-            imgUrl: process.env.S3_STORAGE_URL + `w280/` + post['Post.imgUrl'].split('/')[1]
+
+            imgUrl: process.env.S3_STORAGE_URL + `w560/` + post['Post.imgUrl'].split('/')[1]
         };
     });
 };

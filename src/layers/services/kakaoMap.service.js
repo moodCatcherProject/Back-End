@@ -15,14 +15,24 @@ const findAroundCatcher = async (userId, maxDist) => {
     //오래 걸릴 수 있으니 고민이 필요함.
     let positionArr = [];
     for (let data of authData) {
-        if (data.latitude == null) continue;
+        try {
+            if (data.latitude == null) continue;
 
-        if (distance(latitude, longitude, data.latitude, data.longitude) < maxDist) {
-            const userData = await userRepository.getUserStatusByUserId(data.authId);
-            const authData = await kakaoMapRepository.findUserPosition(data.authId);
-            userData.latitude = authData.latitude;
-            userData.longitude = authData.longitude;
-            positionArr.push(userData);
+            if (distance(latitude, longitude, data.latitude, data.longitude) < maxDist) {
+                const userData = await userRepository.getUserStatusByUserId(data.authId);
+                const authData = await kakaoMapRepository.findUserPosition(data.authId);
+                userData.latitude = authData.latitude;
+                userData.longitude = authData.longitude;
+                userData.imgUrl =
+                    userData.imgUrl[0] === 'h'
+                        ? userData.imgUrl
+                        : process.env.S3_STORAGE_URL + `w280/` + userData.imgUrl.split('/')[1];
+                // userData.imgUrl = process.env.S3_STORAGE_URL + `w280/` + userData.imgUrl.split('/')[1];
+                positionArr.push(userData);
+            }
+        } catch (err) {
+            console.log('에러남!' + err);
+            continue;
         }
     }
     return { aroundUser: positionArr };

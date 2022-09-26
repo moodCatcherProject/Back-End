@@ -52,8 +52,15 @@ const findPostDetailWithLikeStatus = async (postId, userId) => {
                     where: { postId, userId },
                     attributes: ['likeStatus']
                 }
-            ]
+            ],
+            raw: true
         });
+
+        if (post['Likes.likeStatus']) {
+            post['Likes.likeStatus'] = true;
+        } else {
+            post['Likes.likeStatus'] = false;
+        }
 
         return post;
     } catch (err) {
@@ -76,10 +83,11 @@ const findPostDetail = async (postId) => {
                 {
                     model: Like
                 }
-            ]
+            ],
+            raw: true
         });
 
-        post.dataValues.Likes.push({ dataValues: { likeStatus: false } });
+        post['Likes.likeStatus'] = false;
 
         return post;
     } catch (err) {

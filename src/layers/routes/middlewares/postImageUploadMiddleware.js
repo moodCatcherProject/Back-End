@@ -14,37 +14,26 @@ class S3ImageController {
             key: function (req, file, cb) {
                 const { postId } = req.params;
 
-                switch (file.mimetype) {
-                    case 'image/jpeg':
-                        file.mimetype = 'jpg';
-                        break;
-                    case 'image/png':
-                        file.mimetype = 'png';
-                        break;
-                    case 'image/jpg':
-                        file.mimetype = 'jpg';
-                        break;
-                    case 'image/gif':
-                        file.mimetype = 'gif';
-                        break;
-                    default:
-                        Post.destroy({
-                            where: { postId, imgUrl: 'defalt' }
+                let ext = file.mimetype.split('/')[1]; // 확장자
+                // 이미지만 처리
+                if (!['png', 'jpg', 'jpeg', 'gif'].includes(ext)) {
+                    Post.destroy({
+                        where: { postId, imgUrl: 'default' }
+                    })
+                        .then(() => {
+                            return cb(new exception.NotFoundException('이미지 파일이 아닙니다!'));
                         })
-                            .then(() => {
-                                return cb(
-                                    new exception.NotFoundException('이미지 파일이 아닙니다!')
-                                );
-                            })
-                            .catch((err) => {
-                                return cb(
-                                    new exception.NotFoundException(
-                                        '이미지 파일이 아닙니다! + 게시물 없음'
-                                    )
-                                );
-                            });
+                        .catch((err) => {
+                            return cb(
+                                new exception.NotFoundException(
+                                    '이미지 파일이 아닙니다! + 게시물 없음'
+                                )
+                            );
+                        });
+                    return cb(new exception.NotFoundException('이미지 파일이 아닙니다!'));
                 }
-
+                new Error();
+                console.log(file);
                 cb(null, `post/${Date.now()}.${file.mimetype}`);
             }
         }),

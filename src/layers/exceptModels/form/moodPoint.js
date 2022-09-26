@@ -325,7 +325,7 @@ exports.whenInRankingMyPost = async (userId, postId, moodpoint) => {
         pointArr,
         point,
         maxPoint,
-        '게시물 랭킹에 등재, 3000무드 증가',
+        '게시물 랭킹에 등재',
         noticeMessageArray.whenInRankingMyPost,
         postId
     );
