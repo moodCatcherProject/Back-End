@@ -24,7 +24,9 @@ const findByEmail = async (email) => {
  */
 const createSignUp = async (email, password) => {
     try {
-        await User.create({});
+        await User.create({
+            imgUrl: 'default.jpg'
+        });
         await UserDetail.create({});
 
         const hash = await bcrypt.hash(password, 12);

@@ -12,7 +12,7 @@ const getUser = async (userId) => {
     const userStatus = await userRepository.getUserStatusByUserId(userId);
     const authData = await userRepository.findAuth(userId);
 
-    if (authData.provider === 'local') {
+    if (userStatus.imgUrl[0] == 'p' || userStatus.imgUrl[0] == 'd') {
         userStatus.imgUrl = process.env.S3_STORAGE_URL + userStatus.imgUrl;
     }
 
