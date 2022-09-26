@@ -13,6 +13,20 @@ const findAroundCatcher = async (userId, maxDist) => {
     const authData = await kakaoMapRepository.findAroundCatcher();
     console.log(latitude, longitude);
     //오래 걸릴 수 있으니 고민이 필요함.
+
+    const getImageUrl = (imgUrl) => {
+        switch (imgUrl[0]) {
+            case 'd': {
+                return process.env.S3_STORAGE_URL + 'default.jpg';
+            }
+            case 'p': {
+                return process.env.S3_STORAGE_URL + `w280/` + imgUrl.split('/')[1];
+            }
+            default: {
+                return imgUrl;
+            }
+        }
+    };
     let positionArr = [];
     for (let data of authData) {
         try {
@@ -20,13 +34,12 @@ const findAroundCatcher = async (userId, maxDist) => {
 
             if (distance(latitude, longitude, data.latitude, data.longitude) < maxDist) {
                 const userData = await userRepository.getUserStatusByUserId(data.authId);
+
+                console.log(userData);
                 const authData = await kakaoMapRepository.findUserPosition(data.authId);
                 userData.latitude = authData.latitude;
                 userData.longitude = authData.longitude;
-                userData.imgUrl =
-                    userData.imgUrl[0] === 'h'
-                        ? userData.imgUrl
-                        : process.env.S3_STORAGE_URL + `w280/` + userData.imgUrl.split('/')[1];
+                userData.imgUrl = getImageUrl(userData.imgUrl);
                 // userData.imgUrl = process.env.S3_STORAGE_URL + `w280/` + userData.imgUrl.split('/')[1];
                 positionArr.push(userData);
             }
