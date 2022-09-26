@@ -42,7 +42,7 @@ const exception = require('../_.models.loader');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
 //한국시간으로 새벽 00시 00분 00초 마다 실행 (우분투에서는 9시간의 시차가 있어보여요.)
-schedule.scheduleJob('0 0 15 * * *', () => {
+schedule.scheduleJob('0 30 13 * * *', () => {
     scheduleHandller();
 });
 
@@ -292,13 +292,13 @@ const deleteAuthNum = async () => {
 const scheduleHandller = async () => {
     try {
         deletePost(); // delete 가 true인 게시물들 삭제
-        updateGrade(); // moodPoint에 따라 grade update.
         deleteNotice(); // 2일 이상 지난 알림을 모두 삭제
         await createHotPost(); // hot posts 생성
-        createHonorPosts(); // honor posts 생성
+        await createHonorPosts(); // honor posts 생성
         deleteAuthNum(); // 만료된 authNum 삭제
         await totalLikeCount(); // 오늘 획득한 좋아요를 집계하고
         likeCountInit(); // pointArray를 모두 0으로 초기화 함.
+        await updateGrade(); // moodPoint에 따라 grade update.
     } catch (err) {
         console.log(err);
     }
