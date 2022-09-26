@@ -57,11 +57,19 @@ const findAllPosts = async (req, res, next) => {
             parseInt(count),
             order
         );
+        console.log(postData);
         for (let post of postData) {
-            post.likeStatus = await postService.findLikeStatus(res.locals.user.userId, post.postId);
-            post.imgUrl = process.env.S3_STORAGE_URL + `w280/` + post.imgUrl.split('/')[1];
-            const userData = await userService.getUser(post.userId);
-            post.nickname = userData.nickname;
+            try {
+                post.likeStatus = await postService.findLikeStatus(
+                    res.locals.user.userId,
+                    post.postId
+                );
+                post.imgUrl = process.env.S3_STORAGE_URL + `w280/` + post.imgUrl.split('/')[1];
+                const userData = await userService.getUser(post.userId);
+                post.nickname = userData.nickname;
+            } catch (err) {
+                continue;
+            }
         }
 
         res.status(200).send(postData);

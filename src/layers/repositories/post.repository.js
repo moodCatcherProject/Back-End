@@ -167,7 +167,7 @@ const findLikePage = async (userId, page, count, orderKey, order, gender) => {
         });
 
         return await Post.findAll({
-            where: { postId: { [Op.in]: likeIdArr } },
+            where: { postId: { [Op.in]: likeIdArr }, delete: false },
             offset: count * (page - 1),
             limit: count,
             order: [[orderKey, order]]
@@ -229,8 +229,18 @@ const findSearchWriterKeyword = async (keyword, page, count) => {
         for (let user of userData) {
             const rep = await findRepPost(user.userId);
 
+            if (!rep) {
+                result.push({
+                    userId: user.userId,
+                    imgUrl: process.env.S3_STORAGE_URL + 'default.jpg',
+                    nickname: user.nickname
+                });
+                continue;
+            }
+
             result.push(await findPost(rep.postId));
         }
+
         return result;
     } catch (err) {
         throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
@@ -327,7 +337,8 @@ const findRepPost = async (userId) => {
             where: { detailId: userId },
             attributes: ['repPostId']
         });
-
+        if (!repPostIdAttr.repPostId) {
+        }
         return await Post.findByPk(repPostIdAttr.repPostId);
     } catch (err) {
         throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
