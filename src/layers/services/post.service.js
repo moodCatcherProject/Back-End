@@ -135,7 +135,16 @@ const findAllPosts = async (
     if (data.length < 1) {
         throw new exception.BadRequestException('게시물 없음');
     }
-    data = data.map((e) => e.get({ plain: true }));
+
+    data = data.map((e, idx) => {
+        console.log(e, idx);
+        try {
+            return e.get({ plain: true });
+        } catch (err) {
+            console.log(err);
+            return e;
+        }
+    });
 
     return data;
 };
