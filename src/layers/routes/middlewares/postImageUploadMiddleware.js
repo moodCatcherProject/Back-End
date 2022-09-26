@@ -18,7 +18,7 @@ class S3ImageController {
                 // 이미지만 처리
                 if (!['png', 'jpg', 'jpeg', 'gif'].includes(ext)) {
                     Post.destroy({
-                        where: { postId, imgUrl: 'defalt' }
+                        where: { postId, imgUrl: 'default' }
                     })
                         .then(() => {
                             return cb(new exception.NotFoundException('이미지 파일이 아닙니다!'));
@@ -32,7 +32,7 @@ class S3ImageController {
                         });
                     return cb(new exception.NotFoundException('이미지 파일이 아닙니다!'));
                 }
-
+                new Error();
                 console.log(file);
                 cb(null, `post/${Date.now()}.${file.mimetype}`);
             }

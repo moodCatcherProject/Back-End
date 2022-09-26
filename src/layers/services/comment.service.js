@@ -79,21 +79,29 @@ const getComments = async (postId, page, count, userId) => {
     }
 
     const result = data.map((f) => {
+        if (f.User.imgUrl[0] == 'p' || f.User.imgUrl[0] == 'd') {
+            f.User.imgUrl = process.env.S3_STORAGE_URL + f.User.imgUrl;
+        }
+        console.log(f.User.imgUrl);
         return {
             userId: f.userId,
             commentId: f.commentId,
             content: f.content,
             nickname: f.User.nickname,
-            imgUrl: process.env.S3_STORAGE_URL + f.User.imgUrl,
+            imgUrl: f.User.imgUrl,
             grade: f.User.grade,
             createdAt: f.createdAt,
+            recommentCount: f.Recomments.length,
             recommentId: f.Recomments.map((a) => {
+                if (a.User.imgUrl[0] == 'p' || a.User.imgUrl[0] == 'd') {
+                    a.User.imgUrl = process.env.S3_STORAGE_URL + a.User.imgUrl;
+                }
                 return {
                     userId: a.userId,
                     recommentId: a.recommentId,
                     content: a.content,
                     nickname: a.User.nickname,
-                    imgUrl: process.env.S3_STORAGE_URL + a.User.imgUrl,
+                    imgUrl: a.User.imgUrl,
                     grade: a.User.grade,
                     createdAt: a.createdAt
                 };
