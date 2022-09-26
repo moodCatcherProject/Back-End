@@ -2,6 +2,7 @@ const postRepository = require('../repositories/post.repository');
 const likeRepository = require('../repositories/like.repository');
 const userRepository = require('../repositories/user.repository');
 const exception = require('../exceptModels/_.models.loader');
+const { Post } = require('../../sequelize/models');
 
 //CRUD
 // // POST
@@ -192,11 +193,17 @@ const findOnePost = async (postId, userId) => {
 const findHotPosts = async () => {
     const hotPosts = await postRepository.findHotPosts();
 
+    for (let post of hotPosts) {
+        const detail = await Post.findOne({ where: { postId: post.postId } });
+        post.delete = detail.delete;
+    }
+
     return hotPosts.map((post) => {
         return {
             postId: post.postId,
             imgUrl: process.env.S3_STORAGE_URL + post.imgUrl,
-            userId: post.userId
+            userId: post.userId,
+            delete: post.delete
         };
     });
 };
