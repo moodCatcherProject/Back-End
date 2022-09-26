@@ -73,19 +73,21 @@ class S3ImageController {
             where: { userId }
         });
 
-        let params = {
-            Bucket: 'gwonyeong',
-            Key: `${imageName.imgUrl}`
-        };
-
         try {
-            s3.deleteObject(params, function (error, data) {
-                if (error) {
-                    console.log('err: ', error, error.stack);
-                } else {
-                    console.log(data, ' 정상 삭제 되었습니다.');
-                }
-            });
+            if (imageName.imgUrl !== 'default.jpg') {
+                let params = {
+                    Bucket: 'gwonyeong',
+                    Key: `${imageName.imgUrl}`
+                };
+
+                s3.deleteObject(params, function (error, data) {
+                    if (error) {
+                        console.log('err: ', error, error.stack);
+                    } else {
+                        console.log(data, ' 정상 삭제 되었습니다.');
+                    }
+                });
+            }
             next();
         } catch (err) {
             console.log(err);
