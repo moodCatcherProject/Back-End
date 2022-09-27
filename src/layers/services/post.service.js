@@ -260,7 +260,16 @@ const updatePost = async (userId, postId, title, content, gender) => {
  * @returns 없음.
  */
 const deletePost = async (userId, postId) => {
-    await isExistPostOfUser(userId, postId);
+    // await isExistPostOfUser(userId, postId);
+    try {
+        const repData = await postRepository.findRepPost(userId);
+
+        if (postId == repData.postId) {
+            await postRepository.updateRepPost(userId, null);
+        }
+    } catch (err) {
+        console.log(err);
+    }
     postRepository.deletePost(postId);
     return;
 };
@@ -290,6 +299,10 @@ const findRepPost = async (userId) => {
 
     const repPost = await postRepository.findPost(userStatus.repPostId);
 
+    if (!repPost) {
+        return {};
+    }
+
     return {
         postId: repPost['postId'],
         userId: repPost['userId'],
@@ -313,7 +326,7 @@ const createItem = async (userId, postId, items) => {
     const createItemData = [];
     for (let item of items) {
         createItemData.push(await postRepository.createItem(postId, item));
-        exception.MoodPoint.whenCreateItem(userId);
+        // exception.MoodPoint.whenCreateItem(userId);
     }
 
     return createItemData;

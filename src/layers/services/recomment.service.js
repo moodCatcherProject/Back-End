@@ -32,13 +32,19 @@ const createReComment = async (commentId, content, userId) => {
     }
 
     const createdReComment = await reCommentRepository.createReComment(commentId, content, userId);
-    exception.MoodPoint.whenLeaveComment(
+
+    await exception.MoodPoint.whenLeaveComment(
         userId,
         await commentRepository.findPostIdByCommentId(commentId)
     );
-    exception.MoodPoint.whenLeaveMyPostComment(
+    await exception.MoodPoint.whenLeaveMyPostComment(
         userId,
         await commentRepository.findPostIdByCommentId(commentId)
+    );
+    await exception.MoodPoint.whenLeaveMyCommentOfRecomment(
+        userId,
+        await commentRepository.findPostIdByCommentId(commentId),
+        commentId
     );
     return createdReComment;
 };
