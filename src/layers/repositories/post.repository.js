@@ -362,6 +362,7 @@ const findRepPost = async (userId) => {
  */
 const updateRepPost = async (userId, repPostId) => {
     try {
+        console.log(userId, repPostId, 'ddd');
         await UserDetail.update(
             {
                 repPostId

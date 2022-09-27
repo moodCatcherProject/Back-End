@@ -260,13 +260,16 @@ const updatePost = async (userId, postId, title, content, gender) => {
  * @returns 없음.
  */
 const deletePost = async (userId, postId) => {
-    await isExistPostOfUser(userId, postId);
+    // await isExistPostOfUser(userId, postId);
     try {
         const repData = await postRepository.findRepPost(userId);
-        if (postId === repData.postId) {
-            postRepository.updateRepPost(userId, null);
+
+        if (postId == repData.postId) {
+            await postRepository.updateRepPost(userId, null);
         }
-    } catch (err) {}
+    } catch (err) {
+        console.log(err);
+    }
     postRepository.deletePost(postId);
     return;
 };
