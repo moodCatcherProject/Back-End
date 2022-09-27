@@ -535,7 +535,10 @@ const findHonorPosts = async (page, count) => {
             limit: count,
             distinct: true,
             attributes: { exclude: ['honorId'] },
-            order: [['honorId', 'DESC']],
+            order: [
+                ['createdAt', 'DESC'],
+                ['rank', 'ASC']
+            ],
             include: [
                 {
                     model: Post,
