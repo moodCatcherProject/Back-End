@@ -34,17 +34,11 @@ const updateIsExistsNotice = (userId) => {
 const createNotice = async (userId, message, postId) => {
     Notice.create({
         userId,
-        notice: message + ' \n무드 포인트를 획득했습니다.',
+        notice: message,
         postId
     });
 };
-const createFullNotice = async (userId, message, postId, lastMessage) => {
-    Notice.create({
-        userId,
-        notice: message + lastMessage,
-        postId
-    });
-};
+
 const updateNotice = async (noticeData) => {
     Notice.update(
         {
@@ -60,7 +54,8 @@ const checkNotice = async (userId, message, postId) => {
     const noticeData = await Notice.findOne({
         where: { userId, postId }
     });
-    if (noticeData && noticeData.notice == message + ' \n무드 포인트를 획득했습니다.') {
+    console.log(noticeData);
+    if (noticeData && noticeData.notice == message && noticeData.postId === postId) {
         noticeData.duplecation += 1;
 
         updateNotice(noticeData);
@@ -70,11 +65,7 @@ const checkNotice = async (userId, message, postId) => {
 };
 
 exports.createMessage = (userId, message, postId) => {
+    console.log('알림 만들기');
     checkNotice(userId, message, postId);
-    updateIsExistsNotice(userId);
-};
-
-exports.createFullMessage = (userId, message, postId, lastMessage) => {
-    createFullNotice(userId, message, postId, lastMessage);
     updateIsExistsNotice(userId);
 };

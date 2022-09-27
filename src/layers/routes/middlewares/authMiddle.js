@@ -32,9 +32,9 @@ exports.isLoggedIn = async (req, res, next) => {
 
         if (myToken === 'jwt expired') {
             console.log('access token 만료');
-
             const userInfo = jwt.decode(tokenValue, process.env.SECRET_KEY);
             const userId = userInfo.userId;
+            exception.MoodPoint.whenLogin(userId);
             let refreshToken;
             Auth.findOne({ where: { authId: userId } }).then((data) => {
                 refreshToken = data.refreshToken;

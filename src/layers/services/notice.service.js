@@ -42,7 +42,7 @@ const displayedAt = (createdAt) => {
     if (minutes < 60) return `${Math.floor(minutes)}분 전`;
     const hours = minutes / 60;
     if (hours < 24) return `${Math.floor(hours)}시간 전`;
-    else return `${substring.createdAt.substring(0, 10)}`;
+    else return `${createdAt.substring(0, 10)}`;
 };
 
 /**
