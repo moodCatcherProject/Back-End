@@ -315,6 +315,12 @@ const checkNickname = async (nickname) => {
     return ExisNickname;
 };
 
+const logout = async (userId) => {
+    await authRepository.logout(userId);
+
+    return;
+};
+
 module.exports = {
     localSignUp,
     checkAuthNum,
@@ -322,5 +328,6 @@ module.exports = {
     checkEmail,
     sendEmail,
     updatePw,
-    checkNickname
+    checkNickname,
+    logout
 };
