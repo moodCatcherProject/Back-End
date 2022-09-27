@@ -43,4 +43,7 @@ authRouter.get(
 );
 authRouter.get('/kakao/disconnect');
 
+// 로그아웃(/api/auth/logout)
+authRouter.delete('/logout', isLoggedIn, authController.logout);
+
 module.exports = authRouter;
