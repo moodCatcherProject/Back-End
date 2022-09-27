@@ -186,6 +186,18 @@ const kakaoCallback = async (req, res, next) => {
     }
 };
 
+/** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
+const logout = async (req, res, next) => {
+    const { userId } = res.locals.user;
+
+    try {
+        await authService.logout(userId);
+        return res.status(200).json(new exception.FormDto('로그아웃 성공'));
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     localSignUp,
     updateNicknameAgeGender,
@@ -195,5 +207,6 @@ module.exports = {
     updatePw,
     checkNickname,
     localLogin,
-    kakaoCallback
+    kakaoCallback,
+    logout
 };

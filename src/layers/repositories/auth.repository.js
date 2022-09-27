@@ -141,6 +141,12 @@ const deleteAuthNum = async (email) => {
     }
 };
 
+const logout = async (userId) => {
+    await Auth.update({ refreshToken: null }, { where: { authId: userId } });
+
+    return;
+};
+
 module.exports = {
     findByEmail,
     createSignUp,
@@ -150,5 +156,6 @@ module.exports = {
     findHashAuthNum,
     updateHashAuthNum,
     findHashAuthNum,
-    deleteAuthNum
+    deleteAuthNum,
+    logout
 };
