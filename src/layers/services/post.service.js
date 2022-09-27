@@ -313,7 +313,7 @@ const createItem = async (userId, postId, items) => {
     const createItemData = [];
     for (let item of items) {
         createItemData.push(await postRepository.createItem(postId, item));
-        exception.MoodPoint.whenCreateItem(userId);
+        // exception.MoodPoint.whenCreateItem(userId);
     }
 
     return createItemData;

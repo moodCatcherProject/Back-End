@@ -3,18 +3,27 @@ const likeRepository = require('../../repositories/like.repository');
 const notice = require('../form/notice');
 
 const noticeMessageArray = {
-    whenSignUp: `새로운 무드 캐처가 되어`,
+    whenSignUp: `✨ 새로운 캐처님을 환영합니다!! ✨`,
 
-    whenLogin: `무드 캐처에 방문하여`,
+    whenLogin: `무드캐처에 오신 것을 환영합니다!`,
 
-    whenCreatePost: `게시물이 성공적으로 무드의 바다에 떠올라`,
+    //whenCreatePost: `게시물이 성공적으로 무드의 바다에 떠올라`,
+    //게시물의 사용자에게만
+    whenLeaveMyPostComment: `게시물에 새로운 댓글이 있어요`,
 
-    whenLeaveMyPostComment: `다른 캐처님이 게시물에 댓글을 달아주셔서`,
+    //댓글의 작성자에게만
+    whenLeaveMyCommentOfRecomment: '댓글에 새로운 댓글이 있어요',
 
-    whenLeaveComment: `다른 캐처님께 댓글을 남겨`,
+    //해당 캐처에게
+    // whenUpgradeRank: `🎉캐처님의 등급이 ${grade}로 상승했습니다!`,
 
-    whenInRankingMyPost: `캐처님의 무드가 인정받아 랭킹에 등재되어`
+    whenInRankingMyPost: `👑 인기 게시물에 선정되었습니다!! 👑`
 };
+/**
+ *
+ * @param {Number} userId
+ * @returns 포인트의 정보를 담은 배열 pointArray
+ */
 const findPointColumn = async (userId) => {
     return await UserDetail.findOne({
         where: { detailId: userId },
@@ -62,20 +71,16 @@ const checkPoint = async (
     }
     if (pointArr[idx] < maxPoint) {
         pointArr[idx] += point;
+    }
 
-        console.log(`64라인 ${point} 획득, ${pointArr}`);
-        await addPoint(userId, JSON.stringify(pointArr));
-        if (noticeMessage) {
-            notice.createMessage(userId, noticeMessage, postId);
-        }
-        return {
-            pointArr,
-            msg: msg + `현재: ${pointArr[idx]} , 최대치 : ${maxPoint}`
-        };
+    console.log(noticeMessage, userId);
+    await addPoint(userId, JSON.stringify(pointArr));
+    if (noticeMessage) {
+        notice.createMessage(userId, noticeMessage, postId);
     }
     return {
         pointArr,
-        msg: '최대치에 도달'
+        msg: msg + `현재: ${pointArr[idx]} , 최대치 : ${maxPoint}`
     };
 };
 
@@ -90,6 +95,11 @@ const isExistCheckEqualUser = (userIdOfLoginUser, userId) => {
     return false;
 };
 
+/**
+ *
+ * @param {Number} commentId
+ * @returns commentId 댓글의 작성자 userId
+ */
 const findUserIdForComment = async (commentId) => {
     const userId = await Comment.findOne({
         where: { commentId },
@@ -99,6 +109,12 @@ const findUserIdForComment = async (commentId) => {
     return userId.userId;
 };
 
+/**
+ *
+ * @param {Number} postId
+ *
+ * @returns postId 게시물의 작성자 userId
+ */
 const findUserIdForPost = async (postId) => {
     const userId = await Post.findOne({
         where: { postId },
@@ -177,9 +193,7 @@ exports.whenCreatePost = async (userId, postId) => {
         pointArr,
         point,
         maxPoint,
-        '내 게시물 업로드, 100무드 증가',
-        noticeMessageArray.whenCreatePost,
-        postId
+        '내 게시물 업로드, 100무드 증가'
     );
 };
 /**
@@ -273,9 +287,7 @@ exports.whenLeaveComment = async (userId, postId) => {
         pointArr,
         point,
         maxPoint,
-        '타인의 게시물에 댓글 남기기, 30무드 증가',
-        noticeMessageArray.whenLeaveComment,
-        postId
+        '타인의 게시물에 댓글 남기기, 30무드 증가'
     );
 };
 /**
@@ -305,6 +317,30 @@ exports.whenLeaveMyPostComment = async (userId, postId) => {
         postId
     );
 };
+
+exports.whenLeaveMyCommentOfRecomment = async (userId, postId, commentId) => {
+    const userIdOfPost = await findUserIdForPost(postId);
+    const userIdOfComment = await findUserIdForComment(commentId);
+
+    const getPointNumber = 6;
+    const point = 0;
+
+    const maxPoint = 600;
+    const pointData = await findPointColumn(userIdOfPost);
+    const pointArr = JSON.parse(pointData.pointArray);
+
+    return await checkPoint(
+        userIdOfComment,
+        getPointNumber,
+        pointArr,
+        point,
+        maxPoint,
+        '나의 댓글에 대댓글이 달림, 30무드 증가',
+        noticeMessageArray.whenLeaveMyCommentOfRecomment,
+        postId
+    );
+};
+
 /**
  * @version 1.1 한 사람이 여러 자리에 오르면 그만큼 무드포인트 지급
  * @desc 1등 3000, 2등 2000, 3등 1000 무드포인트 지급
