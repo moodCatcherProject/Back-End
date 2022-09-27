@@ -42,7 +42,7 @@ const exception = require('../_.models.loader');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
 //한국시간으로 새벽 00시 00분 00초 마다 실행 (우분투에서는 9시간의 시차가 있어보여요.)
-schedule.scheduleJob('0 30 13 * * *', () => {
+schedule.scheduleJob('0 0 15 * * *', () => {
     scheduleHandller();
 });
 
@@ -182,19 +182,47 @@ const updateGrade = async () => {
                 const moodPoint = pointArray['UserDetail.moodPoint'];
                 const detailId = pointArray['UserDetail.detailId'];
                 const gradeStr = pointArray['grade'].split(' ')[0];
-
+                const gradeNumber = parseInt(pointArray['grade'].split(' ')[1]);
                 //switch 조건문의 case에는 상수값만 올 수 있어 변수, 비교식 등에는 사용할 수 없어서 else if 조건문 선택
                 let gradeNum;
                 if (moodPoint < 1000) {
                     gradeNum = ' 1';
                 } else if (moodPoint < 3000) {
+                    if (gradeNumber <= 1) {
+                        exception.notice.createMessage(
+                            detailId,
+                            `🎉등급이 와이셔츠로 상승했습니다!🎉`,
+                            -1
+                        );
+                    }
                     //else if(1000<=moodPoint<3000)으로 하면 1000보다 큰지만 확인하고 조건문 참으로 인정,,,
                     gradeNum = ' 2';
                 } else if (moodPoint < 6000) {
+                    if (gradeNumber <= 2) {
+                        exception.notice.createMessage(
+                            detailId,
+                            '🎉등급이 넥타이로 상승했습니다!🎉',
+                            -1
+                        );
+                    }
                     gradeNum = ' 3';
                 } else if (moodPoint < 10000) {
+                    if (gradeNumber <= 3) {
+                        exception.notice.createMessage(
+                            detailId,
+                            '🎉캐처님의 등급이 조끼로 상승했습니다!🎉',
+                            -1
+                        );
+                    }
                     gradeNum = ' 4';
                 } else if (moodPoint >= 10000) {
+                    if (gradeNumber <= 4) {
+                        exception.notice.createMessage(
+                            detailId,
+                            '🎉캐처님의 등급이 자켓으로 상승했습니다!🎉',
+                            -1
+                        );
+                    }
                     gradeNum = ' 5';
                 }
 
