@@ -62,12 +62,10 @@ const createComment = async (postId, content, userId) => {
  * @returns { Promise<{ postId: number, page: number, count: number }> | null }
  */
 
-const getComments = async (postId, page, count) => {
+const getComments = async (postId) => {
     try {
         const getComments = await Comment.findAll({
             where: { postId },
-            offset: count * (page - 1),
-            limit: count,
             attributes: ['userId', 'commentId', 'content', 'createdAt'],
             order: [
                 ['createdAt', 'DESC'],
