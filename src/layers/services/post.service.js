@@ -290,6 +290,10 @@ const findRepPost = async (userId) => {
 
     const repPost = await postRepository.findPost(userStatus.repPostId);
 
+    if (!repPost) {
+        return {};
+    }
+
     return {
         postId: repPost['postId'],
         userId: repPost['userId'],
