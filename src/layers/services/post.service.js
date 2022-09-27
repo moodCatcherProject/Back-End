@@ -261,6 +261,12 @@ const updatePost = async (userId, postId, title, content, gender) => {
  */
 const deletePost = async (userId, postId) => {
     await isExistPostOfUser(userId, postId);
+    try {
+        const repData = await postRepository.findRepPost(userId);
+        if (postId === repData.postId) {
+            postRepository.updateRepPost(userId, null);
+        }
+    } catch (err) {}
     postRepository.deletePost(postId);
     return;
 };

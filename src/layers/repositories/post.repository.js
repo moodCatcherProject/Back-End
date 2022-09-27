@@ -345,9 +345,10 @@ const findRepPost = async (userId) => {
             where: { detailId: userId },
             attributes: ['repPostId']
         });
-        if (!repPostIdAttr.repPostId) {
-        }
-        return await Post.findByPk(repPostIdAttr.repPostId);
+
+        return await Post.findOne({
+            where: { postId: repPostIdAttr.repPostId, delete: false }
+        });
     } catch (err) {
         throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
