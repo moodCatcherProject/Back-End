@@ -321,7 +321,9 @@ exports.whenLeaveMyPostComment = async (userId, postId) => {
 exports.whenLeaveMyCommentOfRecomment = async (userId, postId, commentId) => {
     const userIdOfPost = await findUserIdForPost(postId);
     const userIdOfComment = await findUserIdForComment(commentId);
-
+    if (!isExistCheckEqualUser(userId, userIdOfPost)) {
+        return { msg: '자신의 게시물에 댓글.' };
+    }
     const getPointNumber = 6;
     const point = 0;
 

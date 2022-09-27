@@ -34,7 +34,7 @@ class App {
     setMiddleWare() {
         passportConfig();
 
-        if (process.env.MODE !== 'dev' && process.env.NODE_ENV !== 'production') {
+        if (process.env.MODE !== 'env' && process.env.NODE_ENV !== 'production') {
             sequelize
                 .sync({ force: false })
                 .then(() => {
