@@ -11,21 +11,21 @@ const findAllNotice = async (userId) => {
     noticeRepository.updateIsExsitsNotice(userId);
     return await Promise.all(
         noticeData.map(async (notice) => {
-            let postData = null,
-                imgUrl;
+            let userId, imgUrl;
             if (notice.postId !== -1) {
                 await postRepository.findPost(notice.postId).then((p) => {
                     imgUrl = p
                         ? process.env.S3_STORAGE_URL + p.imgUrl
                         : process.env.S3_STORAGE_URL + 'default.jpg';
                 });
+                userId = await postRepository.findPost(notice.postId);
             } else {
                 imgUrl = process.env.S3_STORAGE_URL + 'default.jpg';
             }
-            console.log(imgUrl);
+
             return {
                 msg: notice.notice,
-                userId: notice.userId,
+                userId: userId ? userId.userId : notice.userId,
                 postId: notice.postId,
                 imgUrl,
                 createdAt: displayedAt(notice.createdAt),

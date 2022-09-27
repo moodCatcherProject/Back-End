@@ -42,7 +42,7 @@ const exception = require('../_.models.loader');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
 //한국시간으로 새벽 00시 00분 00초 마다 실행 (우분투에서는 9시간의 시차가 있어보여요.)
-schedule.scheduleJob('50 12 22 * * *', () => {
+schedule.scheduleJob('0 0 15 * * *', () => {
     scheduleHandller();
 });
 
