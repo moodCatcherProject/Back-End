@@ -51,6 +51,15 @@ exports.isLoggedIn = async (req, res, next) => {
         } else {
             const { userId } = jwt.verify(tokenValue, process.env.SECRET_KEY);
 
+            const auth = await Auth.findOne({
+                where: { authId: userId },
+                attributes: ['refreshToken'],
+                raw: true
+            });
+            if (!auth.refreshToken) {
+                throw new exception.ConflictException('refreshToken 없음');
+            }
+
             const userData = await User.findOne({ where: userId });
             const detailUserData = await UserDetail.findOne({ where: { detailId: userId } });
             res.locals.user = userData.dataValues;
