@@ -51,15 +51,17 @@ const updateNotice = async (noticeData) => {
     );
 };
 const checkNotice = async (userId, message, postId) => {
-    const noticeData = await Notice.findOne({
+    const noticeData = await Notice.findAll({
         where: { userId, postId }
     });
-    console.log(noticeData);
-    if (noticeData && noticeData.notice == message && noticeData.postId === postId) {
-        noticeData.duplecation += 1;
 
-        updateNotice(noticeData);
-        return;
+    for (let notice of noticeData) {
+        if (notice.notice == message && notice.postId == postId) {
+            notice.duplecation += 1;
+
+            updateNotice(notice);
+            return;
+        }
     }
     createNotice(userId, message, postId);
 };
@@ -69,3 +71,6 @@ exports.createMessage = (userId, message, postId) => {
     checkNotice(userId, message, postId);
     updateIsExistsNotice(userId);
 };
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImlhdCI6MTY2NDMzMTA1MSwiZXhwIjoxNjY0MzMxMDgxfQ.jXFCybqEdVKJW1vva-Vpd5mdhPlFzEDUuX8xTKaOnoY
+
+// Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjksImlhdCI6MTY2NDMyNjkyNSwiZXhwIjoxNjY0MzM0MTI1fQ.t-m3MfozocEdwi4anlMVIvtX3fb4rf_giOwGeyUrZGA
