@@ -194,8 +194,16 @@ const findHotPosts = async () => {
     const hotPosts = await postRepository.findHotPosts();
 
     for (let post of hotPosts) {
-        const detail = await Post.findOne({ where: { postId: post.postId } });
-        post.delete = detail.delete;
+        try {
+            const detail = await Post.findOne({ where: { postId: post.postId } });
+            if (!detail) {
+                post.imgUrl = 'default.jpg';
+                post.delete = true;
+            }
+            post.delete = detail.delete;
+        } catch (err) {
+            continue;
+        }
     }
 
     return hotPosts.map((post) => {
@@ -298,6 +306,10 @@ const findRepPost = async (userId) => {
     }
 
     const repPost = await postRepository.findPost(userStatus.repPostId);
+
+    if (!repPost) {
+        return {};
+    }
 
     return {
         postId: repPost['postId'],

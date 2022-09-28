@@ -28,7 +28,7 @@ const localSignUp = async (email, password, confirmPw, authNum) => {
     }
 
     const checkEmail =
-        /^[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/;
+        /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
     if (checkEmail.test(email) == false) {
         throw new exception.BadRequestException('이메일 유효성 에러');
     }
@@ -142,7 +142,7 @@ const checkEmail = async (email) => {
     new exception.isString({ email }).value;
 
     const checkEmail =
-        /^[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/;
+        /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
     if (checkEmail.test(email) === false) {
         throw new exception.BadRequestException('이메일 유효성 에러');
     }
@@ -166,7 +166,7 @@ const sendEmail = async (email, type) => {
     new exception.isString({ type }).value;
 
     const checkEmail =
-        /^[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/;
+        /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
     if (checkEmail.test(email) === false) {
         throw new exception.BadRequestException('이메일 유효성 에러');
     }
@@ -263,7 +263,7 @@ const updatePw = async (email, password, confirmPw, authNum) => {
     new exception.isString({ authNum }).value;
 
     const checkEmail =
-        /^[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/;
+        /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
     if (checkEmail.test(email) === false) {
         throw new exception.BadRequestException('이메일 유효성 에러');
     }
@@ -315,6 +315,12 @@ const checkNickname = async (nickname) => {
     return ExisNickname;
 };
 
+const logout = async (userId) => {
+    await authRepository.logout(userId);
+
+    return;
+};
+
 module.exports = {
     localSignUp,
     checkAuthNum,
@@ -322,5 +328,6 @@ module.exports = {
     checkEmail,
     sendEmail,
     updatePw,
-    checkNickname
+    checkNickname,
+    logout
 };
