@@ -51,14 +51,15 @@ exports.isLoggedIn = async (req, res, next) => {
         } else {
             const { userId } = jwt.verify(tokenValue, process.env.SECRET_KEY);
 
-            const auth = await Auth.findOne({
-                where: { authId: userId },
-                attributes: ['refreshToken'],
-                raw: true
-            });
-            if (!auth.refreshToken) {
-                throw new exception.ConflictException('refreshToken 없음');
-            }
+            // 로그아웃 관련 refresh token 없을 때 에러 발생
+            // const auth = await Auth.findOne({
+            //     where: { authId: userId },
+            //     attributes: ['refreshToken'],
+            //     raw: true
+            // });
+            // if (!auth.refreshToken) {
+            //     throw new exception.ConflictException('refreshToken 없음');
+            // }
 
             const userData = await User.findOne({ where: userId });
             const detailUserData = await UserDetail.findOne({ where: { detailId: userId } });
