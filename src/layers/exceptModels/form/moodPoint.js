@@ -73,7 +73,6 @@ const checkPoint = async (
         pointArr[idx] += point;
     }
 
-    console.log(noticeMessage, userId);
     await addPoint(userId, JSON.stringify(pointArr));
     if (noticeMessage) {
         notice.createMessage(userId, noticeMessage, postId);
