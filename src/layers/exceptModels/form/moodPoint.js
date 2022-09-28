@@ -5,6 +5,8 @@ const notice = require('../form/notice');
 const noticeMessageArray = {
     whenSignUp: `✨ 새로운 캐처님을 환영합니다!! ✨`,
 
+    whenSignUpEvent: `이벤트 기간, 참여해 주셔서 감사드려요!!`,
+
     whenLogin: `무드캐처에 오신 것을 환영합니다!`,
 
     //whenCreatePost: `게시물이 성공적으로 무드의 바다에 떠올라`,
@@ -127,8 +129,9 @@ const findUserIdForPost = async (postId) => {
  * @desc 회원가입을 축하한다는 메세지 생성(완)
  * @param {number} userId
  */
-exports.whenSignUp = (userId) => {
+exports.whenSignUp = async (userId) => {
     directUpPoint(userId, noticeMessageArray.whenSignUp);
+    directUpPoint(userId, noticeMessageArray.whenSignUpEvent);
 };
 
 /**
@@ -153,6 +156,7 @@ exports.whenLogin = async (userId) => {
         noticeMessageArray.whenLogin
     );
 };
+
 /**
  * @desc 다른 사람이 나의 옷장을 열람할 시 50 무드 획득. 하루 최대1000(완)
  * @param {number} userId
