@@ -34,10 +34,10 @@ class S3ImageController {
                 }
                 new Error();
                 console.log(file);
-                cb(null, `post/${Date.now()}.${file.mimetype}`);
+                cb(null, `post/${Date.now()}.${ext}`);
             }
         }),
-        limits: { fileSize: 5 * 1024 * 1024 } // 5메가로 용량 제한
+        limits: { fileSize: 10 * 1024 * 1024 } // 10메가로 용량 제한
     });
     //해당 게시물의 이미지 삭제
     delete_file = async (req, res, next) => {

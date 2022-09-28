@@ -197,7 +197,7 @@ const findHotPosts = async () => {
         try {
             const detail = await Post.findOne({ where: { postId: post.postId } });
             if (!detail) {
-                post.imgUrl = 'default.jpg';
+                post.imgUrl = 'post/default.jpg';
                 post.delete = true;
             }
             post.delete = detail.delete;
@@ -209,7 +209,7 @@ const findHotPosts = async () => {
     return hotPosts.map((post) => {
         return {
             postId: post.postId,
-            imgUrl: process.env.S3_STORAGE_URL + post.imgUrl,
+            imgUrl: process.env.S3_STORAGE_URL + `w560/` + post['imgUrl'].split('/')[1],
             userId: post.userId,
             delete: post.delete
         };
