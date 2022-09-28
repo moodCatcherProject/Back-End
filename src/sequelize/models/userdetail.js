@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             moodPoint: {
                 type: DataTypes.INTEGER,
-                defaultValue: 500
+                defaultValue: 2500
             },
             repPostId: {
                 type: DataTypes.INTEGER
