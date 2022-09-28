@@ -6,7 +6,7 @@ const findAllNotice = async (req, res, next) => {
     try {
         const { userId } = res.locals.user;
         const noticeData = await noticeService.findAllNotice(userId);
-        console.log('여기는 게시물', noticeData);
+
         return res
             .status(200)
             .json(new exception.FormDto('알림 보내기 성공', { notices: noticeData }));
