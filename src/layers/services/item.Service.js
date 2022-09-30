@@ -29,12 +29,14 @@ const crawlingMusinsa = async (keyword) => {
                 const imgUrl = $(node).find('.list_img> a> img').attr('data-original');
                 const price = $(node).find('.price').text();
                 const name = $(node).find('.list_info>a').attr('title');
+                const url = $(node).find('.list_img> a').attr('href');
 
                 items.push({
                     imgUrl: 'https:' + imgUrl,
                     brand,
                     name,
-                    price: price.trim()
+                    price: price.trim(),
+                    url
                 });
             }
         });

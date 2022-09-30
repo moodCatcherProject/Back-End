@@ -390,13 +390,14 @@ const updateRepPost = async (userId, repPostId) => {
  */
 const createItem = async (postId, item) => {
     try {
-        const { brand, name, imgUrl, price } = item;
+        const { brand, name, imgUrl, price, url } = item;
         return await Item.create({
             postId,
             brand,
             name,
             imgUrl,
-            price
+            price,
+            url
         });
     } catch (err) {
         throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
@@ -406,7 +407,7 @@ const createItem = async (postId, item) => {
 /**
  * Item 테이블에서 postId 값이 일치하는 data 배열 반환
  * @param {number} postId
- * @returns { Promise<{ brand:string, name:string, price:string, imgUrl:string } | null>}
+ * @returns { Promise<{ brand:string, name:string, price:string, imgUrl:string, url:string } | null>}
  */
 const findItems = async (postId) => {
     try {
