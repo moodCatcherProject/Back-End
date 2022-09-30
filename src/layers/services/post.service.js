@@ -155,7 +155,7 @@ const findAllPosts = async (
  * @param {number} postId
  * @param {number} userId
  * @returns { Promise<{ post: {postId:number, title:string, content:string, userId:number, imgUrl:string,
- *  likeCount:number, createdAt:date, likeStatus:string }, items: [{ brand:string, name:string, price:string, imgUrl:string }] } | null>}
+ *  likeCount:number, createdAt:date, likeStatus:string }, items: [{ brand:string, name:string, price:string, imgUrl:string, url:string }] } | null>}
  */
 const findOnePost = async (postId, userId) => {
     const isExistsPost = await postRepository.findPost(postId);
