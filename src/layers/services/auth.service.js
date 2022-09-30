@@ -178,6 +178,13 @@ const sendEmail = async (email, type) => {
         } // 회원가입을 하려고 하는데, 이 이메일로 이미 가입 되어 있을 때 에러
     }
 
+    if (type === 'password') {
+        const ExistEmail = await authRepository.findByEmail(email);
+        if (!ExistEmail) {
+            throw new exception.BadRequestException('가입되지 않은 이메일');
+        }
+    }
+
     // 관리자 계정 정보
     const managerEmail = {
         host: 'smtp.gmail.com', // Gmail 서비스 사용 / (SMTP는 이메일 클라이언트와 메일 서버 간의 데이터 교환 프로세스)
@@ -198,12 +205,11 @@ const sendEmail = async (email, type) => {
         from: '"MoodCatcher" <process.env.NODEMAILER_USER>', // 보내는 사람의 메일 (관리자 이메일)
         to: email, // 받는 사람 메일 (req.body값에 들어가는 email)
         subject: 'MoodCatcher에 오신 것을 환영합니다.', // 메일 제목
-        html: `
-          <h1>MoodCatcher MoodCatcher에 오신 것을 환영합니다.</h1>
-          <p>아래의 인증 번호를 입력하여 인증을 완료해주세요.</p>
-          <p>개인정보 보호를 위해 인증번호는 10분 동안만 유효합니다.</p>
-          <h2>${authNum}</h2>
-      `
+        html: `<h1>MoodCatcher MoodCatcher에 오신 것을 환영합니다.</h1>
+                <p>회원가입을 위한 인증번호입니다.<p>
+                <p>아래의 인증 번호를 입력하여 인증을 완료해주세요.</p>
+                <p>개인정보 보호를 위해 인증번호는 10분 동안만 유효합니다.</p>
+                <h2>${authNum}</h2>`
     };
 
     const passwordMailOptions = {
@@ -229,6 +235,7 @@ const sendEmail = async (email, type) => {
             }
         });
     };
+
     if (type === 'signup') {
         send(signupMailOptions);
     } else if (type === 'password') {
@@ -236,6 +243,7 @@ const sendEmail = async (email, type) => {
     } else {
         throw new exception.BadRequestException('type을 확인해주세요');
     }
+
     // body에 적은 email이 이미 인증번호값이 있는지 없는지 확인.
     const ExistHashAuthNum = await authRepository.findHashAuthNum(email);
     // body에 적은 email이 이미 인증번호값이 있을 때 그 값을 업데이트.
