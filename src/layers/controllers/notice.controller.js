@@ -15,6 +15,15 @@ const findAllNotice = async (req, res, next) => {
     }
 };
 
+const deleteOneNotice = async (req, res, next) => {
+    try {
+        const { userId } = res.locals.user;
+        const { noticeId } = req.params;
+        noticeService.deleteOneNotice(noticeId);
+        res.status(200).json(new exception.FormDto('알림 하나 삭제 성공'));
+    } catch (err) {}
+};
+
 const deleteAllNotice = async (req, res, next) => {
     try {
         const { userId } = res.locals.user;
@@ -27,5 +36,6 @@ const deleteAllNotice = async (req, res, next) => {
 
 module.exports = {
     findAllNotice,
+    deleteOneNotice,
     deleteAllNotice
 };

@@ -34,9 +34,9 @@ class App {
     setMiddleWare() {
         passportConfig();
 
-        if (process.env.MODE !== 'env' && process.env.NODE_ENV !== 'production') {
+        if (process.env.MODE !== 'dev' && process.env.NODE_ENV !== 'production') {
             sequelize
-                .sync({ force: false })
+                .sync({ force: true })
                 .then(() => {
                     console.log('데이터베이스 연결 성공');
                 })

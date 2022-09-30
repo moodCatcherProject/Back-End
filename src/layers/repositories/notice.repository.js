@@ -15,6 +15,17 @@ const findAllNotice = async (userId) => {
         throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
     }
 };
+
+const deleteOneNotice = async (noticeId) => {
+    try {
+        Notice.destroy({
+            where: { noticeId }
+        });
+    } catch (err) {
+        throw new exception.UnhandleMysqlSequelizeError(`UnhandleMysqlSequelizeError: ${err}`);
+    }
+};
+
 /**
  * @desc userId 유저의 모든 알림 삭제
  * @param {number} userId
@@ -52,6 +63,7 @@ const updateIsExsitsNotice = async (userId) => {
 module.exports = {
     findAllNotice,
     deleteAllNotice,
+    deleteOneNotice,
 
     updateIsExsitsNotice
 };

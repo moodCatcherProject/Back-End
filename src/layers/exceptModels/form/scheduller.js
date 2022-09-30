@@ -149,11 +149,10 @@ const totalLikeCount = async () => {
                     where: { detailId: pointArray.detailId }
                 }
             );
-            exception.notice.createFullMessage(
+            exception.notice.createMessage(
                 pointArray.detailId,
-                `어제 하루동안 무드캐처에서 활동하신 결과`,
-                -1,
-                `\n${totalPoint}무드 포인트를 획득했습니다.`
+                `어제 하루동안 무드캐처에서 활동하신 결과\n${totalPoint}무드 포인트를 획득했습니다.`,
+                -1
             );
         } catch (err) {
             continue;
