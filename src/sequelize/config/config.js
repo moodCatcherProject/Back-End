@@ -20,9 +20,9 @@ const development = {
 };
 
 const production = {
-    username: env.MYSQL_USERNAME,
-    password: env.MYSQL_PASSWORD,
-    database: env.MYSQL_DATABASE + 'production',
+    username: env.MYSQL_USERNAM,
+    password: env.MYSQL_PASSWOR,
+    database: env.MYSQL_DATABAS + 'production',
     host: env.MYSQL_HOST,
     dialect: 'mysql',
     logging: false,
