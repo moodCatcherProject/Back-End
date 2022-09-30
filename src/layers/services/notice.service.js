@@ -29,7 +29,8 @@ const findAllNotice = async (userId) => {
                 postId: notice.postId,
                 imgUrl,
                 createdAt: displayedAt(notice.createdAt),
-                duplecation: notice.duplecation
+                duplecation: notice.duplecation,
+                noticeId: notice.noticeId
             };
         })
     );
@@ -45,6 +46,10 @@ const displayedAt = (createdAt) => {
     else return `${createdAt.substring(0, 10)}`;
 };
 
+const deleteOneNotice = async (noticeId) => {
+    noticeRepository.deleteOneNotice(noticeId);
+};
+
 /**
  * @desc userId의 모든 알림 삭제
  * @param {number} userId
@@ -55,5 +60,6 @@ const deleteAllNotice = async (userId) => {
 
 module.exports = {
     findAllNotice,
-    deleteAllNotice
+    deleteAllNotice,
+    deleteOneNotice
 };
