@@ -1,13 +1,34 @@
 const kakaoMapRepository = require('../repositories/kakaoMap.repository.js');
 const userRepository = require('../repositories/user.repository');
 
+/**
+ * 유저 좌표 업데이트
+ * @param {number} userId
+ * @param {number} latitude
+ * @param {number} longitude
+ * @returns { Promise<{ isExistsMap: boolean }> | null }
+ */
 const updatePosition = async (userId, latitude, longitude) => {
-    const positionData = await kakaoMapRepository.updatePosition(userId, latitude, longitude);
-    return positionData;
+    await kakaoMapRepository.updatePosition(userId, latitude, longitude);
+    const authData = await kakaoMapRepository.findUserPosition(userId);
+
+    if (authData.isExistsMap) isExistsMap = true;
+    else isExistsMap = false;
+
+    return isExistsMap;
 };
 
+/**
+ * 주변 사람 유저 정보 가져오기
+ * @param {number} userId
+ * @param {number} maxDist
+ * @returns isExistsMap이 true인 유저 정보 배열 반환
+ */
 const findAroundCatcher = async (userId, maxDist) => {
     const userPosition = await kakaoMapRepository.findUserPosition(userId);
+    if (!userPosition.isExistsMap) {
+        return { aroundUser: [] };
+    }
     const latitude = userPosition.latitude;
     const longitude = userPosition.longitude;
     const authData = await kakaoMapRepository.findAroundCatcher();
@@ -51,6 +72,23 @@ const findAroundCatcher = async (userId, maxDist) => {
     return { aroundUser: positionArr };
 };
 
+/**
+ * 무드 맵 ON/OFF
+ * @param {number} userId
+ * @returns { Promise<{ isExistsMap: boolean }> | null }
+ */
+const onOffMap = async (userId) => {
+    const authData = await kakaoMapRepository.findUserPosition(userId);
+    if (authData.isExistsMap) {
+        isExistsMap = false;
+    } else {
+        isExistsMap = true;
+    }
+    const result = await kakaoMapRepository.onOffMap(userId, isExistsMap);
+
+    return result.isExistsMap;
+};
+
 function distance(lat1, lon1, lat2, lon2, unit = 'K') {
     if (lat1 == lat2 && lon1 == lon2) {
         return 0;
@@ -81,5 +119,6 @@ function distance(lat1, lon1, lat2, lon2, unit = 'K') {
 }
 module.exports = {
     updatePosition,
-    findAroundCatcher
+    findAroundCatcher,
+    onOffMap
 };

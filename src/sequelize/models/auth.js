@@ -47,6 +47,11 @@ module.exports = (sequelize, DataTypes) => {
             longitude: {
                 type: DataTypes.FLOAT,
                 defaultValue: null
+            },
+            isExistsMap: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
             }
         },
         {

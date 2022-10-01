@@ -12,7 +12,7 @@
 - 2022/08/26 ~ 2022/10/07
 
 # 👒 팀 소개
-
+![come with me (5)](https://user-images.githubusercontent.com/71562311/193312964-ddc4017e-de9d-4f19-8305-cf6d227501f0.png)
 | 역할 | 이름 | git |
 | ------ | -- | ----|
 | Back-end | 조권영 | https://github.com/kwanyung|
@@ -22,6 +22,7 @@
 | Front-end | 신수정 | https://github.com/crystal025| 
 | UI & UX | 김유나 |  [무드캐처 FIGMA 디자인](https://www.figma.com/file/jtjWzOYOVgJ5I4dtneHYwG/%EB%AC%B4%EB%93%9C%EC%BA%90%EC%B3%90?node-id=117%3A290)|
 | PM | 김승빈 | [무드캐처 FIGMA 기획](https://www.figma.com/file/jtjWzOYOVgJ5I4dtneHYwG/%EB%AC%B4%EB%93%9C%EC%BA%90%EC%B3%90?node-id=0%3A1)|   
+
 
 # 👔 Project Architecture
 
