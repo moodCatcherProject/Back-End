@@ -36,6 +36,11 @@ module.exports = {
             },
             longitude: {
                 type: Sequelize.FLOAT
+            },
+            isExistsMap: {
+                type: Sequelize.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
             }
         });
     },
