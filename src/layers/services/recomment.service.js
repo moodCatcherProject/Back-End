@@ -11,12 +11,12 @@ const exception = require('../exceptModels/_.models.loader');
  */
 const createReComment = async (commentId, content, userId) => {
     if (!content) {
-        throw new exception.BadRequestException('대댓글 내용 없음.');
+        throw new exception.BadRequestException('대댓글 내용 없음');
     }
 
     const comment = await commentRepository.findComment(commentId);
     if (comment === null) {
-        throw new exception.BadRequestException('댓글 없음.');
+        throw new exception.NotFoundException('댓글 없음');
     }
 
     const findUser = await commentRepository.findUser(userId);
@@ -24,11 +24,11 @@ const createReComment = async (commentId, content, userId) => {
     const userGrade = findUser.grade;
 
     if (userNickname === null) {
-        throw new exception.BadRequestException('nickname 없음.');
+        throw new exception.BadRequestException('nickname 없음');
     }
 
     if (userGrade === null) {
-        throw new exception.BadRequestException('grade 없음.');
+        throw new exception.BadRequestException('grade 없음');
     }
 
     const createdReComment = await reCommentRepository.createReComment(commentId, content, userId);
@@ -58,18 +58,18 @@ const createReComment = async (commentId, content, userId) => {
  */
 const updateReComment = async (recommentId, content, userId) => {
     if (!content) {
-        throw new exception.BadRequestException('대댓글 내용 없음.');
+        throw new exception.BadRequestException('대댓글 내용 없음');
     }
 
     const reComment = await reCommentRepository.findReComment(recommentId);
     if (reComment === null) {
-        throw new exception.BadRequestException('대댓글 없음.');
+        throw new exception.NotFoundException('대댓글 없음');
     }
 
     const user = await reCommentRepository.findReComment(recommentId);
     const findUser = user.userId;
     if (findUser !== userId) {
-        throw new exception.BadRequestException('대댓글의 작성자만 수정 가능합니다.');
+        throw new exception.UnauthorizedException('대댓글의 작성자만 수정 가능합니다');
     }
 
     const updatedReComment = await reCommentRepository.updateReComment(
@@ -90,13 +90,13 @@ const updateReComment = async (recommentId, content, userId) => {
 const deleteReComment = async (recommentId, userId) => {
     const reComment = await reCommentRepository.findReComment(recommentId);
     if (reComment === null) {
-        throw new exception.BadRequestException('대댓글 없음.');
+        throw new exception.NotFoundException('대댓글 없음');
     }
 
     const user = await reCommentRepository.findReComment(recommentId);
     const findUser = user.userId;
     if (findUser !== userId) {
-        throw new exception.BadRequestException('대댓글의 작성자만 삭제 가능합니다.');
+        throw new exception.BadRequestException('대댓글의 작성자만 삭제 가능합니다');
     }
 
     const deleteReComment = await reCommentRepository.deleteReComment(recommentId, userId);

@@ -57,9 +57,7 @@ const createComment = async (postId, content, userId) => {
  * 유저정보를 포함한 댓글과 유저정보를 포함한 대댓글을 조회.
  * 댓글은 최신순으로 대댓글은 오래된순으로 조회.
  * @param { number } postId
- * @param { number } page
- * @param { number } count
- * @returns { Promise<{ postId: number, page: number, count: number }> | null }
+ * @returns { Promise<{ postId: number }> | null }
  */
 
 const getComments = async (postId) => {
