@@ -18,7 +18,7 @@ authRouter.post('/sendEmail', authController.sendEmail);
 authRouter.get('/check-authnum', authController.checkAuthNum);
 
 // 비밀번호 변경(/api/auth/updatePw?email)
-authRouter.put('/updatePw', isNotLoggedIn, authController.updatePw);
+authRouter.put('/updatePw', authController.updatePw);
 
 // 닉네임 확인(/api/auth/checkNickname?nickname)
 authRouter.get('/checkNickname', isLoggedIn, authController.checkNickname);
