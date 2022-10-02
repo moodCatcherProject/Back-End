@@ -205,22 +205,136 @@ const sendEmail = async (email, type) => {
         from: '"MoodCatcher" <process.env.NODEMAILER_USER>', // 보내는 사람의 메일 (관리자 이메일)
         to: email, // 받는 사람 메일 (req.body값에 들어가는 email)
         subject: 'MoodCatcher에 오신 것을 환영합니다.', // 메일 제목
-        html: `<h1>MoodCatcher MoodCatcher에 오신 것을 환영합니다.</h1>
-                <p>회원가입을 위한 인증번호입니다.<p>
-                <p>아래의 인증 번호를 입력하여 인증을 완료해주세요.</p>
+        html: `
+                <body style="margin: 0">
+                <style>
+                @import url("https://media.discordapp.net/attachments/1014169130045292625/1016677312634306580/123.png?width=994&height=559");
+                body {
+                font-family: "Noto Sans KR", sans-serif;
+                color: #393939;
+                line-height: 1.6;
+                }
+                </style>
+                <div class="wrap">
+                <header
+                style="
+                height: 156px;
+                background-color: #e0cbff;
+                color: #fff;
+                text-align: center;
+                "
+                >
+                <img
+                src="https://cdn.discordapp.com/attachments/1014169130045292625/1014575692412883014/1.png"
+                style="width: 120px; height: auto; padding-top: 45px"
+                />
+                </header>
+                <section
+                class="title"
+                style="
+                max-width: 1000px;
+                margin: 0 auto;
+                padding: 37px 25px 27px;
+                border-bottom: 2px solid #cdcdcd;
+                "
+                >
+                <h1>MoodCatcher 회원가입을 위한 인증번호입니다.</h1>
+                <h4>아래의 인증 번호를 입력하여 인증을 완료해주세요.</h4>
+                </section>
+                <section
+                class="desc"
+                style="
+                max-width: 1000px;
+                margin: 0 auto;
+                text-align: center;
+                padding: 40px 0;
+                border-bottom: 2px solid #cdcdcd;
+                "
+                >
+                <p>인증번호 : <strong>${authNum}</strong></p>
+                </section>
+                <section
+                class="info"
+                style="
+                max-width: 1000px;
+                margin: 0 auto;
+                padding: 37px 2px 27px;
+                border-bottom: 2px solid #cdcdcd;
+                "
+                >
                 <p>개인정보 보호를 위해 인증번호는 10분 동안만 유효합니다.</p>
-                <h2>${authNum}</h2>`
+                </section>
+                </div>
+                </body>
+                `
     };
 
     const passwordMailOptions = {
         from: '"MoodCatcher" <process.env.NODEMAILER_USER>', // 보내는 사람의 메일 (관리자 이메일)
         to: email, // 받는 사람 메일 (req.body값에 들어가는 email)
         subject: 'MoodCatcher 인증번호가 도착했습니다.', // 메일 제목
-        html: `<h1>MoodCatcher 인증번호가 도착했습니다.</h1>
-                <p>비밀번호 찾기를 위한 인증번호입니다.<p>
-                <p>아래의 인증번호를 입력하여 인증을 완료해주세요.</p>
+        html: `
+                <body style="margin: 0">
+                <style>
+                @import url("https://media.discordapp.net/attachments/1014169130045292625/1016677312634306580/123.png?width=994&height=559");
+                body {
+                font-family: "Noto Sans KR", sans-serif;
+                color: #393939;
+                line-height: 1.6;
+                }
+                </style>
+                <div class="wrap">
+                <header
+                style="
+                height: 156px;
+                background-color: #e0cbff;
+                color: #fff;
+                text-align: center;
+                "
+                >
+                <img
+                src="https://cdn.discordapp.com/attachments/1014169130045292625/1014575692412883014/1.png"
+                style="width: 120px; height: auto; padding-top: 45px"
+                />
+                </header>
+                <section
+                class="title"
+                style="
+                max-width: 1000px;
+                margin: 0 auto;
+                padding: 37px 25px 27px;
+                border-bottom: 2px solid #cdcdcd;
+                "
+                >
+                <h1>MoodCatcher 비밀번호찾기를 위한 인증번호입니다.</h1>
+                <h4>아래의 인증 번호를 입력하여 인증을 완료해주세요.</h4>
+                </section>
+                <section
+                class="desc"
+                style="
+                max-width: 1000px;
+                margin: 0 auto;
+                text-align: center;
+                padding: 40px 0;
+                border-bottom: 2px solid #cdcdcd;
+                "
+                >
+                <p>인증번호 : <strong>${authNum}</strong></p>
+                </section>
+                <section
+                class="info"
+                style="
+                max-width: 1000px;
+                margin: 0 auto;
+                padding: 37px 2px 27px;
+                border-bottom: 2px solid #cdcdcd;
+                "
+                >
                 <p>개인정보 보호를 위해 인증번호는 10분 동안만 유효합니다.</p>
-                <h2>${authNum}</h2>`
+                </section>
+                </div>
+                </body>
+                `
     };
 
     // (메일 전송을 위한 SMTP 필요, 관리자급의 계정정보 필요)
