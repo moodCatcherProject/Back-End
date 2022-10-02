@@ -11,7 +11,7 @@ const exception = require('../exceptModels/_.models.loader');
  */
 const createComment = async (postId, content, userId) => {
     if (!content) {
-        throw new exception.BadRequestException('댓글 내용 없음.');
+        throw new exception.BadRequestException('댓글 내용 없음');
     }
 
     const findUser = await commentRepository.findUser(userId);
@@ -19,16 +19,16 @@ const createComment = async (postId, content, userId) => {
     const userGrade = findUser.grade;
 
     if (userNickname === null) {
-        throw new exception.BadRequestException('nickname 없음.');
+        throw new exception.BadRequestException('nickname 없음');
     }
 
     if (userGrade === null) {
-        throw new exception.BadRequestException('grade 없음.');
+        throw new exception.BadRequestException('grade 없음');
     }
 
     const post = await postRepository.findPost(postId);
     if (post === null) {
-        throw new exception.BadRequestException('게시물 없음.');
+        throw new exception.BadRequestException('게시물 없음');
     }
     // exception.MoodPoint.whenLeaveComment(userId, postId);
     exception.MoodPoint.whenLeaveMyPostComment(userId, postId);
@@ -40,19 +40,16 @@ const createComment = async (postId, content, userId) => {
 /**
  * 댓글 조회
  * @param { number } postId
- * @param { number } page
- * @param { number } count
- * @param { number } userId
- * @returns { Promise<{ postId: number, page: number, count: number, userId: number }> | null }
+ * @returns { Promise<{ postId: number }> | null }
  */
-const getComments = async (postId, userId) => {
-    const getComments = await commentRepository.getComments(postId, userId);
+const getComments = async (postId) => {
+    const getComments = await commentRepository.getComments(postId);
 
     data = getComments.map((e) => e.get({ plain: true }));
 
     const post = await postRepository.findPost(postId);
     if (post === null) {
-        throw new exception.BadRequestException('게시물 없음.');
+        throw new exception.BadRequestException('게시물 없음');
     }
 
     const displayedAt = (createdAt) => {
@@ -121,18 +118,18 @@ const getComments = async (postId, userId) => {
  */
 const updateComment = async (commentId, content, userId) => {
     if (!content) {
-        throw new exception.BadRequestException('댓글 내용 없음.');
+        throw new exception.BadRequestException('댓글 내용 없음');
     }
 
     const findComment = await commentRepository.findComment(commentId);
     if (findComment === null) {
-        throw new exception.BadRequestException('댓글 없음.');
+        throw new exception.NotFoundException('댓글 없음');
     }
 
     const user = await commentRepository.findComment(commentId);
     const findUser = user.userId;
     if (findUser !== userId) {
-        throw new exception.BadRequestException('댓글의 작성자만 수정 가능합니다.');
+        throw new exception.UnauthorizedException('댓글의 작성자만 수정 가능합니다');
     }
 
     const updatedComment = await commentRepository.updateComment(commentId, content, userId);
@@ -149,13 +146,13 @@ const updateComment = async (commentId, content, userId) => {
 const deleteComment = async (commentId, userId) => {
     const comment = await commentRepository.findComment(commentId);
     if (comment === null) {
-        throw new exception.BadRequestException('댓글 없음.');
+        throw new exception.NotFoundException('댓글 없음');
     }
 
     const user = await commentRepository.findComment(commentId);
     const findUser = user.userId;
     if (findUser !== userId) {
-        throw new exception.BadRequestException('댓글의 작성자만 삭제 가능합니다.');
+        throw new exception.UnauthorizedException('댓글의 작성자만 삭제 가능합니다');
     }
 
     const deleteComment = await commentRepository.deleteComment(commentId);

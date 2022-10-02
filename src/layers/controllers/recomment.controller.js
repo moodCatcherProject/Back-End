@@ -37,7 +37,7 @@ const updateReComment = async (req, res, next) => {
         updateReComment.dataValues.grade = grade;
         updateReComment.dataValues.imgUrl = imgUrl;
         return res
-            .status(200)
+            .status(201)
             .json(new exception.FormDto('대댓글 수정 성공', { recomment: updateReComment }));
     } catch (err) {
         next(err);

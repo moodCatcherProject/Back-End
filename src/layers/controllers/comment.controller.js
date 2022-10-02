@@ -24,9 +24,8 @@ const createComment = async (req, res, next) => {
 /** @param { e.Request } req @param { e.Response } res @param { e.NextFunction } next */
 const getComments = async (req, res, next) => {
     const { postId } = req.query;
-    const { userId } = res.locals.user;
     try {
-        const getComments = await commentService.getComments(postId, userId);
+        const getComments = await commentService.getComments(postId);
         return res
             .status(200)
             .json(new exception.FormDto('댓글 조회 성공', { comments: getComments }));
@@ -47,7 +46,7 @@ const updateComment = async (req, res, next) => {
         updateComment.dataValues.grade = grade;
         updateComment.dataValues.imgUrl = imgUrl;
         return res
-            .status(200)
+            .status(201)
             .json(new exception.FormDto('댓글 수정 성공', { comment: updateComment }));
     } catch (err) {
         next(err);

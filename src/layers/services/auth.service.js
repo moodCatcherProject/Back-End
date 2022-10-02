@@ -401,7 +401,9 @@ const updatePw = async (email, password, confirmPw, authNum) => {
 
     const hashAuthNum = await authRepository.findHashAuthNum(email);
     if (!hashAuthNum) {
-        throw new exception.BadRequestException('인증번호를 발급받지 않은 이메일');
+        throw new exception.BadRequestException(
+            '인증번호를 발급받지 않았거나 인증번호가 만료된 이메일'
+        );
     }
 
     const isExistsAuthNum = await bcrypt.compare(authNum, hashAuthNum.hashAuthNum);
