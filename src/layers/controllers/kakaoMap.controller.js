@@ -10,7 +10,11 @@ const updatePosition = async (req, res, next) => {
     try {
         const isExistsMap = await kakaoMapService.updatePosition(userId, latitude, longitude);
 
-        return res.status(200).json(new exception.FormDto('유저 좌표 업데이트', { isExistsMap }));
+        return res
+            .status(200)
+            .json(
+                new exception.FormDto('유저 좌표 업데이트', { isExistsMap, latitude, longitude })
+            );
     } catch (err) {
         next(err);
     }
