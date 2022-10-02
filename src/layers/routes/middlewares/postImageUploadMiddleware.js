@@ -13,7 +13,7 @@ class S3ImageController {
             contentType: multerS3.AUTO_CONTENT_TYPE,
             key: function (req, file, cb) {
                 const { postId } = req.params;
-
+                console.log(file);
                 let ext = file.mimetype.split('/')[1]; // 확장자
                 // 이미지만 처리
                 if (!['png', 'jpg', 'jpeg', 'gif'].includes(ext)) {
@@ -32,8 +32,7 @@ class S3ImageController {
                         });
                     return cb(new exception.NotFoundException('이미지 파일이 아닙니다!'));
                 }
-                new Error();
-                console.log(file);
+
                 cb(null, `post/${Date.now()}.${ext}`);
             }
         }),
