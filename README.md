@@ -29,6 +29,7 @@
 ![기술라이브러리](https://user-images.githubusercontent.com/71562311/191900453-d9de5da2-ed37-4a2b-baa1-2e558a176da8.PNG)
 
 # 🩳 API 명세서
+[▶ 무드캐처 REST API 바로가기](https://github.com/moodCatcherProject/Back-End/wiki/%EB%AC%B4%EB%93%9C%EC%BA%90%EC%B2%98-REST-API)
 
 # 🧦 DB 설계도(ERD)
 ![진짜정말로세상에서마지막으로최종](https://user-images.githubusercontent.com/109029407/191969352-be2d455a-bedc-4af2-94ff-c8471c204b5f.png)
