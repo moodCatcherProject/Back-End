@@ -425,13 +425,14 @@ const findItems = async (postId) => {
  */
 const updateItem = async (postId, item) => {
     try {
-        const { brand, name, imgUrl, price } = item;
+        const { brand, name, imgUrl, price, url } = item;
         await Item.update(
             {
                 brand,
                 name,
                 imgUrl,
-                price
+                price,
+                url
             },
             {
                 where: { postId }
