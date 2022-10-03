@@ -104,7 +104,13 @@
   
 ```
 
-### 이미지 리사이징
+# 💎트러블 슈팅
+
+<details>
+<summary>이미지 리사이징</summary>
+<div markdown="3">
+
+
 
 <aside>
 ❓ 주어진 문제와 요구 사항
@@ -148,24 +154,31 @@
 <aside>
 💡 원본 이미지를 출력
 
-![원본사진 불러오는 데 걸리는 시간.PNG](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/153102a1-3460-4877-b6bb-da2f76bb320b/%EC%9B%90%EB%B3%B8%EC%82%AC%EC%A7%84_%EB%B6%88%EB%9F%AC%EC%98%A4%EB%8A%94_%EB%8D%B0_%EA%B1%B8%EB%A6%AC%EB%8A%94_%EC%8B%9C%EA%B0%84.png)
+![이미지 원본GIF](https://user-images.githubusercontent.com/71562311/193570401-d6d0c5d3-7d25-4e56-9db1-1117f0aa4b6f.gif)
+![원본사진 불러오는 데 걸리는 시간](https://user-images.githubusercontent.com/71562311/193570429-ee3c5b4d-c544-42e4-a1d0-6bcd4e5708a2.PNG)
 
-![이미지 원본GIF.gif](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/dee8da58-6cc5-4c54-b41c-961dc840ee07/%EC%9D%B4%EB%AF%B8%EC%A7%80_%EC%9B%90%EB%B3%B8GIF.gif)
 
 </aside>
-
 <aside>
 💡 리사이징 된 이미지 출력
 
-![이미지 리사이징 걸리는 시간.PNG](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/192999ee-74e2-4ce5-81de-e0d41ccc6456/%EC%9D%B4%EB%AF%B8%EC%A7%80_%EB%A6%AC%EC%82%AC%EC%9D%B4%EC%A7%95_%EA%B1%B8%EB%A6%AC%EB%8A%94_%EC%8B%9C%EA%B0%84.png)
+![이미지 리사이징 걸리는 시간](https://user-images.githubusercontent.com/71562311/193570327-a220a017-dec3-4e1f-9821-1065f75d9f19.PNG)
+![이미지 리사이징GIF](https://user-images.githubusercontent.com/71562311/193571107-ccb7d72b-a83c-470b-a723-0d0301f10318.gif)
 
-![이미지 리사이징GIF.gif](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/52901e8a-95c6-4044-a3e2-de0b20e01723/%EC%9D%B4%EB%AF%B8%EC%A7%80_%EB%A6%AC%EC%82%AC%EC%9D%B4%EC%A7%95GIF.gif)
+
+
 
 </aside>
+</div>
+</details>
 
-</aside>
 
-### 전체 게시물 출력
+
+<details>
+<summary>전체 게시물 출력</summary>
+<div markdown="1">
+
+
 
 <aside>
 ❓ 주어진 문제와 요구 사항
@@ -180,14 +193,6 @@
     - api 하나로 충분히 데이터 전송이 가능하다는 판단 하에 api를 하나로 축소
 </aside>
 
-### 이전 api명세
-
-![api명세 이전.PNG](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c64d9eef-40b8-4324-a412-6af93fd6c23e/api%EB%AA%85%EC%84%B8_%EC%9D%B4%EC%A0%84.png)
-
-![마이페이지 api.PNG](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ebc722d5-b5bc-4787-81e5-d4b242fd0f3d/%EB%A7%88%EC%9D%B4%ED%8E%98%EC%9D%B4%EC%A7%80_api.png)
-
-![옷장 페이지.PNG](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/3fc90691-1fc1-4e37-ae1e-d34480525b3b/%EC%98%B7%EC%9E%A5_%ED%8E%98%EC%9D%B4%EC%A7%80.png)
-
 ---
 
 <aside>
@@ -195,9 +200,8 @@
 
 - 현재 서비스 중인 인프런에서 url을 관찰하며 아이디어를 얻음.
     
-    ![인프런.PNG](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/5d35a980-1729-49c8-bbe0-399eeaa4a7ff/%EC%9D%B8%ED%94%84%EB%9F%B0.png)
-    
-    ![인프런 주소.PNG](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/bb1378c3-82ba-4d07-bfa4-aeca95dba2c0/%EC%9D%B8%ED%94%84%EB%9F%B0_%EC%A3%BC%EC%86%8C.png)
+  ![인프런](https://user-images.githubusercontent.com/71562311/193569890-ad2d5b3b-bfd3-456e-b4c8-6320baf39c29.PNG)
+
     
 - 서버에서 프론트에게 전달해주는 데이터는 결국 내용만 바뀌고 형식은 변하지 않기 때문에 query를 이용하면 모든 경우의 수를 고려 할 수 있다고 판단.
 </aside>
@@ -208,137 +212,6 @@
 🧑‍⚖️ 의사 결정과 근거, 구현
 
 - query 값을 이용해 경우의 수를 나누는 알고리즘 생성
-    - 코드
-        
-        ```jsx
-        /**
-         * page , count 는 항상 필수 (default값을 정해도 좋을 것 같음.)
-         * order 는 기본적으로는 recent 값으로 줘도 좋을 것 같음.
-         * == 여기까지 기본으로 같이 오는 값
-         * type=my&userId=1 이 유저아이디의 내가 쓴 게시물 출력
-         * type=like 로그인한 유저가 좋아요를 누른 게시물 출력
-         * type=search&keyword="조권영"&sort=title 제목으로 '조권영'을 검색
-        1. 전체게시물 :
-            1. 남자 2. 여자
-                => 최신순 인기순
-        2. 나의 옷장(게시물) 
-            => 최신순 인기순 
-        3. 검색 결과 페이지 
-            1. 남자 2. 여자
-                => 최신순 인기순 
-        4. 검색 알고리즘
-            만약 남녀 값이 오지 않으면 전체 출력
-         * 
-         */
-        
-        /**
-         * @desc 매개변수의 조합에 따라 보여주는 게시물이 달라짐.
-         * @param {number} userId 다른 사람의 마이페이지 출력 시
-         * @param {*} keyword search 검색기능을 이용할 때 필요한 키워드
-         * @param {*} sort title, writer
-         * @param {*} type my : 마이페이지, like : 내가 좋아요 한 페이지, search : 검색 결과 페이지
-         * @param {*} gender '남자', '여자' , ['남자, '여자']
-         * @param {*} page '현재의 페이지'
-         * @param {*} count ' 한 페이지 출력 개수'
-         * @param {*} order recent : 최신 순, popular : 인기 순
-         * @returns 게시물 데이터
-         */
-        const findAllPosts = async (
-            userId,
-            keyword, //검색결과
-            sort, // 검색종류 title, writer
-            type = 'all',
-            gender = ['남자', '여자'],
-            page = 1,
-            count = 8,
-            order = 'recent'
-        ) => {
-            
-            let data, orderKey;
-            switch (order) {
-                case 'recent': {
-                    orderKey = 'createdAt';
-                    order = 'DESC';
-        
-                    break;
-                }
-                case 'popular': {
-                    orderKey = 'likeCount';
-                    order = 'DESC';
-        
-                    break;
-                }
-            }
-        
-            switch (type) {
-                case 'my': {
-                    //유저의 정보, 이 유저가 작성한 게시물 Posts 배열, UserDetail.gender
-        
-                    data = await postRepository.findMyPage(userId, page, count, orderKey, order);
-                    try {
-                        if (userId !== data[0].userId) {
-        										//다른 사람이 나의 게시물을 조회하면 포인트 지급
-                            exception.MoodPoint.whenLookMyCloser(data[0].userId);
-                        }
-                    } catch (err) {}
-                    break;
-                }
-                case 'like': {
-                    data = await postRepository.findLikePage(userId, page, count, orderKey, order, gender);
-        
-                    break;
-                }
-                case 'search': {
-                    switch (sort) {
-                        case 'title': {
-                            data = await postRepository.findSearchTitleKeyword(
-                                keyword,
-                                page,
-                                count,
-                                orderKey,
-                                order,
-                                gender
-                            );
-        
-                            break;
-                        }
-                        case 'writer': {
-                            data = await postRepository.findSearchWriterKeyword(keyword, page, count);
-        
-                            break;
-                        }
-                    }
-        
-                    break;
-                }
-                case 'alg': {
-                    data = await postRepository.findAlgorithmPost(page, count);
-                    break;
-                }
-                default: {
-                    data = await postRepository.findAllPosts(page, count, orderKey, order, gender);
-        
-                    break;
-                }
-            }
-            try {
-                data = data.map((e) => e.get({ plain: true }));
-            } catch (err) {
-                throw new exception.NotFoundException('검색내용 없음');
-            }
-        
-            return data;
-        };
-        ```
-        
-        ```mermaid
-        graph TD
-          Mermaid --> Diagram
-        ```
-        
-</aside>
-
----
 
 <aside>
 ✅ 결과
@@ -348,11 +221,23 @@
 
 ### 현재 api명세
 
-![현재의 api명세.PNG](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ee2b4e78-37ec-4642-bcf5-e1cb2950f495/%ED%98%84%EC%9E%AC%EC%9D%98_api%EB%AA%85%EC%84%B8.png)
+![현재의 api명세](https://user-images.githubusercontent.com/71562311/193570188-83db6d23-ff22-4f3b-9572-a61bf1808c44.PNG)
+
 
 </aside>
 
-### 회원가입 / 로그인
+</div>
+</details>
+</aside>
+
+
+
+
+<details>
+<summary>회원가입 / 로그인</summary>
+<div markdown="1">
+
+
 
 <aside>
 ❓ 주어진 문제와 요구사항
@@ -397,3 +282,6 @@
 - 비밀번호를 잊었을때 찾을수 있음 (비밀번호 찾기)
 - 해커가 무차별 대입을통한 계정 탈취를 할 수 없음 (로그인)
 </aside>
+
+</div>
+</details>
