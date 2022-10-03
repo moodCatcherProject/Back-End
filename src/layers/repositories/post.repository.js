@@ -198,8 +198,6 @@ const findLikePage = async (userId, page, count, orderKey, order, gender) => {
 const findSearchTitleKeyword = async (keyword, page, count, orderKey, order, gender) => {
     try {
         return await Post.findAll({
-            offset: count * (page - 1),
-            limit: count,
             where: {
                 gender,
                 title: {
@@ -223,8 +221,6 @@ const findSearchTitleKeyword = async (keyword, page, count, orderKey, order, gen
 const findSearchWriterKeyword = async (keyword, page, count) => {
     try {
         const userData = await User.findAll({
-            offset: count * (page - 1),
-            limit: count,
             where: {
                 nickname: {
                     [Op.like]: '%' + keyword + '%'
